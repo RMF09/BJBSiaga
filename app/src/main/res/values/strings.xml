@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">BJBSiaga</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="lupa_pw">Lupa Password?</string>
+    <string name="cabang_cianjur">Cabang Cianjur</string>
+    <string name="description_image">nothing else</string>
+    <string name="title_activity_maps">Map</string>
+</resources>
