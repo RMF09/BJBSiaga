@@ -44,6 +44,9 @@ class DataSecurityActivity : AppCompatActivity() {
         startAt10()
         loadSecurity()
 
+        back.setOnClickListener {
+            finish()
+        }
         btn_add.setOnClickListener {
             startActivity(Intent(this, TambahDataSecurityActivity::class.java))
         }
@@ -59,6 +62,7 @@ class DataSecurityActivity : AppCompatActivity() {
         list = ArrayList()
         adapter = RVAdapterSecurity(list)
         rv_data_security.adapter =adapter
+
     }
     fun initDB(){
         db = FirebaseFirestore.getInstance()

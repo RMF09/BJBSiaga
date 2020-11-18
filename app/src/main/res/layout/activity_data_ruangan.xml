@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".admin.InputJadwalActivity">
+    tools:context=".admin.DataRuanganActivity">
 
     <ImageView
         android:id="@+id/imageView"
@@ -40,43 +40,28 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Input Jadwal"
+            android:text="Data Ruangan"
             android:textColor="@color/colorAccent"
             android:textSize="20sp" />
     </LinearLayout>
-    <LinearLayout
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_data_ruangan"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="14dp"
-        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        tools:layout_editor_absoluteX="12dp">
+        tools:listitem="@layout/item_data_ruangan" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Nama Jadwal"
-            android:textColor="@color/colorAccent"/>
-
-        <EditText
-            android:id="@+id/edit_nama"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/rounded_corner_edit2"
-            android:paddingHorizontal="18dp"
-            android:paddingVertical="12dp"
-            android:layout_marginBottom="8dp"
-            android:inputType="textPersonName"/>
-
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_tambah_data"
-            android:text="Tambah data"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/colorWhiteText"
-            android:background="@drawable/rounded_corner"
-            android:layout_marginTop="18dp"/>
-    </LinearLayout>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btn_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="20dp"
+        android:src="@drawable/ic_baseline_add_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

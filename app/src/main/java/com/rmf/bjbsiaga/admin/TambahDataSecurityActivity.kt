@@ -31,6 +31,9 @@ class TambahDataSecurityActivity : AppCompatActivity() {
         initFirebaseAuth()
         initDB()
 
+        back.setOnClickListener {
+            finish()
+        }
         btn_tambah_data.setOnClickListener {
             if(validate(it)){
                 registerNewUser(it,edit_email.text.toString(), edit_password.text.toString())

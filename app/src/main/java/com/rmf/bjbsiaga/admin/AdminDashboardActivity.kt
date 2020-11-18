@@ -20,5 +20,8 @@ class AdminDashboardActivity : AppCompatActivity() {
         cardJadwal.setOnClickListener {
             startActivity(Intent(this,InputJadwalActivity::class.java))
         }
+        cardRuangan.setOnClickListener {
+            startActivity(Intent(this,DataRuanganActivity::class.java))
+        }
     }
 }
