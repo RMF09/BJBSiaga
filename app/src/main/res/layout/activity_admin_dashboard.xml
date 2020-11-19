@@ -13,7 +13,7 @@
         android:layout_height="match_parent"
         android:contentDescription="@string/description_image"
         android:scaleType="centerCrop"
-        android:src="@drawable/artboard2"
+        android:src="@drawable/artboard1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -28,7 +28,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginBottom="40dp"
         android:contentDescription="@string/description_image"
-        android:src="@drawable/siaga"
+        android:src="@drawable/siaga_l"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -46,7 +46,7 @@
         <ImageView
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:src="@color/colorBlueText" />
+            android:src="@color/colorWhiteText" />
     </androidx.cardview.widget.CardView>
 
     <TextView
@@ -56,7 +56,7 @@
         android:layout_marginTop="10dp"
         android:text="Reksa MF"
         android:textAllCaps="true"
-        android:textColor="@color/colorBlueText"
+        android:textColor="@color/colorWhiteText"
         android:textSize="28sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -66,10 +66,10 @@
     <View
         android:id="@+id/view"
         android:layout_width="match_parent"
-        android:layout_height="6dp"
+        android:layout_height="2dp"
         android:layout_marginHorizontal="50dp"
         android:layout_marginTop="10dp"
-        android:background="@color/colorBlueText"
+        android:background="@color/colorWhitePure"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView4" />
@@ -78,7 +78,7 @@
         android:id="@+id/relativeLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="6dp"
         android:gravity="center"
         app:layout_constraintBottom_toTopOf="@+id/imageView3"
         app:layout_constraintEnd_toEndOf="parent"
@@ -88,12 +88,40 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/cardInput"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="5dp">
 
-            <ImageView
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:src="@drawable/inputb" />
+                >
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/input"
+
+                    app:layout_constraintBottom_toTopOf="@+id/textView7"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <TextView
+
+                    android:id="@+id/textView7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginBottom="11dp"
+                    android:gravity="center"
+                    android:text="Input User"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
@@ -101,12 +129,38 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
-            android:layout_toRightOf="@id/cardInput">
+            android:layout_toRightOf="@id/cardInput"
+            app:cardCornerRadius="5dp">
 
-            <ImageView
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:src="@drawable/jadwalb" />
+                >
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/penjadwalan"
+                    app:layout_constraintBottom_toTopOf="@+id/textView8"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <TextView
+                    android:id="@+id/textView8"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginBottom="11dp"
+                    android:gravity="center"
+                    android:text="Jadwal"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
         <androidx.cardview.widget.CardView
             android:id="@+id/cardRuangan"
@@ -118,7 +172,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:background="@color/colorBlueText">
+             >
 
                 <ImageView
                     android:layout_width="50dp"
@@ -126,7 +180,8 @@
                     android:src="@drawable/room_w"
                     app:layout_constraintBottom_toTopOf="@+id/textView5"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:tint="@color/colorAccent" />
 
                 <TextView
                     android:id="@+id/textView5"
@@ -137,7 +192,7 @@
                     android:layout_marginBottom="11dp"
                     android:gravity="center"
                     android:text="Ruangan"
-                    android:textColor="@color/colorWhiteText"
+                    android:textColor="@color/colorAccent"
                     android:textSize="16sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -149,32 +204,47 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/cardReport"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/cardInput"
-            android:layout_marginTop="20dp">
-
-            <ImageView
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:src="@drawable/reportb" />
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
             android:id="@+id/cardKeluar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/cardJadwal"
-            android:layout_marginLeft="20dp"
+            android:layout_below="@id/cardInput"
             android:layout_marginTop="20dp"
-            android:layout_toRightOf="@id/cardReport">
+            app:cardCornerRadius="5dp">
 
-            <ImageView
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:src="@drawable/keluarb" />
+                >
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/logout"
+                    app:layout_constraintBottom_toTopOf="@+id/textView9"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:tint="@color/colorAccent" />
+
+                <TextView
+
+                    android:id="@+id/textView9"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginBottom="11dp"
+                    android:gravity="center"
+                    android:text="Keluar"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
+
+
 
     </RelativeLayout>
 
@@ -184,6 +254,7 @@
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:contentDescription="@string/description_image"
+        android:scaleType="fitEnd"
         android:src="@drawable/bjb"
         app:layout_constraintBottom_toTopOf="@+id/textView3"
         app:layout_constraintEnd_toEndOf="parent"
@@ -195,9 +266,9 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
         android:text="@string/cabang_cianjur"
+        android:textColor="@color/colorWhiteText"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

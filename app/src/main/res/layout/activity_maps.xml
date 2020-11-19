@@ -13,7 +13,7 @@
         android:layout_height="match_parent"
         android:contentDescription="@string/description_image"
         android:scaleType="centerCrop"
-        android:src="@drawable/artboard2"
+        android:src="@drawable/artboard1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

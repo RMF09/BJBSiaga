@@ -5,11 +5,14 @@
     <color name="colorAccent">#16A2E1</color>
     <color name="colorAccentDark">#076188</color>
     <color name="colorWhiteText">#F4F4F4</color>
+    <color name="colorWhitePure">#FFFFFF</color>
     <color name="colorTransparent">#00F4F4F4</color>
     <color name="colorP">#424242</color>
     <color name="colorDarkEdit">#45000000</color>
     <color name="colorPD">#2C2C2C</color>
     <color name="colorBlueText">#165581</color>
     <color name="colorGrey">#C8C8C8</color>
+    <color name="colorDisable">#838383</color>
+    <color name="colorRed">#ED2E20</color>
 
 </resources>

@@ -36,7 +36,8 @@ class TambahDataSecurityActivity : AppCompatActivity() {
         }
         btn_tambah_data.setOnClickListener {
             if(validate(it)){
-                registerNewUser(it,edit_email.text.toString(), edit_password.text.toString())
+//                registerNewUser(it,edit_email.text.toString(), edit_password.text.toString())
+                saveData(it)
             }
         }
     }
@@ -47,18 +48,19 @@ class TambahDataSecurityActivity : AppCompatActivity() {
 //        db.firestoreSettings =settings
     }
 
-    fun saveData(view: View, uid :String){
+    fun saveData(view: View){
 
         val nama = edit_nama.text.toString()
         val email = edit_email.text.toString()
         val nik : Long = edit_nik.text.toString().toLong()
         val unitKerja = edit_unit_kerja.text.toString()
         val noWA : Long = edit_no_wa.text.toString().toLong()
+        val password = edit_password.text.toString()
 
         val dataSecurity =
-            DataSecurity(nama, email, nik, noWA, unitKerja)
+            DataSecurity(nama, email, nik, noWA, unitKerja,password)
 
-        db.collection(CollectionsFS.SECURITY).document(uid).set(dataSecurity)
+        db.collection(CollectionsFS.SECURITY).document().set(dataSecurity)
             .addOnSuccessListener {
                 Snackbar.make(view,"Data berhasil disimpan",Snackbar.LENGTH_LONG).show()
             }
@@ -72,22 +74,22 @@ class TambahDataSecurityActivity : AppCompatActivity() {
     fun initFirebaseAuth(){
         mAuth = FirebaseAuth.getInstance()
     }
-    fun registerNewUser(view:View, email: String, password: String){
-        mAuth.createUserWithEmailAndPassword(email,password)
-            .addOnCompleteListener {
-                if(it.isSuccessful){
-                    Log.d(TAG, "registerNewUser: success")
-                    val user = mAuth.currentUser
-                    saveData(view,user!!.uid)
-
-                }else{
-                    if(it.exception.toString() == ConstantValue.EMAIL_SUDAH_DIGUNAKAN){
-                        Snackbar.make(view,"Alamat Email sudah digunakan oleh akun lain",Snackbar.LENGTH_LONG).show()
-                    }
-                    Log.w(TAG, "registerNewUser: failure ${it.exception.toString()}" )
-                }
-            }
-    }
+//    fun registerNewUser(view:View, email: String, password: String){
+//        mAuth.createUserWithEmailAndPassword(email,password)
+//            .addOnCompleteListener {
+//                if(it.isSuccessful){
+//                    Log.d(TAG, "registerNewUser: success")
+//                    val user = mAuth.currentUser
+//                    saveData(view,user!!.uid)
+//
+//                }else{
+//                    if(it.exception.toString() == ConstantValue.EMAIL_SUDAH_DIGUNAKAN){
+//                        Snackbar.make(view,"Alamat Email sudah digunakan oleh akun lain",Snackbar.LENGTH_LONG).show()
+//                    }
+//                    Log.w(TAG, "registerNewUser: failure ${it.exception.toString()}" )
+//                }
+//            }
+//    }
     fun validate(view: View) : Boolean{
         val nama = edit_nama.text.toString()
         val email = edit_email.text.toString()

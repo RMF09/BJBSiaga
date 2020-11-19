@@ -7,4 +7,5 @@
     <string name="cabang_cianjur">Cabang Cianjur</string>
     <string name="description_image">nothing else</string>
     <string name="title_activity_maps">Map</string>
+    <string name="filter_text_no_spacing">ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890_-!@#$%^*()</string>
 </resources>

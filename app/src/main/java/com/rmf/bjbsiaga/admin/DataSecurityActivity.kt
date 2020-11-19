@@ -72,7 +72,7 @@ class DataSecurityActivity : AppCompatActivity() {
         securityRef = db.collection(CollectionsFS.SECURITY)
     }
     fun loadSecurity(){
-        securityRef.get()
+        securityRef.whereEqualTo("nama","Ilham").get()
             .addOnSuccessListener {
                 for (document in it){
                     val dataSecurity : DataSecurity = document.toObject(DataSecurity::class.java)

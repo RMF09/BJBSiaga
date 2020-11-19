@@ -9,7 +9,8 @@ data class DataSecurity (
     val email: String="",
     val nik: Long =0,
     val noWA: Long =0,
-    val unitKerja: String=""
+    val unitKerja: String="",
+    val password: String=""
 ){
     @get:Exclude
     var documentId: String=""
