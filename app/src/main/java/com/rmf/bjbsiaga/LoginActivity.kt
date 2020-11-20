@@ -4,11 +4,8 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
-import android.util.Patterns
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -37,7 +34,7 @@ class LoginActivity : AppCompatActivity() {
             hideInfoLogin()
             btn_login.isEnabled=false
             if (validateLogin()){
-                signIn(edit_username.text.toString().toLong(),edit_password.text.toString())
+                signIn(text_input_username.editText?.text.toString().toLong(),text_input_password.editText?.text.toString())
             }else{
                 btn_login.isEnabled=true
             }
@@ -113,8 +110,8 @@ class LoginActivity : AppCompatActivity() {
     }
     fun showInfoLogin(info: Int){
 
-        text_username_warning.visibility= View.GONE
-        text_password_warning.visibility= View.GONE
+        text_input_username.error= ""
+        text_input_password.error= ""
 
         when(info){
             InfoLogin.LOADING ->{
@@ -125,44 +122,42 @@ class LoginActivity : AppCompatActivity() {
             }
             InfoLogin.USERNAME_SALAH -> {
                 hideInfoLogin()
-                text_username_warning.visibility= View.VISIBLE
-                text_username_warning.text="Username Salah"
+                text_input_username.requestFocus()
+                text_input_username.error="Username Salah"
             }
             InfoLogin.PASSWORD_SALAH -> {
                 hideInfoLogin()
-                text_password_warning.visibility= View.VISIBLE
-                text_password_warning.text="Password Salah"
+                text_input_password.requestFocus()
+                text_input_password.error="Password Salah"
             }
         }
     }
 
     fun validateLogin() : Boolean{
-        val username = edit_username.text.toString()
-        val password = edit_password.text.toString()
+        val username = text_input_username.editText?.text.toString()
+        val password = text_input_password.editText?.text.toString()
 
-        text_username_warning.visibility= View.GONE
-        text_password_warning.visibility= View.GONE
+        text_input_username.error= ""
+        text_input_password.error= ""
 
         if(username.isEmpty()){
-            edit_username.requestFocus()
-
-            text_username_warning.visibility= View.VISIBLE
-            text_username_warning.text="Username tidak boleh kosong"
+            text_input_username.requestFocus()
+            text_input_username.error="Username tidak boleh kosong"
             return false
         }
 
         if(password.isEmpty()){
-            edit_password.requestFocus()
-            text_password_warning.visibility= View.VISIBLE
-            text_password_warning.text="Password tidak boleh kosong"
+            text_input_password.requestFocus()
+            text_input_password.error="Password tidak boleh kosong"
             return false
         }
         return true
     }
 
     fun clearForm(){
-        edit_username.setText("")
-        edit_password.setText("")
+        text_input_username.editText?.text= null
+        text_input_password.editText?.text= null
+
     }
 
 }

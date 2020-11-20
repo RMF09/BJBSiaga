@@ -44,7 +44,7 @@ class ResetPasswordActivity : AppCompatActivity() {
 
                     documentId?.let { it1 ->
                         securityRef.document(it1)
-                            .update("password",edit_password_baru.text.toString()).addOnSuccessListener {
+                            .update("password",text_input_password_baru.editText?.text.toString()).addOnSuccessListener {
                                 Log.d(TAG, "onCreate: Berhasil ")
                                 alertDialog.show()
                             }
@@ -65,48 +65,42 @@ class ResetPasswordActivity : AppCompatActivity() {
 
         closeKeyboard()
 
-        text_password_lama_warning.visibility=View.GONE
-        text_password_baru_warning.visibility=View.GONE
-        text_konfirmasi_password_baru_warning.visibility=View.GONE
+        text_input_password_lama.error = ""
+        text_input_password_baru.error= ""
+        text_input_konfirmasi_password_baru.error=""
 
-        val passwordLama: String = edit_password_lama.text.toString()
-        val passwordBaru: String = edit_password_baru.text.toString()
-        val konfirmasiPassword: String = edit_konfirmasi_password_baru.text.toString()
+        val passwordLama: String = text_input_password_lama.editText?.text.toString()
+        val passwordBaru: String = text_input_password_baru.editText?.text.toString()
+        val konfirmasiPassword: String = text_input_konfirmasi_password_baru.editText?.text.toString()
 
         if (passwordLama.isEmpty()){
-            edit_password_lama.requestFocus()
-            text_password_lama_warning.visibility = View.VISIBLE
-            text_password_lama_warning.text= "Masukan Password Lama"
+            text_input_password_lama.requestFocus()
+            text_input_password_lama.error = "Masukan Password Lama"
             return false
         }
         if (passwordLama!=pwLama){
-            edit_password_lama.requestFocus()
-            text_password_lama_warning.visibility = View.VISIBLE
-            text_password_lama_warning.text= "Password Lama Salah"
+            text_input_password_lama.requestFocus()
+            text_input_password_lama.error = "Password Lama Salah"
             return false
         }
         if (passwordBaru.isEmpty()){
-            edit_password_baru.requestFocus()
-            text_password_baru_warning.visibility = View.VISIBLE
-            text_password_baru_warning.text= "Masukan Password Baru"
+            text_input_password_baru.requestFocus()
+            text_input_password_baru.error= "Masukan Password Baru"
             return false
         }
-        if (edit_password_baru.length() <8){
-            edit_password_baru.requestFocus()
-            text_password_baru_warning.visibility = View.VISIBLE
-            text_password_baru_warning.text="Password baru harus memiliki 8 karakter atau lebih"
+        if (text_input_password_baru.editText!!.length() < 8){
+            text_input_password_baru.requestFocus()
+            text_input_password_baru.error= "Password baru harus memiliki 8 karakter atau lebih"
             return false
         }
         if (konfirmasiPassword.isEmpty()){
-            edit_konfirmasi_password_baru.requestFocus()
-            text_konfirmasi_password_baru_warning.visibility = View.VISIBLE
-            text_konfirmasi_password_baru_warning.text="Masukan Konfirmasi Password"
+            text_input_konfirmasi_password_baru.requestFocus()
+            text_input_konfirmasi_password_baru.error="Masukan Konfirmasi Password"
             return false
         }
         if (passwordBaru!=konfirmasiPassword){
-            edit_konfirmasi_password_baru.requestFocus()
-            text_konfirmasi_password_baru_warning.visibility = View.VISIBLE
-            text_konfirmasi_password_baru_warning.text="Konfirmasi Password Baru tidak sesuai dengan Password Baru"
+            text_input_konfirmasi_password_baru.requestFocus()
+            text_input_konfirmasi_password_baru.error="Konfirmasi Password Baru tidak sesuai dengan Password Baru"
             return false
         }
         return true

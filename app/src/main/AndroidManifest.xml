@@ -25,7 +25,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ResetPasswordActivity"></activity>
+        <activity android:name=".DetailSiklusActivity"></activity>
+        <activity android:name=".ResetPasswordActivity" />
         <activity android:name=".admin.DataRuanganActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -43,18 +44,18 @@
             android:value="@integer/google_play_services_version" />
 
         <activity android:name=".admin.TambahRuanganActivity" />
-        <activity android:name=".security.SecurityDashboardActivity" />
-        <activity android:name=".admin.InputJadwalActivity" />
-        <activity android:name=".admin.TambahDataSecurityActivity" />
-        <activity android:name=".admin.DataSecurityActivity" />
-        <activity android:name=".admin.AdminDashboardActivity" />
-        <activity android:name=".LoginActivity">
+        <activity android:name=".security.SecurityDashboardActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".admin.InputJadwalActivity" />
+        <activity android:name=".admin.TambahDataSecurityActivity" />
+        <activity android:name=".admin.DataSecurityActivity" />
+        <activity android:name=".admin.AdminDashboardActivity"></activity>
+        <activity android:name=".LoginActivity"></activity>
         <activity android:name=".Splash" />
         <activity android:name=".MainActivity" />
 
