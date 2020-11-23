@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">BJBSiaga</string>
-    <string name="username">Username</string>
-    <string name="password">Password</string>
+
     <string name="login">Login</string>
     <string name="lupa_pw">Lupa Password?</string>
     <string name="cabang_cianjur">Cabang Cianjur</string>
@@ -19,4 +18,34 @@
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
+    <string name="harap_tunggu">Harap tunggu…</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="masuk">Masuk</string>
+    <string name="input_user">Input User</string>
+    <string name="reksa_mf">Reksa MF</string>
+    <string name="jadwal">Jadwal</string>
+    <string name="ruangan">Ruangan</string>
+    <string name="keluar">Keluar</string>
+    <string name="data_ruangan">Data Ruangan</string>
+    <string name="input_data_security">Input Data Security</string>
+    <string name="detail_siklus">Detail Siklus</string>
+    <string name="input_jadwal">Input Jadwal</string>
+    <string name="nama_jadwal">Nama Jadwal</string>
+
+    <string name="capture">Capture</string>
+    <string name="tambah_data_ruangan">Tambah Data Ruangan</string>
+    <string name="nama_ruangan">Nama Ruangan</string>
+    <string name="keterangan">Keterangan</string>
+    <string name="koordinat_lokasi">Koordinat Lokasi</string>
+    <string name="tambah_data">Tambah Data</string>
+    <string name="password_lama">Password Lama</string>
+    <string name="password_baru">Password Baru</string>
+    <string name="konfirmasi_password_baru">Konfirmasi Password Baru</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="budi_setiawan">Budi Setiawan</string>
+    <string name="siklus_i">Siklus I</string>
+    <string name="siklus_ii">Siklus II</string>
+    <string name="siklus_iii">Siklus III</string>
+    <string name="siklus_iv">Siklus IV</string>
 </resources>

@@ -6,7 +6,6 @@ import com.google.firebase.firestore.IgnoreExtraProperties
 @IgnoreExtraProperties
 data class DataRuangan(
     var namaRuangan: String="",
-    var keterangan: String="",
     var lat: Double= 0.0,
     var lng: Double= 0.0
 ){

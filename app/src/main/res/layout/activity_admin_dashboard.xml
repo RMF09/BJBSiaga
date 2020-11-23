@@ -46,6 +46,7 @@
         <ImageView
             android:layout_width="100dp"
             android:layout_height="100dp"
+            android:contentDescription="@string/description_image"
             android:src="@color/colorWhiteText" />
     </androidx.cardview.widget.CardView>
 
@@ -54,7 +55,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="Reksa MF"
+        android:text="@string/reksa_mf"
         android:textAllCaps="true"
         android:textColor="@color/colorWhiteText"
         android:textSize="28sp"
@@ -93,14 +94,13 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="100dp"
-                android:layout_height="100dp"
-                >
+                android:layout_height="100dp">
 
                 <ImageView
                     android:layout_width="50dp"
                     android:layout_height="50dp"
+                    android:contentDescription="@string/description_image"
                     android:src="@drawable/input"
-
                     app:layout_constraintBottom_toTopOf="@+id/textView7"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
@@ -114,7 +114,7 @@
                     android:layout_centerInParent="true"
                     android:layout_marginBottom="11dp"
                     android:gravity="center"
-                    android:text="Input User"
+                    android:text="@string/input_user"
                     android:textColor="@color/colorAccent"
                     android:textSize="16sp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -128,18 +128,18 @@
             android:id="@+id/cardJadwal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_toRightOf="@id/cardInput"
+            android:layout_marginStart="20dp"
+            android:layout_toEndOf="@id/cardInput"
             app:cardCornerRadius="5dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="100dp"
-                android:layout_height="100dp"
-                >
+                android:layout_height="100dp">
 
                 <ImageView
                     android:layout_width="50dp"
                     android:layout_height="50dp"
+                    android:contentDescription="@string/description_image"
                     android:src="@drawable/penjadwalan"
                     app:layout_constraintBottom_toTopOf="@+id/textView8"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -153,7 +153,7 @@
                     android:layout_centerInParent="true"
                     android:layout_marginBottom="11dp"
                     android:gravity="center"
-                    android:text="Jadwal"
+                    android:text="@string/jadwal"
                     android:textColor="@color/colorAccent"
                     android:textSize="16sp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -162,19 +162,21 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
+
         <androidx.cardview.widget.CardView
             android:id="@+id/cardRuangan"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_toRightOf="@id/cardJadwal"
+            android:layout_marginStart="20dp"
+            android:layout_toEndOf="@id/cardJadwal"
             app:cardCornerRadius="5dp">
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="100dp"
-                android:layout_height="100dp"
-             >
+                android:layout_height="100dp">
 
                 <ImageView
+                    android:contentDescription="@string/description_image"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:src="@drawable/room_w"
@@ -191,7 +193,7 @@
                     android:layout_centerInParent="true"
                     android:layout_marginBottom="11dp"
                     android:gravity="center"
-                    android:text="Ruangan"
+                    android:text="@string/ruangan"
                     android:textColor="@color/colorAccent"
                     android:textSize="16sp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -213,10 +215,10 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="100dp"
-                android:layout_height="100dp"
-                >
+                android:layout_height="100dp">
 
                 <ImageView
+                    android:contentDescription="@string/description_image"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:src="@drawable/logout"
@@ -234,7 +236,7 @@
                     android:layout_centerInParent="true"
                     android:layout_marginBottom="11dp"
                     android:gravity="center"
-                    android:text="Keluar"
+                    android:text="@string/keluar"
                     android:textColor="@color/colorAccent"
                     android:textSize="16sp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -243,7 +245,6 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
-
 
 
     </RelativeLayout>

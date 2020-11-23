@@ -1,6 +1,7 @@
 package com.rmf.bjbsiaga.admin
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -72,25 +73,33 @@ class TambahRuanganActivity : AppCompatActivity(), OnMapReadyCallback {
             finish()
         }
         btn_tambah_data.setOnClickListener {
-            if(validate(it)){
+            if(validate()){
                 saveData(it)
             }
         }
 
     }
-    fun validate(view: View):Boolean{
-        val namaRuangan: String = edit_nama_ruangan.text.toString()
-        val keterangan: String? = edit_keterangan_ruangan.text.toString()
-        val koordinat: String = edit_koordinat_lokasi.text.toString()
+
+    fun clearError(){
+        text_input_nama_ruangan.error=""
+        text_input_koordinat_lokasi.error=""
+    }
+
+    fun validate():Boolean{
+
+        clearError()
+
+        val namaRuangan: String = text_input_nama_ruangan.editText?.text.toString()
+        val koordinat: String = text_input_koordinat_lokasi.editText?.text.toString()
 
         if(namaRuangan.isEmpty()){
-            edit_nama_ruangan.requestFocus()
-            Snackbar.make(view,"Nama Ruangan diperlukan", Snackbar.LENGTH_LONG).show()
+            text_input_nama_ruangan.requestFocus()
+            text_input_nama_ruangan.error = "Nama Ruangan diperlukan"
             return false
         }
         if(koordinat.isEmpty()){
-            edit_koordinat_lokasi.requestFocus()
-            Snackbar.make(view,"Koordinat lokasi diperlukan. Geser marker pada map untuk mendapatkan nilai koordinat", Snackbar.LENGTH_LONG).show()
+            text_input_koordinat_lokasi.requestFocus()
+            text_input_koordinat_lokasi.error ="Koordinat lokasi diperlukan. Geser marker pada map untuk mendapatkan nilai koordinat"
             return false
         }
         return true
@@ -102,10 +111,10 @@ class TambahRuanganActivity : AppCompatActivity(), OnMapReadyCallback {
 
     fun saveData(view: View){
 
-        val namaRuangan: String = edit_nama_ruangan.text.toString()
-        val keterangan: String = edit_keterangan_ruangan.text.toString()
+        clearError()
+        val namaRuangan: String = text_input_nama_ruangan.editText?.text.toString()
 
-        val dataRuangan = DataRuangan(namaRuangan,keterangan,lat, lng)
+        val dataRuangan = DataRuangan(namaRuangan,lat, lng)
 
         db.collection(CollectionsFS.RUANGAN).document().set(dataRuangan)
             .addOnSuccessListener {
@@ -118,6 +127,7 @@ class TambahRuanganActivity : AppCompatActivity(), OnMapReadyCallback {
 
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
@@ -131,7 +141,7 @@ class TambahRuanganActivity : AppCompatActivity(), OnMapReadyCallback {
 
             val test = mMap.cameraPosition
             markerCenter.position =test.target
-            edit_koordinat_lokasi.setText("${markerCenter.position.latitude},${markerCenter.position.longitude}")
+            text_input_koordinat_lokasi.editText?.setText("${markerCenter.position.latitude},${markerCenter.position.longitude}")
             Log.d(TAG, "Map Coordinate: " + markerCenter.position);
             lat= markerCenter.position.latitude
             lng= markerCenter.position.longitude
@@ -156,25 +166,17 @@ class TambahRuanganActivity : AppCompatActivity(), OnMapReadyCallback {
         ){
 
             fusedLocationProviderClient.lastLocation.addOnSuccessListener {
-//                Toast.makeText(
-//                    this,
-//                    "Lat: ${it.latitude} Long: ${it.longitude} ", Toast.LENGTH_LONG
-//                )
-//                    .show()
                 Log.d(
                     TAG,
                     "updateGPS: Lat: ${it.latitude} Long: ${it.longitude} accuray : ${it.accuracy} "
                 )
-               mMap.clear()
+                mMap.clear()
                 val myLocation = LatLng(it.latitude, it.longitude)
-
                 val icon =
                     ContextCompat.getDrawable(this,
                         R.drawable.ic_baseline_location_on_24_transparent
                     )?.let { it1 ->
-                        getMarkerIcon(
-                            it1
-                        )
+                        getMarkerIcon(it1)
                     }
                 markerCenter = mMap.addMarker(MarkerOptions().position(myLocation).title("Marker in Sydney").icon(icon))
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 16f))
