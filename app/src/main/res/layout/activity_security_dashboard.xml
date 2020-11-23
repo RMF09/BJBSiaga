@@ -98,7 +98,8 @@
             android:text="@string/siklus_ii"
             android:layout_marginTop="24dp"
             android:textColor="@color/colorWhiteText"
-            android:background="@drawable/button"/>
+            android:background="@drawable/button"
+            android:enabled="false"/>
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_siklus3"
             android:layout_width="match_parent"
@@ -107,7 +108,8 @@
             android:text="@string/siklus_iii"
             android:layout_marginTop="24dp"
             android:textColor="@color/colorWhiteText"
-            android:background="@drawable/button"/>
+            android:background="@drawable/button"
+            android:enabled="false"/>
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_siklus4"
             android:layout_width="match_parent"
@@ -116,7 +118,8 @@
             android:text="@string/siklus_iv"
             android:layout_marginTop="24dp"
             android:textColor="@color/colorWhiteText"
-            android:background="@drawable/button" />
+            android:background="@drawable/button"
+            android:enabled="false"/>
 
     </LinearLayout>
 

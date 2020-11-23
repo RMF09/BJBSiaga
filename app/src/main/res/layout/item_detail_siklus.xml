@@ -40,16 +40,17 @@
                     app:tint="@color/colorWhiteText"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:src="@drawable/ic_baseline_check_24"/>
+                    android:src="@drawable/ic_baseline_close_24"/>
                 <TextView
-                    android:id="@+id/text_keterangan_ruangan"
+                    android:id="@+id/text_status_ruangan"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Sudah dicek pada pukul 18.45"
+                    android:layout_height="match_parent"
+                    android:text="Belum dicek"
                     android:maxLines="1"
                     android:ellipsize="end"
                     android:textStyle="italic"
-                    android:textColor="@color/colorWhiteText"/>
+                    android:textColor="@color/colorWhiteText"
+                    android:gravity="center_vertical"/>
             </LinearLayout>
         </LinearLayout>
 

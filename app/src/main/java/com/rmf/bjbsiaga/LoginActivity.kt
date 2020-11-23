@@ -11,6 +11,7 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.rmf.bjbsiaga.admin.AdminDashboardActivity
 import com.rmf.bjbsiaga.data.DataSecurity
+import com.rmf.bjbsiaga.security.SecurityDashboardActivity
 import com.rmf.bjbsiaga.util.CollectionsFS
 import com.rmf.bjbsiaga.util.InfoLogin
 import kotlinx.android.synthetic.main.activity_login.*
@@ -83,7 +84,7 @@ class LoginActivity : AppCompatActivity() {
                             startActivity(intent)
 
                         }else{
-                            startActivity(Intent(this,AdminDashboardActivity::class.java))
+                            startActivity(Intent(this,SecurityDashboardActivity::class.java))
                         }
                     }
                 }

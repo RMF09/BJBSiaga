@@ -1,7 +1,9 @@
 package com.rmf.bjbsiaga.security
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.rmf.bjbsiaga.DetailSiklusActivity
 import com.rmf.bjbsiaga.R
 import kotlinx.android.synthetic.main.activity_security_dashboard.*
 
@@ -11,10 +13,14 @@ class SecurityDashboardActivity : AppCompatActivity() {
         setContentView(R.layout.activity_security_dashboard)
 
         btn_siklus1.setOnClickListener {
-            when(btn_siklus1.isEnabled){
-                true -> btn_siklus1.isEnabled=false
-                else -> btn_siklus1.isEnabled=true
-            }
+//            when(btn_siklus1.isEnabled){
+//                true -> btn_siklus1.isEnabled=false
+//                else -> btn_siklus1.isEnabled=true
+//            }
+
+            startActivity(Intent(this,DetailSiklusActivity::class.java))
+
+
         }
 
         btn_siklus2.setOnClickListener {

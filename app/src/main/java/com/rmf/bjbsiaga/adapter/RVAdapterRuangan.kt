@@ -24,7 +24,7 @@ class RVAdapterRuangan(var list: ArrayList<DataRuangan>) : RecyclerView.Adapter<
 
         holder.itemView.text_nomer.text = (position+1).toString()
         holder.itemView.text_nama_ruangan.text= data.namaRuangan
-        holder.itemView.text_keterangan_ruangan.text= data.keterangan
+
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
