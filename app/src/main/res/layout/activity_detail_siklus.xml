@@ -48,12 +48,12 @@
 
     </LinearLayout>
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_data_ruangan"
+        android:id="@+id/rv_data_siklus"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        tools:listitem="@layout/item_data_ruangan" />
+        tools:listitem="@layout/item_detail_siklus" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -97,60 +97,59 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/nama_ruangan"
-                android:textColor="@color/colorAccent" />
-
-            <EditText
-                android:id="@+id/edit_nama_ruangan"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/text_input_nama_ruangan"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:background="@drawable/rounded_corner_edit2"
-                android:inputType="textPersonName"
-                android:paddingHorizontal="18dp"
-                android:paddingVertical="12dp"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor" />
+                android:layout_marginBottom="12dp"
+                android:textColorHint="@color/colorWhiteText"
+                app:errorEnabled="true"
+                app:errorTextColor="@color/colorRed"
+                app:hintEnabled="false"
+                >
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:background="@drawable/rounded_corner_edit2"
+                    android:hint="@string/nama_ruangan"
+                    android:inputType="textPassword"
+                    android:maxLines="1"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="16dp"
+                    android:textColor="@color/colorWhiteText"
+                    android:textColorHint="@color/colorWhiteText"
+                    android:textSize="16sp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/keterangan"
-                android:textColor="@color/colorAccent" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <EditText
-                android:id="@+id/edit_keterangan_ruangan"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/text_input_koordinat_lokasi"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:background="@drawable/rounded_corner_edit2"
-                android:inputType="textPersonName"
-                android:paddingHorizontal="18dp"
-                android:paddingVertical="12dp"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor" />
+                android:layout_marginBottom="12dp"
+                android:textColorHint="@color/colorWhiteText"
+                app:errorEnabled="true"
+                app:errorTextColor="@color/colorRed"
+                app:hintEnabled="false"
+                >
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/koordinat_lokasi"
-                android:textColor="@color/colorAccent" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:background="@drawable/rounded_corner_edit2"
+                    android:hint="@string/koordinat_lokasi"
+                    android:inputType="textPassword"
+                    android:maxLines="1"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="16dp"
+                    android:textColor="@color/colorWhiteText"
+                    android:textColorHint="@color/colorWhiteText"
+                    android:textSize="16sp" />
 
-            <EditText
-                android:id="@+id/edit_koordinat_lokasi"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:background="@drawable/rounded_corner_edit2"
-                android:enabled="false"
-                android:inputType="textPersonName"
-                android:paddingHorizontal="18dp"
-                android:paddingVertical="12dp"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor" />
+            </com.google.android.material.textfield.TextInputLayout>
+
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_tambah_data"
@@ -160,6 +159,8 @@
                 android:layout_marginBottom="8dp"
                 android:background="@drawable/ripple_effect"
                 android:text="@string/tambah_data"
+                android:letterSpacing=".1"
+                android:textAllCaps="false"
                 android:textColor="@color/colorWhiteText" />
         </LinearLayout>
     </ScrollView>
