@@ -7,5 +7,6 @@ class CollectionsFS {
         const val JADWAL: String= "Jadwal"
         const val USER: String= "User"
         const val DETAIL_SIKLUS: String = "DetailSiklus"
+        const val SIKLUS: String= "Siklus"
     }
 }

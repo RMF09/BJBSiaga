@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.rmf.bjbsiaga">
+
+    <uses-sdk tools:overrideLibrary="com.google.zxing.client.android" />
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -19,13 +22,22 @@
 
     <application
         android:allowBackup="true"
+        android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".DetailSiklusActivity"></activity>
+        <activity android:name=".CapturePotrait"
+            android:screenOrientation="sensorPortrait"
+            android:stateNotNeeded="true"
+            android:theme="@style/zxing_CaptureTheme"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
+            android:name=".DetailSiklusActivity"
+            android:screenOrientation="portrait"
+            tools:replace="screenOrientation" />
         <activity android:name=".ResetPasswordActivity" />
         <activity android:name=".admin.DataRuanganActivity" />
         <!--
@@ -44,18 +56,18 @@
             android:value="@integer/google_play_services_version" />
 
         <activity android:name=".admin.TambahRuanganActivity" />
-        <activity android:name=".security.SecurityDashboardActivity">
+        <activity android:name=".security.SecurityDashboardActivity"/>
+        <activity android:name=".admin.InputJadwalActivity" />
+        <activity android:name=".admin.TambahDataSecurityActivity" />
+        <activity android:name=".admin.DataSecurityActivity" />
+        <activity android:name=".admin.AdminDashboardActivity" />
+        <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".admin.InputJadwalActivity" />
-        <activity android:name=".admin.TambahDataSecurityActivity" />
-        <activity android:name=".admin.DataSecurityActivity" />
-        <activity android:name=".admin.AdminDashboardActivity"></activity>
-        <activity android:name=".LoginActivity"></activity>
         <activity android:name=".Splash" />
         <activity android:name=".MainActivity" />
 

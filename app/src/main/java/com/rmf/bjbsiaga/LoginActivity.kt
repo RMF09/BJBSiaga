@@ -13,7 +13,9 @@ import com.rmf.bjbsiaga.admin.AdminDashboardActivity
 import com.rmf.bjbsiaga.data.DataSecurity
 import com.rmf.bjbsiaga.security.SecurityDashboardActivity
 import com.rmf.bjbsiaga.util.CollectionsFS
+import com.rmf.bjbsiaga.util.Config
 import com.rmf.bjbsiaga.util.InfoLogin
+import com.rmf.bjbsiaga.util.SharedPref
 import kotlinx.android.synthetic.main.activity_login.*
 
 
@@ -28,7 +30,22 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-//        initFirebaseAuth()
+        //Check Login
+        if(SharedPref.getInstance(this)!!.isLoggedIn()){
+            when(SharedPref.getInstance(this)!!.loggedInRole()){
+                Config.USER_LOGIN_ADMIN ->{
+                    startActivity(Intent(this,SecurityDashboardActivity::class.java))
+                    finish()
+                }
+                Config.USER_LOGIN_USER ->{
+                    startActivity(Intent(this,SecurityDashboardActivity::class.java))
+                    finish()
+                }
+            }
+
+
+        }
+
         initDB()
 
         btn_login.setOnClickListener {
@@ -51,7 +68,9 @@ class LoginActivity : AppCompatActivity() {
 
         var passwordDB = ""
         var nikDB : Long = 0
+        var nama=""
         var documentId=""
+        var role=""
 
         showInfoLogin(InfoLogin.LOADING)
 
@@ -67,11 +86,10 @@ class LoginActivity : AppCompatActivity() {
                         passwordDB = dataSecurity.password
                         nikDB = dataSecurity.nik
                         documentId =  dataSecurity.documentId
-
-
+                        nama = dataSecurity.nama
+                        role = dataSecurity.role
                     }
                     if(!passwordDB.equals(password)){
-
                         showInfoLogin(InfoLogin.PASSWORD_SALAH)
                     }
                     else{
@@ -84,7 +102,14 @@ class LoginActivity : AppCompatActivity() {
                             startActivity(intent)
 
                         }else{
-                            startActivity(Intent(this,SecurityDashboardActivity::class.java))
+                            SharedPref.getInstance(this)!!.apply {
+                                storeUserName(nama)
+                                storeRole(role)
+                            }
+                            val intent = Intent(this,SecurityDashboardActivity::class.java)
+                            intent.putExtra("nama",nama)
+                            startActivity(intent)
+                            finish()
                         }
                     }
                 }

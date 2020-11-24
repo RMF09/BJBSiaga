@@ -7,8 +7,7 @@ import com.google.firebase.firestore.IgnoreExtraProperties
 data class DataSiklus (
     val nama: String= "",
     val pukul: String= "",
-    val diCheck: Boolean= false,
-    val idRuangan: String= "",
+    val siklusKe: Int= 0,
     val tanggal: String= ""
 ){
     @get:Exclude

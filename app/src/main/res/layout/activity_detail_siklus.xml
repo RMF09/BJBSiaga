@@ -35,8 +35,8 @@
             android:layout_width="27dp"
             android:layout_height="27dp"
             android:layout_marginEnd="12dp"
-            android:src="@drawable/back"
-            android:contentDescription="@string/description_image" />
+            android:contentDescription="@string/description_image"
+            android:src="@drawable/back" />
 
         <TextView
             android:id="@+id/text_header_siklus"
@@ -47,6 +47,7 @@
             android:textSize="20sp" />
 
     </LinearLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_data_siklus"
         android:layout_width="match_parent"
@@ -55,5 +56,27 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
         tools:listitem="@layout/item_detail_siklus" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btn_open_camera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:src="@drawable/ic_baseline_photo_camera_24"
+        android:tint="@color/colorWhitePure"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:backgroundTint="@color/colorDisable"/>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btn_open_camera_qr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="14dp"
+        android:src="@drawable/ic_baseline_camera_24"
+        android:tint="@color/colorWhitePure"
+        app:layout_constraintBottom_toTopOf="@id/btn_open_camera"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

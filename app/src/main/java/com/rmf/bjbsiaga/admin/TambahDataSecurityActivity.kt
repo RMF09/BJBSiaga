@@ -8,12 +8,10 @@ import android.view.View
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.rmf.bjbsiaga.R
 import com.rmf.bjbsiaga.data.DataSecurity
 import com.rmf.bjbsiaga.util.CollectionsFS
-import com.rmf.bjbsiaga.util.ConstantValue
-import kotlinx.android.synthetic.main.activity_login.*
+import com.rmf.bjbsiaga.util.Config
 
 import kotlinx.android.synthetic.main.activity_tambah_data_security.*
 import kotlinx.android.synthetic.main.activity_tambah_data_security.edit_password
@@ -44,8 +42,6 @@ class TambahDataSecurityActivity : AppCompatActivity() {
 
     fun initDB(){
         db = FirebaseFirestore.getInstance()
-//        val settings = FirebaseFirestoreSettings.Builder().setTimestampsInSnapshotsEnabled(true).build()
-//        db.firestoreSettings =settings
     }
 
     fun saveData(view: View){
@@ -58,7 +54,7 @@ class TambahDataSecurityActivity : AppCompatActivity() {
         val password = edit_password.text.toString()
 
         val dataSecurity =
-            DataSecurity(nama, email, nik, noWA, unitKerja,password)
+            DataSecurity(nama, email, nik, noWA, unitKerja,password,Config.USER_LOGIN_USER)
 
         db.collection(CollectionsFS.SECURITY).document().set(dataSecurity)
             .addOnSuccessListener {
