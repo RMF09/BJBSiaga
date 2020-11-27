@@ -11,7 +11,7 @@ class SharedPref(context: Context) {
     companion object{
 
         const val SHARED_PREF_NAME = "com.rmf.bjbsiaga"
-        const val USER_NAME = "username"
+        const val ID = "id"
         const val ROLE = "role"
 
         var mInstance: SharedPref? = null
@@ -25,13 +25,13 @@ class SharedPref(context: Context) {
         }
     }
 
-    fun storeUserName(names: String?) {
+    fun storeID(names: String?) {
         val sharedPreferences: SharedPreferences = mContext.getSharedPreferences(
             SHARED_PREF_NAME,
             Context.MODE_PRIVATE
         )
         sharedPreferences.edit().apply {
-            putString(USER_NAME, names)
+            putString(ID, names)
             apply()
         }
 
@@ -54,7 +54,7 @@ class SharedPref(context: Context) {
             SHARED_PREF_NAME,
             Context.MODE_PRIVATE
         )
-        return sharedPreferences.getString(USER_NAME, null) != null
+        return sharedPreferences.getString(ID, null) != null
     }
 
 
@@ -64,7 +64,7 @@ class SharedPref(context: Context) {
             SHARED_PREF_NAME,
             Context.MODE_PRIVATE
         )
-        return sharedPreferences.getString(USER_NAME, null)
+        return sharedPreferences.getString(ID, null)
     }
 
     //find logged in role user

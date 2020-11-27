@@ -13,7 +13,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.*
 import com.google.zxing.integration.android.IntentIntegrator
-import com.google.zxing.integration.android.IntentResult
 import com.rmf.bjbsiaga.adapter.RVAdapterSiklus
 import com.rmf.bjbsiaga.data.DataDetailSiklus
 import com.rmf.bjbsiaga.data.DataRuangan

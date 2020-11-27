@@ -103,7 +103,7 @@ class LoginActivity : AppCompatActivity() {
 
                         }else{
                             SharedPref.getInstance(this)!!.apply {
-                                storeUserName(nama)
+                                storeID(documentId)
                                 storeRole(role)
                             }
                             val intent = Intent(this,SecurityDashboardActivity::class.java)

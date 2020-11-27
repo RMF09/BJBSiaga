@@ -89,7 +89,8 @@
             android:text="@string/siklus_i"
             android:layout_marginTop="24dp"
             android:textColor="@color/colorWhiteText"
-            android:background="@drawable/button"/>
+            android:background="@drawable/button"
+            android:enabled="false"/>
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_siklus2"
             android:layout_width="match_parent"
