@@ -20,7 +20,7 @@ import com.rmf.bjbsiaga.util.Config.Companion.TANGGAL_FIELD
 import com.rmf.bjbsiaga.util.Config.Companion.dateNow
 import com.rmf.bjbsiaga.util.SharedPref
 import kotlinx.android.synthetic.main.activity_security_dashboard.*
-import java.lang.Exception
+
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -29,6 +29,7 @@ import kotlin.collections.ArrayList
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class SecurityDashboardActivity : AppCompatActivity() {
 
+    private lateinit var idJadwalBertugas: String
     private lateinit var listSiklus: ArrayList<DataSiklus>
     private lateinit var listShiftMalam: ArrayList<String>
 
@@ -38,6 +39,7 @@ class SecurityDashboardActivity : AppCompatActivity() {
 
     private var NIK: Long? = 0
     private val TAG = "SecurityDashboardActivi"
+    private var initialLoad= false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -127,6 +129,7 @@ class SecurityDashboardActivity : AppCompatActivity() {
                     for(document in it){
                         val dataJadwalBertugas = document.toObject(DataJadwalBertugas::class.java)
                         dataJadwalBertugas.documentId = document.id
+                        idJadwalBertugas= dataJadwalBertugas.documentId
                     }
                     loadDataSiklus()
                 }
@@ -153,6 +156,8 @@ class SecurityDashboardActivity : AppCompatActivity() {
                         enableButton()
                         ambilWaktu(dataSiklus.pukul)
                     }
+                    checkSiklusSudahBeres()
+
 
                     Log.d(TAG, "loadDataSiklus: ada ${listSiklus.size}")
                 }else{
@@ -186,6 +191,39 @@ class SecurityDashboardActivity : AppCompatActivity() {
         db = FirebaseFirestore.getInstance()
         siklusTodayRef = db.collection(CollectionsFS.SIKLUS)
         jadwalBertugasRef = db.collection(CollectionsFS.JADWAL_BERTUGAS)
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+
+    }
+    private fun checkSiklusSudahBeres(){
+        for(data in listSiklus){
+            if(data.sudahBeres){
+                buatSiklusBaru(data.siklusKe)
+            }
+        }
+    }
+
+    private fun buatSiklusBaru(siklusKe: Int) {
+
+        val siklusKeBaru = siklusKe+1
+        Log.d(TAG, "buatSiklusBaru: kadie $siklusKeBaru")
+
+        if(siklusKeBaru<4){
+            val dataSiklus = DataSiklus("siklus $siklusKeBaru",listShiftMalam[siklusKeBaru-1],siklusKeBaru,
+                dateNow(),false,idJadwalBertugas)
+            siklusTodayRef.document()
+                .set(dataSiklus)
+                .addOnSuccessListener {
+                    Log.d(TAG, "buatSiklusBaru: berhasil")
+//                    loadDataSiklus()
+                }
+                .addOnFailureListener {e->
+                    Log.e(TAG, "buatSiklusBaru: gagal $e")
+                }
+        }
     }
 
     override fun onBackPressed() {

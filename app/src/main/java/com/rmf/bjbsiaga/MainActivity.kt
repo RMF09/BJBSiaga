@@ -1,9 +1,11 @@
 package com.rmf.bjbsiaga
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Matrix
 import android.graphics.SurfaceTexture
+import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.util.DisplayMetrics
@@ -11,11 +13,15 @@ import android.util.Log
 import android.util.Rational
 import android.util.Size
 import android.view.Surface
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 
@@ -30,11 +36,14 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var permissions: ArrayList<String>
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+
         setupPermissions()
+
     }
 
     private fun startCamera() {
@@ -55,8 +64,11 @@ class MainActivity : AppCompatActivity() {
 
         val preview = Preview(previewConfig)
         preview.setOnPreviewOutputUpdateListener {
+            val parent = texture.parent as ViewGroup
+            parent.removeView(texture)
             val surfaceTexture : SurfaceTexture =it.surfaceTexture
             texture.setSurfaceTexture(surfaceTexture)
+            parent.addView(texture,0)
             updateTransform()
         }
 
@@ -74,8 +86,6 @@ class MainActivity : AppCompatActivity() {
         val imageCapture = ImageCapture(imageCaptureConfig)
         btnTakePicture.setOnClickListener {
 
-//            val file = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-//            val file = File(Environment.getExternalStorageDirectory() + "/"+System.currentTimeMillis() + ".png");
             val file = File(
                 Environment.getExternalStorageDirectory()
                     .toString() + "/" + System.currentTimeMillis() + ".png"
@@ -97,7 +107,15 @@ class MainActivity : AppCompatActivity() {
 
                     override fun onImageSaved(file: File) {
                         val msg = "Photo capture successfully: ${file.absolutePath}"
-                        Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+//                        uploadFoto(file)
+
+                        Intent().apply {
+                            putExtra("msg",msg)
+                            putExtra("file",file)
+                            setResult(RESULT_OK,this)
+                            finish()
+                        }
+
                     }
                 })
 
@@ -165,6 +183,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+
 
 
 

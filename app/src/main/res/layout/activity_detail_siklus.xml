@@ -66,8 +66,7 @@
         android:src="@drawable/ic_baseline_photo_camera_24"
         android:tint="@color/colorWhitePure"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:backgroundTint="@color/colorDisable"/>
+        app:layout_constraintEnd_toEndOf="parent"/>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_open_camera_qr"
         android:layout_width="wrap_content"
