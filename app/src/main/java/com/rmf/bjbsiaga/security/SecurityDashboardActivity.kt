@@ -199,10 +199,11 @@ class SecurityDashboardActivity : AppCompatActivity() {
 
     }
     private fun checkSiklusSudahBeres(){
-        for(data in listSiklus){
-            if(data.sudahBeres){
-                buatSiklusBaru(data.siklusKe)
-            }
+
+        val lastData = listSiklus[listSiklus.size-1]
+
+        if(lastData.sudahBeres){
+            buatSiklusBaru(lastData.siklusKe)
         }
     }
 
