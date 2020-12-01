@@ -18,6 +18,7 @@ import com.rmf.bjbsiaga.util.CollectionsFS
 
 import com.rmf.bjbsiaga.util.Config.Companion.TANGGAL_FIELD
 import com.rmf.bjbsiaga.util.Config.Companion.dateNow
+import com.rmf.bjbsiaga.util.NotifAlarm
 import com.rmf.bjbsiaga.util.SharedPref
 import kotlinx.android.synthetic.main.activity_security_dashboard.*
 
@@ -39,7 +40,8 @@ class SecurityDashboardActivity : AppCompatActivity() {
 
     private var NIK: Long? = 0
     private val TAG = "SecurityDashboardActivi"
-    private var initialLoad= false
+    private var pergiKeDetailSiklus =false
+    private var membuatSiklusBaru =false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,36 +78,30 @@ class SecurityDashboardActivity : AppCompatActivity() {
             finish()
         }
 
-
-
         btn_siklus1.setOnClickListener {
-            if(listSiklus.size >0){
-                val intent = Intent(this,DetailSiklusActivity::class.java)
-                intent.putExtra("siklus", listSiklus[0].siklusKe)
-                intent.putExtra("id", listSiklus[0].documentId)
-                startActivity(intent)
-            }
+            this.keDetailSiklus(0)
         }
 
         btn_siklus2.setOnClickListener {
-            when(btn_siklus2.isEnabled){
-                true -> btn_siklus2.isEnabled=false
-                else -> btn_siklus2.isEnabled=true
-            }
+            this.keDetailSiklus(1)
         }
 
         btn_siklus3.setOnClickListener {
-            when(btn_siklus3.isEnabled){
-                true -> btn_siklus3.isEnabled=false
-                else -> btn_siklus3.isEnabled=true
-            }
+            this.keDetailSiklus(2)
         }
 
         btn_siklus4.setOnClickListener {
-            when(btn_siklus4.isEnabled){
-                true -> btn_siklus4.isEnabled=false
-                else -> btn_siklus4.isEnabled=true
-            }
+            this.keDetailSiklus(3)
+        }
+    }
+
+    private fun keDetailSiklus(index: Int){
+        if(listSiklus.size >0){
+            pergiKeDetailSiklus=true
+            val intent = Intent(this,DetailSiklusActivity::class.java)
+            intent.putExtra("siklus", listSiklus[index].siklusKe)
+            intent.putExtra("id", listSiklus[index].documentId)
+            startActivity(intent)
         }
     }
 
@@ -120,7 +116,28 @@ class SecurityDashboardActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("SimpleDateFormat")
+    fun setAlarmForLastDataSiklus(){
+        val data = listSiklus[listSiklus.size-1]
+        Log.e(TAG, "setAlarmForLastDataSiklus: sudah beres? ${data.sudahBeres}" )
+        if(!data.sudahBeres){
+            try {
+                val df = SimpleDateFormat("HH.mm")
+                val calendar = Calendar.getInstance()
+                calendar.time =df.parse(data.pukul)
+
+                NotifAlarm.set(this,
+                    calendar.get(Calendar.HOUR_OF_DAY),
+                    calendar.get(Calendar.MINUTE))
+            }
+            catch (e: Exception){
+                Log.e(TAG, "setAlarmForLastDataSiklus: $e")
+            }
+        }
+    }
+
     fun checkJadwalBertugas(){
+        Log.d(TAG, "checkJadwalBertugas: nikPetugas : $NIK, tanggal: ${dateNow()}")
         jadwalBertugasRef.whereEqualTo("nikPetugas",NIK)
             .whereEqualTo(TANGGAL_FIELD, dateNow())
             .get()
@@ -153,12 +170,11 @@ class SecurityDashboardActivity : AppCompatActivity() {
                         dataSiklus.documentId = document.id
                         listSiklus.add(dataSiklus)
                         Log.d(TAG, "loadDataSiklus: Siklus ke ${listSiklus.size}")
-                        enableButton()
                         ambilWaktu(dataSiklus.pukul)
                     }
+                    enableButton()
                     checkSiklusSudahBeres()
-
-
+                    setAlarmForLastDataSiklus()
                     Log.d(TAG, "loadDataSiklus: ada ${listSiklus.size}")
                 }else{
                     Log.d(TAG, "loadDataSiklus: Kosong ${listSiklus.size}")
@@ -168,9 +184,15 @@ class SecurityDashboardActivity : AppCompatActivity() {
     }
 
     private fun enableButton() {
-        when(listSiklus.size){
-            1 -> btn_siklus1.isEnabled=true
+        for(i in 1..listSiklus.size){
+            when(i){
+                1 -> btn_siklus1.isEnabled=true
+                2 -> btn_siklus2.isEnabled=true
+                3 -> btn_siklus3.isEnabled=true
+                4 -> btn_siklus4.isEnabled=true
+            }
         }
+
     }
 
     private fun insertSiklusBaru() {
@@ -178,7 +200,9 @@ class SecurityDashboardActivity : AppCompatActivity() {
             "siklus ${listSiklus.size+1}",
             listShiftMalam[listSiklus.size],
             listSiklus.size+1,
-            dateNow()
+            dateNow(),
+            false,
+            idJadwalBertugas
             )
         siklusTodayRef.document().set(dataSiklus)
             .addOnSuccessListener {
@@ -195,31 +219,38 @@ class SecurityDashboardActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-
+        if(pergiKeDetailSiklus){
+            loadDataSiklus()
+            Log.d(TAG, "onResume:  LoadDataSiklus")
+        }
 
     }
     private fun checkSiklusSudahBeres(){
 
         val lastData = listSiklus[listSiklus.size-1]
+        Log.d(TAG, "checkSiklusSudahBeres: ${lastData.documentId} ${lastData.nama} ${lastData.sudahBeres}")
 
         if(lastData.sudahBeres){
-            buatSiklusBaru(lastData.siklusKe)
+            Log.d(TAG, "checkSiklusSudahBeres: ${lastData.documentId}")
+            buatSiklusBaru()
         }
     }
 
-    private fun buatSiklusBaru(siklusKe: Int) {
+    private fun buatSiklusBaru() {
 
-        val siklusKeBaru = siklusKe+1
+        val siklusKeBaru =listSiklus.size+1
         Log.d(TAG, "buatSiklusBaru: kadie $siklusKeBaru")
 
-        if(siklusKeBaru<4){
-            val dataSiklus = DataSiklus("siklus $siklusKeBaru",listShiftMalam[siklusKeBaru-1],siklusKeBaru,
+        if(listSiklus.size<5 && !membuatSiklusBaru){
+            membuatSiklusBaru=true
+            val dataSiklus = DataSiklus("siklus ${siklusKeBaru}",listShiftMalam[siklusKeBaru-1],siklusKeBaru,
                 dateNow(),false,idJadwalBertugas)
             siklusTodayRef.document()
                 .set(dataSiklus)
                 .addOnSuccessListener {
                     Log.d(TAG, "buatSiklusBaru: berhasil")
-//                    loadDataSiklus()
+
+                    loadDataSiklus()
                 }
                 .addOnFailureListener {e->
                     Log.e(TAG, "buatSiklusBaru: gagal $e")
@@ -253,6 +284,8 @@ class SecurityDashboardActivity : AppCompatActivity() {
             val calendar = Calendar.getInstance()
             calendar.time =df.parse(waktu)
             Log.d(TAG, "ambilWaktu: jam:${calendar.get(Calendar.HOUR_OF_DAY)}, menit:${calendar.get(Calendar.MINUTE)}")
+
+
 
         }
         catch (e: ParseException){

@@ -8,7 +8,7 @@ class Config {
     companion object{
         val ID_SIKLUS= "idSiklus"
         val EMAIL_SUDAH_DIGUNAKAN ="com.google.firebase.auth.FirebaseAuthUserCollisionException: The email address is already in use by another account."
-        val TGL ="dd-MM-yyyy"
+        val TGL ="d-MM-yyyy"
         val JAM ="HH.mm"
         val TANGGAL_FIELD= "tanggal"
         val ACTION_DATA_DETAIL_SIKLUS="data-detail-siklus"

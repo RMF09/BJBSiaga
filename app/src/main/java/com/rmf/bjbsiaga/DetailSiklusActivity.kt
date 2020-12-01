@@ -24,6 +24,7 @@ import com.google.zxing.integration.android.IntentIntegrator
 import com.rmf.bjbsiaga.adapter.RVAdapterSiklus
 import com.rmf.bjbsiaga.data.DataDetailSiklus
 import com.rmf.bjbsiaga.data.DataRuangan
+import com.rmf.bjbsiaga.data.DataSiklus
 import com.rmf.bjbsiaga.util.CollectionsFS
 import com.rmf.bjbsiaga.util.Config
 import com.rmf.bjbsiaga.util.Config.Companion.ID_SIKLUS
@@ -46,6 +47,9 @@ class DetailSiklusActivity : AppCompatActivity() {
     private lateinit var detailSiklusRef: CollectionReference
     private lateinit var siklusRef: CollectionReference
     private lateinit var storageReference: StorageReference
+    private lateinit var siklusTodayRef: CollectionReference
+
+    private lateinit var listShiftMalam: ArrayList<String>
 
     private val TAG = "DetailSiklusActivity"
 
@@ -61,6 +65,7 @@ class DetailSiklusActivity : AppCompatActivity() {
     private lateinit var textHeader: TextView
     private lateinit var btnOK: Button
 
+    private lateinit var idJadwalBertugas: String
 
     var broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent) {
@@ -109,6 +114,7 @@ class DetailSiklusActivity : AppCompatActivity() {
         setContentView(R.layout.activity_detail_siklus)
 
         initDialog()
+
         idSiklus = intent.getStringExtra("id").toString()
         siklus = intent.getIntExtra("siklus", 0)
         text_header_siklus.text = "Detail Siklus $siklus"
@@ -379,6 +385,10 @@ class DetailSiklusActivity : AppCompatActivity() {
         ruanganRef = db.collection(CollectionsFS.RUANGAN)
         detailSiklusRef = db.collection(CollectionsFS.DETAIL_SIKLUS)
         siklusRef = db.collection(CollectionsFS.SIKLUS)
+        
+        this.siklusTodayRef = db.collection(CollectionsFS.SIKLUS)
+
+        
     }
 
     private fun setupRV(){
@@ -429,6 +439,9 @@ class DetailSiklusActivity : AppCompatActivity() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver)
         super.onPause()
     }
+
+
+
 
 
 

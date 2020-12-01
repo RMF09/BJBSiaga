@@ -1,6 +1,6 @@
 package com.rmf.bjbsiaga.services
 
-import android.R
+import com.rmf.bjbsiaga.R
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -8,9 +8,12 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.os.Build
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
+import com.rmf.bjbsiaga.security.SecurityDashboardActivity
 
 
 class AlarmReceiver : BroadcastReceiver() {
@@ -20,9 +23,10 @@ class AlarmReceiver : BroadcastReceiver() {
         val CHANNEL_ID = "alarm_security" // The id of the channel.
         val name: CharSequence = "notif alarm" // The user-visible name of the channel.
 
-//        val notificationIntent = Intent(context, Absensi::class.java)
-//        //        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-//        val pendingIntent = PendingIntent.getActivity(context, 99, notificationIntent, 0)
+        val notificationIntent = Intent(context, SecurityDashboardActivity::class.java)
+        notificationIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+
+        val pendingIntent = PendingIntent.getActivity(context, 99, notificationIntent, 0)
 
         val mNotificationManager =
             context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -32,10 +36,12 @@ class AlarmReceiver : BroadcastReceiver() {
             setContentText("Tap untuk memulai cek ruangan")
             setLargeIcon(
                 BitmapFactory.decodeResource(
-                    context.getResources(),R.drawable.ic_input_add
+                    context.resources,R.drawable.ic_baseline_camera_24
                 )
             )
-            setSmallIcon(R.drawable.ic_input_add)
+            color = Color.parseColor("#"+Integer.toHexString(ContextCompat.getColor(context,R.color.colorAccentDark)))
+            setContentIntent(pendingIntent)
+            setSmallIcon(R.drawable.ic_baseline_camera_24)
             setAutoCancel(true)
         }
 //        mBuilder.setContentIntent(pendingIntent)
