@@ -208,6 +208,7 @@ class DetailSiklusActivity : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun uploadFoto(file: File){
+        textHeader.text = "Mengupload foto, mohon tunggu... "
         alertDialog.show()
 
         val name = "${System.currentTimeMillis()}.jpg"

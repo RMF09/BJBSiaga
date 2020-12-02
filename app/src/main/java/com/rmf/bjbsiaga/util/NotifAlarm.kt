@@ -22,10 +22,12 @@ class NotifAlarm {
             calendar.set(Calendar.HOUR_OF_DAY, jam)
             calendar.set(Calendar.MINUTE, menit)
             calendar.set(Calendar.SECOND, 0)
-            if (calendar.time < Date()) {
-                //sudah terlewat besok aja
-                Log.d("setAlarm", "set: kalewat")
-            }else{
+
+
+//            if (calendar.time < Date()) {
+//                //sudah terlewat besok aja
+//                Log.d("setAlarm", "set: kalewat")
+//            }else{
                 Log.d("setAlarm", "set: alarm!")
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                     manager.setExactAndAllowWhileIdle(
@@ -33,7 +35,7 @@ class NotifAlarm {
                     )
                 }
 
-            }
+//            }
 
         }
     }

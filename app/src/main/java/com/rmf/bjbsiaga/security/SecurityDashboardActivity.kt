@@ -26,6 +26,8 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.math.roundToInt
+import kotlin.random.Random
 
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class SecurityDashboardActivity : AppCompatActivity() {
@@ -160,7 +162,7 @@ class SecurityDashboardActivity : AppCompatActivity() {
     }
 
     private fun loadDataSiklus(){
-        listSiklus = ArrayList()
+
         siklusTodayRef.whereEqualTo(TANGGAL_FIELD,dateNow())
             .get()
             .addOnSuccessListener {
@@ -171,6 +173,7 @@ class SecurityDashboardActivity : AppCompatActivity() {
                         listSiklus.add(dataSiklus)
                         Log.d(TAG, "loadDataSiklus: Siklus ke ${listSiklus.size}")
                         ambilWaktu(dataSiklus.pukul)
+
                     }
                     enableButton()
                     checkSiklusSudahBeres()
@@ -198,7 +201,7 @@ class SecurityDashboardActivity : AppCompatActivity() {
     private fun insertSiklusBaru() {
         val dataSiklus = DataSiklus(
             "siklus ${listSiklus.size+1}",
-            listShiftMalam[listSiklus.size],
+            randomWaktu(listSiklus.size),
             listSiklus.size+1,
             dateNow(),
             false,
@@ -212,6 +215,7 @@ class SecurityDashboardActivity : AppCompatActivity() {
     }
 
     private fun initDB() {
+        listSiklus = ArrayList()
         db = FirebaseFirestore.getInstance()
         siklusTodayRef = db.collection(CollectionsFS.SIKLUS)
         jadwalBertugasRef = db.collection(CollectionsFS.JADWAL_BERTUGAS)
@@ -226,14 +230,20 @@ class SecurityDashboardActivity : AppCompatActivity() {
 
     }
     private fun checkSiklusSudahBeres(){
-
-        val lastData = listSiklus[listSiklus.size-1]
+        Log.d(TAG, "checkSiklusSudahBeres: list size ${listSiklus.size} ${listSiklus[3].documentId}")
+        val lastData = listSiklus[3]
         Log.d(TAG, "checkSiklusSudahBeres: ${lastData.documentId} ${lastData.nama} ${lastData.sudahBeres}")
 
-        if(lastData.sudahBeres){
-            Log.d(TAG, "checkSiklusSudahBeres: ${lastData.documentId}")
-            buatSiklusBaru()
+        var i= 0
+        for(data in listSiklus){
+            Log.d(TAG, "checkSiklusSudahBeres: $i ${data.documentId}")
         }
+
+
+//        if(lastData.sudahBeres){
+//            Log.d(TAG, "checkSiklusSudahBeres: ${lastData.documentId}")
+//            buatSiklusBaru()
+//        }
     }
 
     private fun buatSiklusBaru() {
@@ -243,8 +253,12 @@ class SecurityDashboardActivity : AppCompatActivity() {
 
         if(listSiklus.size<5 && !membuatSiklusBaru){
             membuatSiklusBaru=true
-            val dataSiklus = DataSiklus("siklus ${siklusKeBaru}",listShiftMalam[siklusKeBaru-1],siklusKeBaru,
-                dateNow(),false,idJadwalBertugas)
+            val dataSiklus = DataSiklus(
+                "siklus ${siklusKeBaru}",
+                randomWaktu(listSiklus.size),
+                siklusKeBaru,
+                dateNow(),
+                false,idJadwalBertugas)
             siklusTodayRef.document()
                 .set(dataSiklus)
                 .addOnSuccessListener {
@@ -284,16 +298,61 @@ class SecurityDashboardActivity : AppCompatActivity() {
             val calendar = Calendar.getInstance()
             calendar.time =df.parse(waktu)
             Log.d(TAG, "ambilWaktu: jam:${calendar.get(Calendar.HOUR_OF_DAY)}, menit:${calendar.get(Calendar.MINUTE)}")
-
-
-
         }
         catch (e: ParseException){
             Log.e(TAG, "ambilWaktu: $e" )
         }
     }
-    fun randomWaktu(){
+    @SuppressLint("SimpleDateFormat")
+    fun randomWaktu(siklus: Int): String{
+        return try {
+            val df = SimpleDateFormat("HH.mm")
+            val calendar = Calendar.getInstance()
+            calendar.time =df.parse(listShiftMalam[siklus])
+            Log.d(TAG, "dari: jam:${calendar.get(Calendar.HOUR_OF_DAY)}, menit:${calendar.get(Calendar.MINUTE)}")
 
+            val calendar2 = Calendar.getInstance()
+
+            calendar2.time =df.parse(listShiftMalam[siklus+1])
+
+            calendar2.time =df.parse(listShiftMalam[siklus+1])
+            Log.d(TAG, "sampai: jam:${calendar2.get(Calendar.HOUR_OF_DAY)}, menit:${calendar.get(Calendar.MINUTE)}")
+
+            val randomJamDari = calendar.get(Calendar.HOUR_OF_DAY)
+            val randomJamSampai = calendar2.get(Calendar.HOUR_OF_DAY) -1
+
+
+
+            Log.d(TAG, "randomWaktu: dari jam ${calendar.get(Calendar.HOUR_OF_DAY)} - $randomJamSampai")
+
+            val hasilJamSampai: Calendar = Calendar.getInstance()
+            hasilJamSampai.apply {
+                set(Calendar.HOUR_OF_DAY, randomJamSampai)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+            }
+
+
+//
+            var randomJam =0
+            randomJam = if(randomJamDari==22){
+                val listJam :IntArray = intArrayOf(22,23,0)
+                val index =  Random.nextInt(listJam.size)
+                listJam[index]
+            }else{
+
+                Random.nextInt(randomJamDari,randomJamSampai)
+            }
+            val randomMinute = Random.nextInt(0,30)
+//
+            Log.d(TAG, "randomWaktu: hasil random : $randomJam.$randomMinute ")
+
+            "$randomJam.$randomMinute"
+
+        } catch (e: ParseException){
+            Log.e(TAG, "ramdomWaktu: $e" )
+            "0.0"
+        }
     }
 
 
