@@ -334,9 +334,6 @@ class SecurityDashboardActivity : AppCompatActivity() {
                 set(Calendar.SECOND, 0)
             }
 
-
-//
-
             val randomJam = if(randomJamDari==22){
                 val listJam :IntArray = intArrayOf(22,23,0)
                 val index =  Random.nextInt(listJam.size)

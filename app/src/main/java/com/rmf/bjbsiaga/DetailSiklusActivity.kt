@@ -24,7 +24,6 @@ import com.google.zxing.integration.android.IntentIntegrator
 import com.rmf.bjbsiaga.adapter.RVAdapterSiklus
 import com.rmf.bjbsiaga.data.DataDetailSiklus
 import com.rmf.bjbsiaga.data.DataRuangan
-import com.rmf.bjbsiaga.data.DataSiklus
 import com.rmf.bjbsiaga.util.CollectionsFS
 import com.rmf.bjbsiaga.util.Config
 import com.rmf.bjbsiaga.util.Config.Companion.ID_SIKLUS
@@ -34,6 +33,9 @@ import com.rmf.bjbsiaga.util.Config.Companion.jamSekarang
 import kotlinx.android.synthetic.main.activity_detail_siklus.*
 import org.json.JSONObject
 import java.io.File
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.concurrent.schedule
 
 
 class DetailSiklusActivity : AppCompatActivity() {
@@ -48,8 +50,6 @@ class DetailSiklusActivity : AppCompatActivity() {
     private lateinit var siklusRef: CollectionReference
     private lateinit var storageReference: StorageReference
     private lateinit var siklusTodayRef: CollectionReference
-
-    private lateinit var listShiftMalam: ArrayList<String>
 
     private val TAG = "DetailSiklusActivity"
 
@@ -66,6 +66,9 @@ class DetailSiklusActivity : AppCompatActivity() {
     private lateinit var btnOK: Button
 
     private lateinit var idJadwalBertugas: String
+
+    lateinit var alertDialogCompleteSiklus : AlertDialog
+    private lateinit var btnOKCompleteSiklus: Button
 
     var broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent) {
@@ -114,7 +117,7 @@ class DetailSiklusActivity : AppCompatActivity() {
         setContentView(R.layout.activity_detail_siklus)
 
         initDialog()
-
+        initDialogCompleteSiklus()
         idSiklus = intent.getStringExtra("id").toString()
         siklus = intent.getIntExtra("siklus", 0)
         text_header_siklus.text = "Detail Siklus $siklus"
@@ -150,6 +153,7 @@ class DetailSiklusActivity : AppCompatActivity() {
                 .update("sudahBeres",true)
                 .addOnSuccessListener {
                     Log.d(TAG, "siklusBeres: success")
+                    alertDialogCompleteSiklus.show()
                 }
                 .addOnFailureListener { e->
                     Log.e(TAG, "siklusBeres: gagal $e" )
@@ -178,7 +182,7 @@ class DetailSiklusActivity : AppCompatActivity() {
                 .update("foto",name)
                 .addOnSuccessListener {
                     Log.d(TAG, "updateData: Berhasil update Data")
-                    loadData()
+                    //loadData()
                 }
                 .addOnFailureListener { e ->
                     Log.d(TAG, "updateData: Fail : $e")
@@ -220,6 +224,7 @@ class DetailSiklusActivity : AppCompatActivity() {
                 updateData(name)
                 textHeader.text= "Berhasil mengupload foto"
                 btnOK.isEnabled = true
+
             }
             .addOnFailureListener {
                 Log.e(TAG, "uploadFoto: $it")
@@ -424,6 +429,29 @@ class DetailSiklusActivity : AppCompatActivity() {
         btnOK.setOnClickListener {
             alertDialog.dismiss()
             btnOK.isEnabled=false
+            loadData()
+        }
+    }
+
+    fun initDialogCompleteSiklus(){
+        val builder = AlertDialog.Builder(this)
+        val view = layoutInflater.inflate(R.layout.dialog_konfirmasi_ruangan_telah_selesai,null)
+
+
+        btnOKCompleteSiklus = view.findViewById(R.id.btn_ok_dialog_detail_siklus)
+
+        builder.setView(view)
+        alertDialogCompleteSiklus = builder.create()
+        alertDialogCompleteSiklus.setCancelable(false)
+        alertDialogCompleteSiklus.window?.setWindowAnimations(R.style.DialogAnimation)
+
+        btnOKCompleteSiklus.setOnClickListener {
+
+            Timer("finish",false).schedule(200){
+
+                alertDialogCompleteSiklus.dismiss()
+                finish()
+            }
         }
     }
 
