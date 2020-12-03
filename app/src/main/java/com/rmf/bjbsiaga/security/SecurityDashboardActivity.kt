@@ -162,7 +162,7 @@ class SecurityDashboardActivity : AppCompatActivity() {
     }
 
     private fun loadDataSiklus(){
-
+        listSiklus.clear()
         siklusTodayRef.whereEqualTo(TANGGAL_FIELD,dateNow())
             .get()
             .addOnSuccessListener {
@@ -224,26 +224,28 @@ class SecurityDashboardActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         if(pergiKeDetailSiklus){
+            membuatSiklusBaru=false
             loadDataSiklus()
             Log.d(TAG, "onResume:  LoadDataSiklus")
         }
 
     }
     private fun checkSiklusSudahBeres(){
-        Log.d(TAG, "checkSiklusSudahBeres: list size ${listSiklus.size} ${listSiklus[3].documentId}")
-        val lastData = listSiklus[3]
+        Log.d(TAG, "checkSiklusSudahBeres: list size ${listSiklus.size} ")
+
+        listSiklus.sortWith(compareBy { it.siklusKe })
+
+        val lastData = listSiklus[listSiklus.size-1]
         Log.d(TAG, "checkSiklusSudahBeres: ${lastData.documentId} ${lastData.nama} ${lastData.sudahBeres}")
 
-        var i= 0
-        for(data in listSiklus){
+        for((i, data) in listSiklus.withIndex()){
             Log.d(TAG, "checkSiklusSudahBeres: $i ${data.documentId}")
         }
 
-
-//        if(lastData.sudahBeres){
-//            Log.d(TAG, "checkSiklusSudahBeres: ${lastData.documentId}")
-//            buatSiklusBaru()
-//        }
+        if(lastData.sudahBeres && listSiklus.size<4){
+            Log.d(TAG, "checkSiklusSudahBeres: ${lastData.documentId}")
+            buatSiklusBaru()
+        }
     }
 
     private fun buatSiklusBaru() {
@@ -334,8 +336,8 @@ class SecurityDashboardActivity : AppCompatActivity() {
 
 
 //
-            var randomJam =0
-            randomJam = if(randomJamDari==22){
+
+            val randomJam = if(randomJamDari==22){
                 val listJam :IntArray = intArrayOf(22,23,0)
                 val index =  Random.nextInt(listJam.size)
                 listJam[index]

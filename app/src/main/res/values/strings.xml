@@ -48,4 +48,7 @@
     <string name="siklus_ii">Siklus II</string>
     <string name="siklus_iii">Siklus III</string>
     <string name="siklus_iv">Siklus IV</string>
+    <string name="semua_ruangan_telah_diperiksa">Semua Ruangan Telah Diperiksa!</string>
+    <string name="harap_klik_ok_untuk_konfirmasi_bahwa_anda_telah_menyelesaikan_tugas_siaga_pada_siklus_ini">Harap klik OK untuk konfirmasi bahwa Anda telah menyelesaikan tugas siaga pada siklus ini.</string>
+    <string name="ok">OK</string>
 </resources>

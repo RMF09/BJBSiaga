@@ -46,25 +46,19 @@ class RVAdapterSiklus(var list: ArrayList<DataDetailSiklus>) : RecyclerView.Adap
 
     }
 
-    fun checkStatus(diCheck: Boolean,foto:String,pukul: String) : String{
-        if(diCheck){
+    private fun checkStatus(diCheck: Boolean, foto:String, pukul: String) : String{
+        return if(diCheck){
             if(foto.isEmpty()){
-                return "Tekan Tombol kamera untuk foto diri"
+                "Tekan Tombol kamera untuk foto diri"
+            } else{
+                "Sudah dicek pada pukul $pukul"
             }
-            else{
-                return "Sudah dicek pada pukul $pukul"
-            }
+        } else{
+            "Belum dicek"
         }
-        else{
-            return "Belum dicek"
-        }
-//        return when(diCheck){
-//            true -> "Sudah dicek pada pukul $pukul"
-//            else ->
-//        }
     }
 
-    fun checkIcon(context: Context, diCheck: Boolean) : Drawable? {
+    private fun checkIcon(context: Context, diCheck: Boolean) : Drawable? {
         return when(diCheck){
             true -> ContextCompat.getDrawable(context,R.drawable.ic_baseline_check_24)
             else -> ContextCompat.getDrawable(context,R.drawable.ic_baseline_close_24)
@@ -74,11 +68,13 @@ class RVAdapterSiklus(var list: ArrayList<DataDetailSiklus>) : RecyclerView.Adap
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
 
-    fun sendDataWithBroadCast(context: Context, position: Int, holder: ViewHolder){
+    private fun sendDataWithBroadCast(context: Context, position: Int, holder: ViewHolder){
         val docId = list[position].documentId
-        Log.d(TAG, "sendDataWithBroadCast selected: $selected,  documentID $docId")
+
         if(!selected && list[position].documentId.isNotEmpty() && list[position].foto==""){
             selected=true
+
+            Log.d(TAG, "sendDataWithBroadCast selected: $selected,  documentID $docId")
             holder.itemView.relativeLayout.setBackgroundColor(
                 Color.parseColor("#"+Integer.toHexString(ContextCompat.getColor(context,R.color.colorAccentDark))))
 
@@ -90,7 +86,6 @@ class RVAdapterSiklus(var list: ArrayList<DataDetailSiklus>) : RecyclerView.Adap
             }
         }
         if(!selected){
-//            selected=true
             Intent(Config.ACTION_DATA_DETAIL_SIKLUS).apply {
                 putExtra("id","nothing_checked")
                 LocalBroadcastManager.getInstance(context).sendBroadcast(this)

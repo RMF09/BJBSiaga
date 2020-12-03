@@ -29,11 +29,13 @@
         android:roundIcon="@mipmap/ic_launcher_bjb_siaga2_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".CapturePotrait"
+        <activity android:name=".KonfirmasiRuanganTelahSelesai"/>
+        <activity
+            android:name=".CapturePotrait"
             android:screenOrientation="sensorPortrait"
             android:stateNotNeeded="true"
             android:theme="@style/zxing_CaptureTheme"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".DetailSiklusActivity"
             android:screenOrientation="portrait"
@@ -56,7 +58,7 @@
             android:value="@integer/google_play_services_version" />
 
         <activity android:name=".admin.TambahRuanganActivity" />
-        <activity android:name=".security.SecurityDashboardActivity"/>
+        <activity android:name=".security.SecurityDashboardActivity" />
         <activity android:name=".admin.InputJadwalActivity" />
         <activity android:name=".admin.TambahDataSecurityActivity" />
         <activity android:name=".admin.DataSecurityActivity" />
