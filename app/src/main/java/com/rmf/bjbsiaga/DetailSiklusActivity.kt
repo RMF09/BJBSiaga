@@ -58,6 +58,8 @@ class DetailSiklusActivity : AppCompatActivity() {
     private var id : String? = ""
     private var idRuanganTerpilih: String? =""
     private var positionSelected: Int=0
+    private var diCheckSelected: Boolean=false
+    private var fotoSelected: String?=""
 
     private lateinit var alertDialog: AlertDialog
     private lateinit var progressBar: ProgressBar
@@ -72,39 +74,64 @@ class DetailSiklusActivity : AppCompatActivity() {
 
     var broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent) {
+
             // Get extra data included in the Intent
             id = intent.getStringExtra("id")
             idRuanganTerpilih = intent.getStringExtra("id_ruangan")
             positionSelected = intent.getIntExtra("position_selected",0)
-            Log.d(TAG, "onReceive: id: $id, id ruangan terpilih: $idRuanganTerpilih, posisi : $positionSelected")
-            if(id.equals("nothing_checked")){
-                btn_open_camera_qr.apply {
-                    isEnabled=false
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                        backgroundTintList = ColorStateList.valueOf(getColor(R.color.colorDisable))
-                    }
-                }
+            diCheckSelected = intent.getBooleanExtra("di_check",false)
+            fotoSelected = intent.getStringExtra("foto")
 
+            Log.d(TAG, "onReceive: id: $id, id ruangan terpilih: $idRuanganTerpilih, posisi : $positionSelected, diCheck : $diCheckSelected")
+            checkLastData()
+
+        }
+    }
+
+    private fun checkLastData() {
+        if(id.equals("nothing_checked")){
+            btn_open_camera_qr.apply {
+                isEnabled=false
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                    backgroundTintList = ColorStateList.valueOf(getColor(R.color.colorDisable))
+                }
+            }
+
+            btn_open_camera.apply {
+                isEnabled=false
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                    backgroundTintList = ColorStateList.valueOf(getColor(R.color.colorDisable))
+                }
+            }
+        }
+        else{
+            btn_open_camera_qr.apply {
+                isEnabled = true
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                    backgroundTintList = ColorStateList.valueOf(getColor(R.color.colorAccent))
+                }
+            }
+
+            btn_open_camera.apply {
+                isEnabled = true
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                    backgroundTintList = ColorStateList.valueOf(getColor(R.color.colorAccent))
+                }
+            }
+
+            if(!diCheckSelected){
                 btn_open_camera.apply {
                     isEnabled=false
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                         backgroundTintList = ColorStateList.valueOf(getColor(R.color.colorDisable))
                     }
                 }
-
             }
             else{
                 btn_open_camera_qr.apply {
-                    isEnabled = true
+                    isEnabled=false
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                        backgroundTintList = ColorStateList.valueOf(getColor(R.color.colorAccent))
-                    }
-                }
-
-                btn_open_camera.apply {
-                    isEnabled = true
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                        backgroundTintList = ColorStateList.valueOf(getColor(R.color.colorAccent))
+                        backgroundTintList = ColorStateList.valueOf(getColor(R.color.colorDisable))
                     }
                 }
             }
@@ -161,7 +188,7 @@ class DetailSiklusActivity : AppCompatActivity() {
         }
     }
     
-    fun checkIsDone(){
+    private fun checkIsDone(){
         val totalData = list.size
         var sudahDicek=0
         for(data in list){
@@ -176,7 +203,7 @@ class DetailSiklusActivity : AppCompatActivity() {
         }
     }
 
-    fun updateData(name: String){
+    private fun updateData(name: String){
         id?.let {
             detailSiklusRef.document(it)
                 .update("foto",name)
@@ -244,38 +271,27 @@ class DetailSiklusActivity : AppCompatActivity() {
         if(requestCode==1){
             if(resultCode== RESULT_OK){
                 Log.d(TAG, "onActivityResult: Tina kamera photo")
-                Toast.makeText(this,data!!.getStringExtra("msg"),Toast.LENGTH_SHORT).show()
-                val file = data.extras!!.get("file") as File
+                //Toast.makeText(this,data!!.getStringExtra("msg"),Toast.LENGTH_SHORT).show()
+                val file = data!!.extras!!.get("file") as File
                 uploadFoto(file)
             }
         }else{
             val result = IntentIntegrator.parseActivityResult(requestCode,resultCode,data)
             if(result!=null){
-                if(result.contents==null){
-                    Log.d(TAG, "onActivityResult: QR Kosong")
-                }
-                else{
-                    Log.d(TAG, "onActivityResult: ${result.contents}")
-
+                if(result.contents==null){ Log.d(TAG, "onActivityResult: QR Kosong") }
+                else{ Log.d(TAG, "onActivityResult: ${result.contents}")
                     try {
-
                         JSONObject(result.contents).apply {
                             val idRuangan = this.get("idRuangan")
                             if(idRuangan == idRuanganTerpilih){
                                 checkQR()
-                            }else{
-                                Toast.makeText(this@DetailSiklusActivity,"Salah scan tempat!",Toast.LENGTH_LONG).show()
-                            }
+                            }else{ Toast.makeText(this@DetailSiklusActivity,"Salah scan tempat!",Toast.LENGTH_LONG).show() }
                         }
                     }
-                    catch (e: Exception){
-                        Log.e(TAG, "onActivityResult: $e" )
-                    }
+                    catch (e: Exception){ Log.e(TAG, "onActivityResult: $e" ) }
                 }
             }
-            else{
-                super.onActivityResult(requestCode, resultCode, data)
-            }
+            else{ super.onActivityResult(requestCode, resultCode, data) }
         }
 
     }
@@ -309,7 +325,6 @@ class DetailSiklusActivity : AppCompatActivity() {
     private fun insertData(){
         var i =0
         for (data in listRuangan){
-
             val dataDetailSiklus = DataDetailSiklus(
                 data.namaRuangan,
                 "",
@@ -327,9 +342,7 @@ class DetailSiklusActivity : AppCompatActivity() {
                         loadData()
                     }
                 }
-                .addOnFailureListener {
-                    Log.e(TAG, "insertData: ${it.toString()}")
-                }
+                .addOnFailureListener { Log.e(TAG, "insertData: ${it.toString()}") }
         }
     }
 
@@ -356,16 +369,13 @@ class DetailSiklusActivity : AppCompatActivity() {
                     insertData()
                 }
             }
-            .addOnFailureListener {
-                Log.e(TAG, "loadData: ${it.toString()}")
-            }
+            .addOnFailureListener { Log.e(TAG, "loadData: ${it.toString()}") }
     }
 
 
     private fun loadResourceRuangan() {
         ruanganRef.get()
             .addOnSuccessListener {
-
             if(!it.isEmpty){
                 for ((i, document) in it.withIndex()){
                     val dataRuangan: DataRuangan = document.toObject(DataRuangan::class.java)
@@ -380,9 +390,7 @@ class DetailSiklusActivity : AppCompatActivity() {
                 loadData()
             }
         }
-            .addOnFailureListener {
-                Log.e(TAG, "loadResourceRuangan: ${it.toString()}")
-            }
+            .addOnFailureListener { Log.e(TAG, "loadResourceRuangan: ${it.toString()}") }
     }
 
 
@@ -391,10 +399,7 @@ class DetailSiklusActivity : AppCompatActivity() {
         ruanganRef = db.collection(CollectionsFS.RUANGAN)
         detailSiklusRef = db.collection(CollectionsFS.DETAIL_SIKLUS)
         siklusRef = db.collection(CollectionsFS.SIKLUS)
-        
         this.siklusTodayRef = db.collection(CollectionsFS.SIKLUS)
-
-        
     }
 
     private fun setupRV(){
@@ -408,12 +413,11 @@ class DetailSiklusActivity : AppCompatActivity() {
     private fun setupAdapter(){
         listRuangan = ArrayList()
         list = ArrayList()
-
         adapter = RVAdapterSiklus(list)
         rv_data_siklus.adapter= adapter
     }
 
-    fun initDialog(){
+    private fun initDialog(){
         val builder = AlertDialog.Builder(this)
         val view = layoutInflater.inflate(R.layout.dialog_progress,null)
 
@@ -437,7 +441,6 @@ class DetailSiklusActivity : AppCompatActivity() {
         val builder = AlertDialog.Builder(this)
         val view = layoutInflater.inflate(R.layout.dialog_konfirmasi_ruangan_telah_selesai,null)
 
-
         btnOKCompleteSiklus = view.findViewById(R.id.btn_ok_dialog_detail_siklus)
 
         builder.setView(view)
@@ -447,9 +450,8 @@ class DetailSiklusActivity : AppCompatActivity() {
 
         btnOKCompleteSiklus.setOnClickListener {
 
-            Timer("finish",false).schedule(200){
-
-                alertDialogCompleteSiklus.dismiss()
+            alertDialogCompleteSiklus.dismiss()
+            Timer("finish",false).schedule(1000){
                 finish()
             }
         }
@@ -468,11 +470,4 @@ class DetailSiklusActivity : AppCompatActivity() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver)
         super.onPause()
     }
-
-
-
-
-
-
-
 }

@@ -33,7 +33,6 @@ class RVAdapterSiklus(var list: ArrayList<DataDetailSiklus>) : RecyclerView.Adap
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         val data = list[position]
-
         holder.itemView.apply {
             relativeLayout.setBackgroundColor(0x00000000)
             text_nomer.text = (position+1).toString()
@@ -42,20 +41,13 @@ class RVAdapterSiklus(var list: ArrayList<DataDetailSiklus>) : RecyclerView.Adap
             icon_keterangan.setImageDrawable(checkIcon(holder.itemView.context,data.diCheck))
             sendDataWithBroadCast(holder.itemView.context,position,holder)
         }
-
-
     }
 
     private fun checkStatus(diCheck: Boolean, foto:String, pukul: String) : String{
         return if(diCheck){
-            if(foto.isEmpty()){
-                "Tekan Tombol kamera untuk foto diri"
-            } else{
-                "Sudah dicek pada pukul $pukul"
-            }
-        } else{
-            "Belum dicek"
-        }
+            if(foto.isEmpty()){ "Tekan Tombol kamera untuk foto diri" }
+            else{ "Sudah dicek pada pukul $pukul" }
+        } else{ "Belum dicek" }
     }
 
     private fun checkIcon(context: Context, diCheck: Boolean) : Drawable? {
@@ -67,14 +59,13 @@ class RVAdapterSiklus(var list: ArrayList<DataDetailSiklus>) : RecyclerView.Adap
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
-
     private fun sendDataWithBroadCast(context: Context, position: Int, holder: ViewHolder){
         val docId = list[position].documentId
 
         if(!selected && list[position].documentId.isNotEmpty() && list[position].foto==""){
             selected=true
 
-            Log.d(TAG, "sendDataWithBroadCast selected: $selected,  documentID $docId")
+            Log.d(TAG, "sendDataWithBroadCast selected: $selected, documentID $docId")
             holder.itemView.relativeLayout.setBackgroundColor(
                 Color.parseColor("#"+Integer.toHexString(ContextCompat.getColor(context,R.color.colorAccentDark))))
 
@@ -82,6 +73,8 @@ class RVAdapterSiklus(var list: ArrayList<DataDetailSiklus>) : RecyclerView.Adap
                 putExtra("id",list[position].documentId)
                 putExtra("id_ruangan", list[position].idRuangan)
                 putExtra("position_selected",position)
+                putExtra("di_check",list[position].diCheck)
+                putExtra("foto",list[position].foto)
                 LocalBroadcastManager.getInstance(context).sendBroadcast(this)
             }
         }

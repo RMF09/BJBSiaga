@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -14,39 +14,40 @@
             android:id="@+id/text_nomer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="1"
-            android:layout_marginLeft="12dp"
+            android:text="@string/_1"
+            android:layout_marginStart="12dp"
             android:textColor="@color/colorWhitePure"
             android:textSize="26sp"/>
         <LinearLayout
-            android:layout_toRightOf="@id/text_nomer"
+            android:layout_toEndOf="@id/text_nomer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
             >
             <TextView
                 android:id="@+id/text_nama_ruangan"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Burning Hall"
+                android:text="@string/burning_hall"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="@color/colorWhiteText"/>
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                tools:ignore="UseCompoundDrawables">
                 <ImageView
                     android:id="@+id/icon_keterangan"
-                    app:tint="@color/colorWhiteText"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:src="@drawable/ic_baseline_close_24"/>
+                    android:src="@drawable/ic_baseline_close_24"
+                    android:contentDescription="@string/description_image" />
                 <TextView
                     android:id="@+id/text_status_ruangan"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="Belum dicek"
+                    android:text="@string/belum_dicek"
                     android:maxLines="1"
                     android:ellipsize="end"
                     android:textStyle="italic"

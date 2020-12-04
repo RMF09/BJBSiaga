@@ -2,14 +2,14 @@ package com.rmf.bjbsiaga
 
 import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
+
 import android.graphics.Matrix
 import android.graphics.SurfaceTexture
-import android.net.Uri
+
 import android.os.Bundle
 import android.os.Environment
 import android.util.DisplayMetrics
-import android.util.Log
+
 import android.util.Rational
 import android.util.Size
 import android.view.Surface
@@ -17,32 +17,45 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.core.net.toUri
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
+
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 
 
+@Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
     private var lensFacing = CameraX.LensFacing.BACK
-    private val TAG = "MainActivity"
-    val CAMERA_REQUEST_CODE =1
-    val STORAGE_REQUEST_CODE=2
-    var isRationale = false;
-    var isFirst =true
-
-    lateinit var permissions: ArrayList<String>
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+//        setupPermissions()
+        Dexter.withContext(this)
+            .withPermissions(
+                Manifest.permission.CAMERA,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+            .withListener(object : MultiplePermissionsListener {
+                override fun onPermissionRationaleShouldBeShown(
+                    p0: MutableList<PermissionRequest>?,
+                    p1: PermissionToken?
+                ) {
+                    p1?.continuePermissionRequest()
+                }
 
-        setupPermissions()
+                override fun onPermissionsChecked(p0: MultiplePermissionsReport?) {
+                    if(p0!!.areAllPermissionsGranted()){
+                        initCamera()
+                    }
+                }
+            })
+            .check()
 
     }
 
@@ -92,7 +105,7 @@ class MainActivity : AppCompatActivity() {
             )
 
 
-            Toast.makeText(this,file?.path,Toast.LENGTH_LONG).show()
+//            Toast.makeText(this, file.path,Toast.LENGTH_LONG).show()
 
             imageCapture.takePicture(file,
                 object : ImageCapture.OnImageSavedListener {
@@ -100,8 +113,8 @@ class MainActivity : AppCompatActivity() {
                         error: ImageCapture.UseCaseError,
                         message: String, exc: Throwable?
                     ) {
-                        val msg = "Photo capture failed: $message"
-                        Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+                        //val msg = "Photo capture failed: $message"
+//                        Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
 
                     }
 
@@ -140,18 +153,18 @@ class MainActivity : AppCompatActivity() {
         texture.setTransform(matrix)
     }
 
-    private fun setupPermissions() {
-        val permission = ContextCompat.checkSelfPermission(this,
-            Manifest.permission.CAMERA)
-
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            Log.i(TAG, "Permission to record denied")
-            makeRequest()
-        }
-        else{
-            initCamera()
-        }
-    }
+//    private fun setupPermissions() {
+//        val permission = ContextCompat.checkSelfPermission(this,
+//            Manifest.permission.CAMERA)
+//
+//        if (permission != PackageManager.PERMISSION_GRANTED) {
+//            Log.i(TAG, "Permission to record denied")
+//            makeRequest()
+//        }
+//        else{
+//            initCamera()
+//        }
+//    }
 
     fun initCamera(){
         texture.post { startCamera() }
@@ -160,34 +173,27 @@ class MainActivity : AppCompatActivity() {
             updateTransform()
         }
     }
-    private fun makeRequest() {
-        ActivityCompat.requestPermissions(this,
-            arrayOf(Manifest.permission.CAMERA),
-            CAMERA_REQUEST_CODE)
-    }
+//    private fun makeRequest() {
+//        ActivityCompat.requestPermissions(this,
+//            arrayOf(Manifest.permission.CAMERA),
+//            CAMERA_REQUEST_CODE)
+//    }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when(requestCode){
-            CAMERA_REQUEST_CODE ->{
-                if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                    Log.i(TAG, "Permission has been denied by user")
-                } else {
-                    initCamera()
-                    Log.i(TAG, "Permission has been granted by user")
-                }
-            }
-        }
-    }
-
-
-
-
-
-
-
+//    override fun onRequestPermissionsResult(
+//        requestCode: Int,
+//        permissions: Array<out String>,
+//        grantResults: IntArray
+//    ) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+//        when(requestCode){
+//            CAMERA_REQUEST_CODE ->{
+//                if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+//                    Log.i(TAG, "Permission has been denied by user")
+//                } else {
+//                    initCamera()
+//                    Log.i(TAG, "Permission has been granted by user")
+//                }
+//            }
+//        }
+//    }
 }

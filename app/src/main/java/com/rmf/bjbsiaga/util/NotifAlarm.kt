@@ -24,18 +24,17 @@ class NotifAlarm {
             calendar.set(Calendar.SECOND, 0)
 
 
-//            if (calendar.time < Date()) {
-//                //sudah terlewat besok aja
-//                Log.d("setAlarm", "set: kalewat")
-//            }else{
-                Log.d("setAlarm", "set: alarm!")
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                    manager.setExactAndAllowWhileIdle(
-                        AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent
-                    )
-                }
-
-//            }
+            if (calendar.time < Date()) {
+                //sudah terlewat besok aja
+                calendar.add(Calendar.DAY_OF_MONTH,1)
+                Log.d("setAlarm", "set: kalewat tambah hari")
+            }
+            Log.d("setAlarm", "set: alarm!")
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                manager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent
+                )
+            }
 
         }
     }

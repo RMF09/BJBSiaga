@@ -51,4 +51,9 @@
     <string name="semua_ruangan_telah_diperiksa">Semua Ruangan Telah Diperiksa!</string>
     <string name="harap_klik_ok_untuk_konfirmasi_bahwa_anda_telah_menyelesaikan_tugas_siaga_pada_siklus_ini">Harap klik OK untuk konfirmasi bahwa Anda telah menyelesaikan tugas siaga pada siklus ini.</string>
     <string name="ok">OK</string>
+    <string name="open_qr">open qr</string>
+    <string name="open_camera">open camera</string>
+    <string name="_1">1</string>
+    <string name="burning_hall">Burning Hall</string>
+    <string name="belum_dicek">Belum dicek</string>
 </resources>

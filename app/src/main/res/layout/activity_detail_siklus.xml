@@ -57,16 +57,20 @@
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
         tools:listitem="@layout/item_detail_siklus" />
 
+
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_open_camera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
+        android:contentDescription="@string/open_camera"
         android:src="@drawable/ic_baseline_photo_camera_24"
         android:tint="@color/colorWhitePure"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_open_camera_qr"
         android:layout_width="wrap_content"
@@ -76,6 +80,7 @@
         android:src="@drawable/ic_baseline_camera_24"
         android:tint="@color/colorWhitePure"
         app:layout_constraintBottom_toTopOf="@id/btn_open_camera"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:contentDescription="@string/open_qr" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

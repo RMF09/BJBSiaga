@@ -225,6 +225,7 @@ class SecurityDashboardActivity : AppCompatActivity() {
         super.onResume()
         if(pergiKeDetailSiklus){
             membuatSiklusBaru=false
+            pergiKeDetailSiklus=false
             loadDataSiklus()
             Log.d(TAG, "onResume:  LoadDataSiklus")
         }
@@ -280,21 +281,21 @@ class SecurityDashboardActivity : AppCompatActivity() {
 
     }
     lateinit var alertDialogBuilder : AlertDialog.Builder
-    fun initDialog(){
+    private fun initDialog(){
         alertDialogBuilder = AlertDialog.Builder(this).apply {
             setTitle("Keluar Aplikasi")
             setMessage("Anda yakin ingin keluar?")
-            setPositiveButton("Ya"){dialog, which ->
-                finish()
+            setPositiveButton("Ya"){ _, _ ->
+                super.onBackPressed()
             }
-            setNegativeButton("Tidak"){dialog, which ->
+            setNegativeButton("Tidak"){ dialog, _ ->
                 dialog.dismiss()
             }
         }
 
     }
     @SuppressLint("SimpleDateFormat")
-    fun ambilWaktu(waktu: String){
+    private fun ambilWaktu(waktu: String){
         try {
             val df = SimpleDateFormat("HH.mm")
             val calendar = Calendar.getInstance()
@@ -323,8 +324,6 @@ class SecurityDashboardActivity : AppCompatActivity() {
             val randomJamDari = calendar.get(Calendar.HOUR_OF_DAY)
             val randomJamSampai = calendar2.get(Calendar.HOUR_OF_DAY) -1
 
-
-
             Log.d(TAG, "randomWaktu: dari jam ${calendar.get(Calendar.HOUR_OF_DAY)} - $randomJamSampai")
 
             val hasilJamSampai: Calendar = Calendar.getInstance()
@@ -339,11 +338,9 @@ class SecurityDashboardActivity : AppCompatActivity() {
                 val index =  Random.nextInt(listJam.size)
                 listJam[index]
             }else{
-
                 Random.nextInt(randomJamDari,randomJamSampai)
             }
             val randomMinute = Random.nextInt(0,30)
-//
             Log.d(TAG, "randomWaktu: hasil random : $randomJam.$randomMinute ")
 
             "$randomJam.$randomMinute"
