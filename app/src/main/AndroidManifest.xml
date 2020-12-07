@@ -29,7 +29,8 @@
         android:roundIcon="@mipmap/ic_launcher_bjb_siaga2_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".KonfirmasiRuanganTelahSelesai"/>
+        <activity android:name=".Act"></activity>
+        <activity android:name=".KonfirmasiRuanganTelahSelesai" />
         <activity
             android:name=".CapturePotrait"
             android:screenOrientation="sensorPortrait"

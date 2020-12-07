@@ -2,9 +2,11 @@ package com.rmf.bjbsiaga.security
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AlertDialog
 import com.google.firebase.firestore.CollectionReference
@@ -20,7 +22,10 @@ import com.rmf.bjbsiaga.util.Config.Companion.TANGGAL_FIELD
 import com.rmf.bjbsiaga.util.Config.Companion.dateNow
 import com.rmf.bjbsiaga.util.NotifAlarm
 import com.rmf.bjbsiaga.util.SharedPref
+import eightbitlab.com.blurview.RenderScriptBlur
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_security_dashboard.*
+
 
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -141,7 +146,6 @@ class SecurityDashboardActivity : AppCompatActivity() {
     fun checkJadwalBertugas(){
         Log.d(TAG, "checkJadwalBertugas: nikPetugas : $NIK, tanggal: ${dateNow()}")
         jadwalBertugasRef.whereEqualTo("nikPetugas",NIK)
-            .whereEqualTo(TANGGAL_FIELD, dateNow())
             .get()
             .addOnSuccessListener {
                 if(!it.isEmpty){

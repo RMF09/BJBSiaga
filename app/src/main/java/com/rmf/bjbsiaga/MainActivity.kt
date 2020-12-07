@@ -2,27 +2,25 @@ package com.rmf.bjbsiaga
 
 import android.Manifest
 import android.content.Intent
-
 import android.graphics.Matrix
 import android.graphics.SurfaceTexture
-
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Environment
 import android.util.DisplayMetrics
-
 import android.util.Rational
 import android.util.Size
 import android.view.Surface
+import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
-
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import eightbitlab.com.blurview.RenderScriptBlur
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 
@@ -34,6 +32,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+
 
 //        setupPermissions()
         Dexter.withContext(this)
@@ -50,14 +50,17 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onPermissionsChecked(p0: MultiplePermissionsReport?) {
-                    if(p0!!.areAllPermissionsGranted()){
+                    if (p0!!.areAllPermissionsGranted()) {
                         initCamera()
                     }
                 }
+
             })
             .check()
 
     }
+
+
 
     private fun startCamera() {
 
@@ -81,7 +84,7 @@ class MainActivity : AppCompatActivity() {
             parent.removeView(texture)
             val surfaceTexture : SurfaceTexture =it.surfaceTexture
             texture.setSurfaceTexture(surfaceTexture)
-            parent.addView(texture,0)
+            parent.addView(texture, 0)
             updateTransform()
         }
 
@@ -97,13 +100,13 @@ class MainActivity : AppCompatActivity() {
 
         // Build the image capture use case and attach button click listener
         val imageCapture = ImageCapture(imageCaptureConfig)
-        btnTakePicture.setOnClickListener {
 
+        btnTakePicture.setOnClickListener {
+            btnTakePicture.isEnabled=false
             val file = File(
                 Environment.getExternalStorageDirectory()
                     .toString() + "/" + System.currentTimeMillis() + ".png"
             )
-
 
 //            Toast.makeText(this, file.path,Toast.LENGTH_LONG).show()
 
@@ -123,15 +126,14 @@ class MainActivity : AppCompatActivity() {
 //                        uploadFoto(file)
 
                         Intent().apply {
-                            putExtra("msg",msg)
-                            putExtra("file",file)
-                            setResult(RESULT_OK,this)
+                            putExtra("msg", msg)
+                            putExtra("file", file)
+                            setResult(RESULT_OK, this)
                             finish()
                         }
 
                     }
                 })
-
         }
 
         CameraX.bindToLifecycle(this, preview, imageCapture)
