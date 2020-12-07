@@ -10,7 +10,7 @@ data class DataSiklus (
     val siklusKe: Int= 0,
     val tanggal: String= "",
     val sudahBeres: Boolean=false,
-    val idJadwalBertugas: String=""
+    val idTugasSiaga: String=""
 ){
     @get:Exclude
     var documentId: String=""

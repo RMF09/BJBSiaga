@@ -4,12 +4,9 @@ import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.IgnoreExtraProperties
 
 @IgnoreExtraProperties
-data class DataJadwalBertugas (
-
-    val idJadwal: String= "",
-    val nikPetugas: Long= 0,
-    val shift: String="",
-    val hari: String=""
+data class DataJadwal (
+    val hari: String= "",
+    var shift: String= ""
 ){
     @get:Exclude
     var documentId: String=""

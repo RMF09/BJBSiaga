@@ -11,12 +11,16 @@ import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AlertDialog
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.rmf.bjbsiaga.DetailSiklusActivity
 import com.rmf.bjbsiaga.LoginActivity
 import com.rmf.bjbsiaga.R
+import com.rmf.bjbsiaga.data.DataJadwal
 import com.rmf.bjbsiaga.data.DataJadwalBertugas
 import com.rmf.bjbsiaga.data.DataSiklus
+import com.rmf.bjbsiaga.data.DataTugasSiaga
 import com.rmf.bjbsiaga.util.CollectionsFS
+import com.rmf.bjbsiaga.util.Config
 
 import com.rmf.bjbsiaga.util.Config.Companion.TANGGAL_FIELD
 import com.rmf.bjbsiaga.util.Config.Companion.dateNow
@@ -31,24 +35,32 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.math.log
 import kotlin.math.roundToInt
 import kotlin.random.Random
 
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class SecurityDashboardActivity : AppCompatActivity() {
 
+    private lateinit var idJadwal: String
     private lateinit var idJadwalBertugas: String
+    private lateinit var idTugasSiaga: String
     private lateinit var listSiklus: ArrayList<DataSiklus>
     private lateinit var listShiftMalam: ArrayList<String>
 
     private lateinit var db: FirebaseFirestore
+    private lateinit var jadwalRef: CollectionReference
     private lateinit var siklusTodayRef: CollectionReference
     private lateinit var jadwalBertugasRef: CollectionReference
+    private lateinit var tugasSiagaRef: CollectionReference
 
     private var NIK: Long? = 0
     private val TAG = "SecurityDashboardActivi"
     private var pergiKeDetailSiklus =false
     private var membuatSiklusBaru =false
+
+    private var hari: String= ""
+    private var shift: String= ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -143,9 +155,12 @@ class SecurityDashboardActivity : AppCompatActivity() {
         }
     }
 
-    fun checkJadwalBertugas(){
-        Log.d(TAG, "checkJadwalBertugas: nikPetugas : $NIK, tanggal: ${dateNow()}")
+    private fun checkJadwalBertugas(){
+        Log.d(TAG, "checkJadwalBertugas: nikPetugas : $NIK")
+        val hariSekarang = Config.Today()
+        Log.d(TAG, "checkJadwalBertugas: $hariSekarang")
         jadwalBertugasRef.whereEqualTo("nikPetugas",NIK)
+            .whereEqualTo("hari", hariSekarang)
             .get()
             .addOnSuccessListener {
                 if(!it.isEmpty){
@@ -153,15 +168,59 @@ class SecurityDashboardActivity : AppCompatActivity() {
                         val dataJadwalBertugas = document.toObject(DataJadwalBertugas::class.java)
                         dataJadwalBertugas.documentId = document.id
                         idJadwalBertugas= dataJadwalBertugas.documentId
+                        idJadwal = dataJadwalBertugas.idJadwal
                     }
-                    loadDataSiklus()
+                    //loadDataSiklus()
+                    checkTugasSiaga()
                 }
                 else{
-                    Log.d(TAG, "checkJadwalBertugas: Tidak ada jadwal hari ini")
+                    Log.d(TAG, "checkJadwalBertugas: Tidak ada jadwal untuk anda")
                 }
             }
             .addOnFailureListener {
                 Log.d(TAG, "checkJadwalBertugas: $it")
+            }
+    }
+
+
+
+    private fun checkTugasSiaga(){
+        tugasSiagaRef.whereEqualTo("idJadwalBertugas", idJadwalBertugas)
+            .orderBy(TANGGAL_FIELD,Query.Direction.DESCENDING)
+            .limit(1)
+            .get()
+            .addOnSuccessListener {
+                if(!it.isEmpty){
+                    for (document in it){
+                        val dataTugasSiaga = document.toObject(DataTugasSiaga::class.java)
+                        dataTugasSiaga.documentId = document.id
+                        idTugasSiaga = dataTugasSiaga.documentId
+
+                        Log.d(TAG, "checkTugasSiaga:  ${dataTugasSiaga.tanggal} ${dataTugasSiaga.tanggal?.let { it1 ->
+                            Config.convertTanggalTimeStamp(
+                                it1
+                            )
+                        }}")
+                    }
+                    Log.d(TAG, "checkTugasSiaga: $idTugasSiaga")
+                }
+                else{
+                    Log.d(TAG, "checkTugasSiaga: Tidak ada tugas siaga")
+                    addTugasSiaga()
+                }
+            }
+            .addOnFailureListener {
+                Log.e(TAG, "checkTugasSiaga: $it ")
+            }
+    }
+    private fun addTugasSiaga(){
+        val dataTugasSiaga = DataTugasSiaga(idJadwalBertugas,false, Date())
+        tugasSiagaRef.document().set(dataTugasSiaga)
+            .addOnSuccessListener {
+                Log.d(TAG, "addTugasSiaga: berhasil")
+            }
+            .addOnFailureListener {
+                Log.e(TAG, "addTugasSiaga: $it" )
             }
     }
 
@@ -223,7 +282,11 @@ class SecurityDashboardActivity : AppCompatActivity() {
         db = FirebaseFirestore.getInstance()
         siklusTodayRef = db.collection(CollectionsFS.SIKLUS)
         jadwalBertugasRef = db.collection(CollectionsFS.JADWAL_BERTUGAS)
+        tugasSiagaRef = db.collection(CollectionsFS.TUGAS_SIAGA)
+        jadwalRef = db.collection(CollectionsFS.JADWAL)
     }
+
+
 
     override fun onResume() {
         super.onResume()
