@@ -1,9 +1,11 @@
 package com.rmf.bjbsiaga.util
 
 import android.annotation.SuppressLint
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
+@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class Config {
     companion object{
         val ID_SIKLUS= "idSiklus"
@@ -35,9 +37,23 @@ class Config {
         }
 
         @SuppressLint("SimpleDateFormat")
-        fun convertTanggalTimeStamp(timeStamp: Date): String{
+        fun convertTanggalTimeStamp(timeStamp: Date?): String{
             val sdf = SimpleDateFormat(TGL)
             return sdf.format(timeStamp)
+        }
+
+        @SuppressLint("SimpleDateFormat")
+        fun ambilJam(waktu: String): Int{
+            return try {
+
+                val df = SimpleDateFormat("HH.mm")
+                val calendar = Calendar.getInstance()
+                calendar.time =df.parse(waktu)
+                calendar.get(Calendar.HOUR_OF_DAY)
+
+            } catch (e: ParseException){
+                0
+            }
         }
 
     }

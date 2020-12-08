@@ -2,11 +2,9 @@ package com.rmf.bjbsiaga.security
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AlertDialog
 import com.google.firebase.firestore.CollectionReference
@@ -15,28 +13,21 @@ import com.google.firebase.firestore.Query
 import com.rmf.bjbsiaga.DetailSiklusActivity
 import com.rmf.bjbsiaga.LoginActivity
 import com.rmf.bjbsiaga.R
-import com.rmf.bjbsiaga.data.DataJadwal
 import com.rmf.bjbsiaga.data.DataJadwalBertugas
 import com.rmf.bjbsiaga.data.DataSiklus
 import com.rmf.bjbsiaga.data.DataTugasSiaga
 import com.rmf.bjbsiaga.util.CollectionsFS
 import com.rmf.bjbsiaga.util.Config
-
 import com.rmf.bjbsiaga.util.Config.Companion.TANGGAL_FIELD
 import com.rmf.bjbsiaga.util.Config.Companion.dateNow
 import com.rmf.bjbsiaga.util.NotifAlarm
 import com.rmf.bjbsiaga.util.SharedPref
-import eightbitlab.com.blurview.RenderScriptBlur
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_security_dashboard.*
-
-
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.log
-import kotlin.math.roundToInt
 import kotlin.random.Random
 
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
@@ -62,6 +53,8 @@ class SecurityDashboardActivity : AppCompatActivity() {
     private var hari: String= ""
     private var shift: String= ""
 
+    private var statusTugasSiaga= false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_security_dashboard)
@@ -70,6 +63,7 @@ class SecurityDashboardActivity : AppCompatActivity() {
         initListMalam()
         initDialog()
         initDB()
+
 
         //check is Login and get nama
         if(SharedPref.getInstance(this)!!.isLoggedIn()){
@@ -158,7 +152,7 @@ class SecurityDashboardActivity : AppCompatActivity() {
     private fun checkJadwalBertugas(){
         Log.d(TAG, "checkJadwalBertugas: nikPetugas : $NIK")
         val hariSekarang = Config.Today()
-        Log.d(TAG, "checkJadwalBertugas: $hariSekarang")
+        Log.d(TAG, "checkJadwalBertugas: Hari ini : $hariSekarang")
         jadwalBertugasRef.whereEqualTo("nikPetugas",NIK)
             .whereEqualTo("hari", hariSekarang)
             .get()
@@ -169,6 +163,8 @@ class SecurityDashboardActivity : AppCompatActivity() {
                         dataJadwalBertugas.documentId = document.id
                         idJadwalBertugas= dataJadwalBertugas.documentId
                         idJadwal = dataJadwalBertugas.idJadwal
+                        hari = dataJadwalBertugas.hari
+                        shift = dataJadwalBertugas.shift
                     }
                     //loadDataSiklus()
                     checkTugasSiaga()
@@ -185,6 +181,9 @@ class SecurityDashboardActivity : AppCompatActivity() {
 
 
     private fun checkTugasSiaga(){
+        var tglTugasSiaga : Date? = null
+
+
         tugasSiagaRef.whereEqualTo("idJadwalBertugas", idJadwalBertugas)
             .orderBy(TANGGAL_FIELD,Query.Direction.DESCENDING)
             .limit(1)
@@ -195,13 +194,39 @@ class SecurityDashboardActivity : AppCompatActivity() {
                         val dataTugasSiaga = document.toObject(DataTugasSiaga::class.java)
                         dataTugasSiaga.documentId = document.id
                         idTugasSiaga = dataTugasSiaga.documentId
-
+                        tglTugasSiaga = dataTugasSiaga.tanggal
+                        statusTugasSiaga = dataTugasSiaga.statusSudahBeres
+                        
                         Log.d(TAG, "checkTugasSiaga:  ${dataTugasSiaga.tanggal} ${dataTugasSiaga.tanggal?.let { it1 ->
                             Config.convertTanggalTimeStamp(
                                 it1
                             )
                         }}")
+                        loadDataSiklus()
                     }
+
+                    Log.d(TAG, "checkTugasSiaga: tgl $tglTugasSiaga , ayena ${Date()}")
+
+                    val hasilTglTugasSiaga = Config.convertTanggalTimeStamp(tglTugasSiaga)
+                    val hasilTanggalSekarang = dateNow()
+
+                    Log.d(TAG, "checkTugasSiaga: hasil tanggal $hasilTglTugasSiaga, ayena $hasilTanggalSekarang")
+
+                    if(hasilTglTugasSiaga != hasilTanggalSekarang){
+                        Log.d(TAG, "checkTugasSiaga: beda tanggal")
+                        if(statusTugasSiaga){
+                            Log.d(TAG, "checkTugasSiaga: status Tugas Siaga :  $statusTugasSiaga, add tugasSiaga hari ini")
+                            addTugasSiaga()
+                        }else{
+                            val jamTerakhirDariShift: Int
+
+                            if(shift == "malam"){
+                                jamTerakhirDariShift = Config.ambilJam(listShiftMalam[listShiftMalam.size-1])
+                                checkTugasSiagaTelahBerakhir(jamTerakhirDariShift)
+                            }
+                        }
+                    }
+                    
                     Log.d(TAG, "checkTugasSiaga: $idTugasSiaga")
                 }
                 else{
@@ -213,11 +238,24 @@ class SecurityDashboardActivity : AppCompatActivity() {
                 Log.e(TAG, "checkTugasSiaga: $it ")
             }
     }
+
+    private fun checkTugasSiagaTelahBerakhir(jamTerakhirDariShift: Int) {
+        val calendar = Calendar.getInstance()
+        val jamSekarang =  calendar.get(Calendar.HOUR_OF_DAY)
+        Log.d(TAG, "checkTugasSiagaTelahBerakhir: jam Sekarang :  $jamSekarang")
+
+        if(jamSekarang>jamTerakhirDariShift){
+            updateStatusTugas()
+        }
+
+    }
+
     private fun addTugasSiaga(){
         val dataTugasSiaga = DataTugasSiaga(idJadwalBertugas,false, Date())
         tugasSiagaRef.document().set(dataTugasSiaga)
             .addOnSuccessListener {
                 Log.d(TAG, "addTugasSiaga: berhasil")
+                checkTugasSiaga()
             }
             .addOnFailureListener {
                 Log.e(TAG, "addTugasSiaga: $it" )
@@ -268,7 +306,7 @@ class SecurityDashboardActivity : AppCompatActivity() {
             listSiklus.size+1,
             dateNow(),
             false,
-            idJadwalBertugas
+            idTugasSiaga
             )
         siklusTodayRef.document().set(dataSiklus)
             .addOnSuccessListener {
@@ -314,6 +352,25 @@ class SecurityDashboardActivity : AppCompatActivity() {
             Log.d(TAG, "checkSiklusSudahBeres: ${lastData.documentId}")
             buatSiklusBaru()
         }
+        //Final Destination
+        if(listSiklus.size==4 && lastData.sudahBeres){
+            Log.d(TAG, "checkSiklusSudahBeres: Sudah beres semua! Update status Tugas Siaga! ")
+            if(!statusTugasSiaga){
+                updateStatusTugas()
+            }
+        }
+    }
+
+    private fun updateStatusTugas() {
+        tugasSiagaRef.document(idTugasSiaga)
+            .update("statusSudahBeres",true)
+            .addOnSuccessListener {
+                Log.d(TAG, "updateStatusTugas: Berhasil Update Status Tugas Siaga")
+                checkTugasSiaga()
+            }
+            .addOnFailureListener {
+                Log.e(TAG, "updateStatusTugas: $it" )
+            }
     }
 
     private fun buatSiklusBaru() {
@@ -328,7 +385,9 @@ class SecurityDashboardActivity : AppCompatActivity() {
                 randomWaktu(listSiklus.size),
                 siklusKeBaru,
                 dateNow(),
-                false,idJadwalBertugas)
+                false,
+                idTugasSiaga)
+
             siklusTodayRef.document()
                 .set(dataSiklus)
                 .addOnSuccessListener {
@@ -364,6 +423,7 @@ class SecurityDashboardActivity : AppCompatActivity() {
     @SuppressLint("SimpleDateFormat")
     private fun ambilWaktu(waktu: String){
         try {
+            
             val df = SimpleDateFormat("HH.mm")
             val calendar = Calendar.getInstance()
             calendar.time =df.parse(waktu)
