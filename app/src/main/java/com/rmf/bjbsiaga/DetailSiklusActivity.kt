@@ -67,9 +67,8 @@ class DetailSiklusActivity : AppCompatActivity() {
     private lateinit var textHeader: TextView
     private lateinit var btnOK: Button
 
-    private lateinit var idJadwalBertugas: String
 
-    lateinit var alertDialogCompleteSiklus : AlertDialog
+    private lateinit var alertDialogCompleteSiklus : AlertDialog
     private lateinit var btnOKCompleteSiklus: Button
 
     var broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
