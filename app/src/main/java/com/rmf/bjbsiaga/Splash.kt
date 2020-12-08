@@ -10,6 +10,7 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.rmf.bjbsiaga.security.Camera
 
 class Splash : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,7 +39,7 @@ class Splash : AppCompatActivity() {
             .check()
     }
     fun start(){
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(this, Camera::class.java)
         startActivity(intent)
     }
 

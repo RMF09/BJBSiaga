@@ -21,8 +21,6 @@ import com.google.firebase.firestore.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.zxing.integration.android.IntentIntegrator
-import com.rmf.bjbsiaga.CapturePotrait
-import com.rmf.bjbsiaga.MainActivity
 import com.rmf.bjbsiaga.R
 import com.rmf.bjbsiaga.adapter.RVAdapterSiklus
 import com.rmf.bjbsiaga.data.DataDetailSiklus
@@ -171,7 +169,7 @@ class DetailSiklusActivity : AppCompatActivity() {
         }
 
         btn_open_camera.setOnClickListener {
-            startActivityForResult(Intent(this, MainActivity::class.java),1)
+            startActivityForResult(Intent(this, Camera::class.java),1)
         }
     }
 

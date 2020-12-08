@@ -32,7 +32,7 @@
         <activity android:name=".Act"></activity>
         <activity android:name=".KonfirmasiRuanganTelahSelesai" />
         <activity
-            android:name=".CapturePotrait"
+            android:name=".security.CapturePotrait"
             android:screenOrientation="sensorPortrait"
             android:stateNotNeeded="true"
             android:theme="@style/zxing_CaptureTheme"
@@ -72,7 +72,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".Splash" />
-        <activity android:name=".MainActivity" />
+        <activity android:name=".security.Camera" />
 
         <receiver android:name=".services.AlarmReceiver">
             <intent-filter>

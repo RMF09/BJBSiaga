@@ -1,17 +1,15 @@
-package com.rmf.bjbsiaga
+package com.rmf.bjbsiaga.security
 
 import android.Manifest
 import android.content.Intent
 import android.graphics.Matrix
 import android.graphics.SurfaceTexture
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Environment
 import android.util.DisplayMetrics
 import android.util.Rational
 import android.util.Size
 import android.view.Surface
-import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
@@ -20,13 +18,13 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import eightbitlab.com.blurview.RenderScriptBlur
+import com.rmf.bjbsiaga.R
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 
 
 @Suppress("DEPRECATION")
-class MainActivity : AppCompatActivity() {
+class Camera : AppCompatActivity() {
     private var lensFacing = CameraX.LensFacing.BACK
 
     override fun onCreate(savedInstanceState: Bundle?) {
