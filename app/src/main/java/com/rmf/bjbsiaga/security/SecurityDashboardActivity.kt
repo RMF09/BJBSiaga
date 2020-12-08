@@ -10,7 +10,6 @@ import androidx.appcompat.app.AlertDialog
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.rmf.bjbsiaga.DetailSiklusActivity
 import com.rmf.bjbsiaga.LoginActivity
 import com.rmf.bjbsiaga.R
 import com.rmf.bjbsiaga.data.DataJadwalBertugas
@@ -110,7 +109,7 @@ class SecurityDashboardActivity : AppCompatActivity() {
     private fun keDetailSiklus(index: Int){
         if(listSiklus.size >0){
             pergiKeDetailSiklus=true
-            val intent = Intent(this,DetailSiklusActivity::class.java)
+            val intent = Intent(this, DetailSiklusActivity::class.java)
             intent.putExtra("siklus", listSiklus[index].siklusKe)
             intent.putExtra("id", listSiklus[index].documentId)
             startActivity(intent)

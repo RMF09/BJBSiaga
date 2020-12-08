@@ -1,4 +1,4 @@
-package com.rmf.bjbsiaga
+package com.rmf.bjbsiaga.security
 
 import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
@@ -21,6 +21,9 @@ import com.google.firebase.firestore.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.zxing.integration.android.IntentIntegrator
+import com.rmf.bjbsiaga.CapturePotrait
+import com.rmf.bjbsiaga.MainActivity
+import com.rmf.bjbsiaga.R
 import com.rmf.bjbsiaga.adapter.RVAdapterSiklus
 import com.rmf.bjbsiaga.data.DataDetailSiklus
 import com.rmf.bjbsiaga.data.DataRuangan
@@ -168,7 +171,7 @@ class DetailSiklusActivity : AppCompatActivity() {
         }
 
         btn_open_camera.setOnClickListener {
-            startActivityForResult(Intent(this,MainActivity::class.java),1)
+            startActivityForResult(Intent(this, MainActivity::class.java),1)
         }
     }
 
