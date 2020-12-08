@@ -11,6 +11,7 @@ class Config {
         val ID_SIKLUS= "idSiklus"
         val EMAIL_SUDAH_DIGUNAKAN ="com.google.firebase.auth.FirebaseAuthUserCollisionException: The email address is already in use by another account."
         val TGL ="d-MM-yyyy"
+        val TGL2 ="EEEE, d MMMM yyyy"
         val HARI ="EEEE"
         val JAM ="HH.mm"
         val TANGGAL_FIELD= "tanggal"
@@ -39,6 +40,11 @@ class Config {
         @SuppressLint("SimpleDateFormat")
         fun convertTanggalTimeStamp(timeStamp: Date?): String{
             val sdf = SimpleDateFormat(TGL)
+            return sdf.format(timeStamp)
+        }
+        @SuppressLint("SimpleDateFormat")
+        fun convertTanggalTimeStamp2(timeStamp: Date?): String{
+            val sdf = SimpleDateFormat(TGL2)
             return sdf.format(timeStamp)
         }
 

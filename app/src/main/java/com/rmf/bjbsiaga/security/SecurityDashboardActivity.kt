@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.animation.AnimationUtils
+import android.widget.Button
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -26,6 +28,7 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.concurrent.schedule
 import kotlin.random.Random
 
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
@@ -52,6 +55,13 @@ class SecurityDashboardActivity : AppCompatActivity() {
     private var shift: String= ""
 
     private var statusTugasSiaga= false
+    private var tanggalTugasSiga= ""
+    private var tampilDialogSiklusComplete=false
+
+    private lateinit var alertDialogCompleteSiklus: AlertDialog
+    private lateinit var textTitleCompleteSiklus: TextView
+    private lateinit var textKeteranganCompleteSiklus: TextView
+    private lateinit var btnOKCompleteSiklus: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,8 +70,8 @@ class SecurityDashboardActivity : AppCompatActivity() {
 
         initListMalam()
         initDialog()
-        initDB()
 
+        initDB()
 
         //check is Login and get nama
         if(SharedPref.getInstance(this)!!.isLoggedIn()){
@@ -106,13 +116,40 @@ class SecurityDashboardActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
+    fun initDialogCompleteSiklus(){
+        val builder = AlertDialog.Builder(this)
+        val view = layoutInflater.inflate(R.layout.dialog_konfirmasi_ruangan_telah_selesai,null)
+
+        view.apply {
+            textTitleCompleteSiklus = findViewById(R.id.text_title_complete)
+            textKeteranganCompleteSiklus = findViewById(R.id.text_keterangan)
+            btnOKCompleteSiklus = findViewById(R.id.btn_ok_dialog_detail_siklus)
+
+            textTitleCompleteSiklus.text = "Tugas Siaga Selesai!"
+            textKeteranganCompleteSiklus.text = "Tugas Siaga Anda pada hari $tanggalTugasSiga telah selesai"
+
+        }
+
+        builder.setView(view)
+        alertDialogCompleteSiklus = builder.create()
+        alertDialogCompleteSiklus.setCancelable(false)
+        alertDialogCompleteSiklus.window?.setWindowAnimations(R.style.DialogAnimation)
+
+        btnOKCompleteSiklus.setOnClickListener {
+            alertDialogCompleteSiklus.dismiss()
+
+        }
+    }
+
     private fun keDetailSiklus(index: Int){
         if(listSiklus.size >0){
             pergiKeDetailSiklus=true
-            val intent = Intent(this, DetailSiklusActivity::class.java)
-            intent.putExtra("siklus", listSiklus[index].siklusKe)
-            intent.putExtra("id", listSiklus[index].documentId)
-            startActivity(intent)
+            Intent(this, DetailSiklusActivity::class.java).apply {
+                putExtra("siklus", listSiklus[index].siklusKe)
+                putExtra("id", listSiklus[index].documentId)
+                startActivity(this)
+            }
         }
     }
 
@@ -181,7 +218,6 @@ class SecurityDashboardActivity : AppCompatActivity() {
     private fun checkTugasSiaga(){
         var tglTugasSiaga : Date? = null
 
-
         tugasSiagaRef.whereEqualTo("idJadwalBertugas", idJadwalBertugas)
             .orderBy(TANGGAL_FIELD,Query.Direction.DESCENDING)
             .limit(1)
@@ -194,12 +230,13 @@ class SecurityDashboardActivity : AppCompatActivity() {
                         idTugasSiaga = dataTugasSiaga.documentId
                         tglTugasSiaga = dataTugasSiaga.tanggal
                         statusTugasSiaga = dataTugasSiaga.statusSudahBeres
-                        
+                        tanggalTugasSiga = Config.convertTanggalTimeStamp2(tglTugasSiaga)
                         Log.d(TAG, "checkTugasSiaga:  ${dataTugasSiaga.tanggal} ${dataTugasSiaga.tanggal?.let { it1 ->
                             Config.convertTanggalTimeStamp(
                                 it1
                             )
                         }}")
+                        initDialogCompleteSiklus()
                         loadDataSiklus()
                     }
 
@@ -353,6 +390,10 @@ class SecurityDashboardActivity : AppCompatActivity() {
         //Final Destination
         if(listSiklus.size==4 && lastData.sudahBeres){
             Log.d(TAG, "checkSiklusSudahBeres: Sudah beres semua! Update status Tugas Siaga! ")
+            if(!alertDialogCompleteSiklus.isShowing && !tampilDialogSiklusComplete){
+                alertDialogCompleteSiklus.show()
+                tampilDialogSiklusComplete=true
+            }
             if(!statusTugasSiaga){
                 updateStatusTugas()
             }

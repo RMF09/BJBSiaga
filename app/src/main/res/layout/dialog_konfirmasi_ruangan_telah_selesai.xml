@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:background="@color/colorPD"
     android:padding="24dp"
@@ -21,6 +21,7 @@
             android:contentDescription="@string/description_image"
             android:layout_marginBottom="20dp"/>
         <TextView
+            android:id="@+id/text_title_complete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/semua_ruangan_telah_diperiksa"
