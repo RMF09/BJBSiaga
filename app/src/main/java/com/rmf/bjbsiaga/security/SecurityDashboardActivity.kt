@@ -12,6 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.rmf.bjbsiaga.DialogSelesaiActivity
 import com.rmf.bjbsiaga.LoginActivity
 import com.rmf.bjbsiaga.R
 import com.rmf.bjbsiaga.data.DataJadwalBertugas
@@ -270,6 +271,7 @@ class SecurityDashboardActivity : AppCompatActivity() {
                             }
                         }
                     }
+                    //end beda tanggal
                     else {
                         Log.d(TAG, "checkTugasSiaga: loadDataSiklus")
                         loadDataSiklus()
@@ -294,6 +296,13 @@ class SecurityDashboardActivity : AppCompatActivity() {
         if(jamSekarang>jamTerakhirDariShift){
             updateStatusTugas()
         }
+        else{
+            //load data siklus kemarin
+        }
+
+    }
+
+    private fun t() {
 
     }
 
@@ -404,7 +413,12 @@ class SecurityDashboardActivity : AppCompatActivity() {
         if(listSiklus.size==4 && lastData.sudahBeres){
             Log.d(TAG, "checkSiklusSudahBeres: Sudah beres semua! Update status Tugas Siaga! ")
             if(!alertDialogCompleteSiklus.isShowing && !tampilDialogSiklusComplete){
-                alertDialogCompleteSiklus.show()
+//                alertDialogCompleteSiklus.show()
+                Intent(this,DialogSelesaiActivity::class.java).apply {
+                    putExtra("tanggal", tanggalTugasSiga)
+                    startActivity(this)
+                }
+
                 tampilDialogSiklusComplete=true
             }
             if(!statusTugasSiaga){
