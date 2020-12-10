@@ -31,6 +31,7 @@ import com.rmf.bjbsiaga.util.Config.Companion.ID_SIKLUS
 import com.rmf.bjbsiaga.util.Config.Companion.TANGGAL_FIELD
 import com.rmf.bjbsiaga.util.Config.Companion.dateNow
 import com.rmf.bjbsiaga.util.Config.Companion.jamSekarang
+import com.rmf.bjbsiaga.util.RMFRequestCode
 import kotlinx.android.synthetic.main.activity_detail_siklus.*
 import org.json.JSONObject
 import java.io.File
@@ -71,6 +72,9 @@ class DetailSiklusActivity : AppCompatActivity() {
 
     private lateinit var alertDialogCompleteSiklus : AlertDialog
     private lateinit var btnOKCompleteSiklus: Button
+
+    private var latRuanganTerpilih =0.0
+    private var lngRuanganTerpilih =0.0
 
     var broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent) {
@@ -187,6 +191,21 @@ class DetailSiklusActivity : AppCompatActivity() {
                 }
         }
     }
+
+    private fun getCoordinatRuangan(){
+        idRuanganTerpilih?.let {
+            ruanganRef.document(it)
+                .get()
+                .addOnSuccessListener { documentSnapshot ->
+                    if(documentSnapshot.exists()){
+                        val dataRuangan = documentSnapshot.toObject(DataRuangan::class.java)
+                        latRuanganTerpilih = dataRuangan!!.lat
+                        lngRuanganTerpilih = dataRuangan.lng
+
+                    }
+                }
+        }
+    }
     
     private fun checkIsDone(){
         val totalData = list.size
@@ -251,6 +270,7 @@ class DetailSiklusActivity : AppCompatActivity() {
                 updateData(name)
                 textHeader.text= "Berhasil mengupload foto"
                 btnOK.isEnabled = true
+                file.delete()
 
             }
             .addOnFailureListener {
@@ -268,7 +288,7 @@ class DetailSiklusActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
         Log.d(TAG, "onActivityResult: $requestCode")
-        if(requestCode==1){
+        if(requestCode==RMFRequestCode.REQUEST_CODE_FROM_CAMERA){
             if(resultCode== RESULT_OK){
                 Log.d(TAG, "onActivityResult: Tina kamera photo")
                 //Toast.makeText(this,data!!.getStringExtra("msg"),Toast.LENGTH_SHORT).show()

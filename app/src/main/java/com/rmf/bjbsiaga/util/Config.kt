@@ -61,6 +61,11 @@ class Config {
                 0
             }
         }
+        @SuppressLint("SimpleDateFormat")
+        fun dateKemarin(tanggal: Date): String{
+            val sdf = SimpleDateFormat(TGL)
+            return sdf.format(tanggal)
+        }
 
     }
 }

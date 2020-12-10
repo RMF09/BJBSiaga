@@ -27,6 +27,7 @@ import com.rmf.bjbsiaga.util.SharedPref
 import kotlinx.android.synthetic.main.activity_security_dashboard.*
 import java.text.ParseException
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.concurrent.schedule
@@ -63,6 +64,7 @@ class SecurityDashboardActivity : AppCompatActivity() {
     private lateinit var textTitleCompleteSiklus: TextView
     private lateinit var textKeteranganCompleteSiklus: TextView
     private lateinit var btnOKCompleteSiklus: Button
+    private var isYesterday = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -288,6 +290,37 @@ class SecurityDashboardActivity : AppCompatActivity() {
             }
     }
 
+    private fun checkTugasSiagaKemarin(){
+        var tglTugasSiaga : Date? = null
+
+        tugasSiagaRef.whereEqualTo("idJadwalBertugas", idJadwalBertugas)
+            .orderBy(TANGGAL_FIELD,Query.Direction.DESCENDING)
+            .limit(1)
+            .get()
+            .addOnSuccessListener {
+                if(!it.isEmpty){
+                    for (document in it){
+                        val dataTugasSiaga = document.toObject(DataTugasSiaga::class.java)
+                        dataTugasSiaga.documentId = document.id
+                        idTugasSiaga = dataTugasSiaga.documentId
+                        tglTugasSiaga = dataTugasSiaga.tanggal
+                        statusTugasSiaga = dataTugasSiaga.statusSudahBeres
+                        tanggalTugasSiga = Config.convertTanggalTimeStamp2(tglTugasSiaga)
+                        Log.d(TAG, "checkTugasSiagaKemarin:  ${dataTugasSiaga.tanggal} ${dataTugasSiaga.tanggal?.let { it1 ->
+                            Config.convertTanggalTimeStamp(
+                                it1
+                            )
+                        }}")
+
+                    }
+                    loadDataSiklus()
+                }
+            }
+            .addOnFailureListener {
+                Log.e(TAG, "checkTugasSiagaKemarin: $it" )
+            }
+    }
+
     private fun checkTugasSiagaTelahBerakhir(jamTerakhirDariShift: Int) {
         val calendar = Calendar.getInstance()
         val jamSekarang =  calendar.get(Calendar.HOUR_OF_DAY)
@@ -297,12 +330,12 @@ class SecurityDashboardActivity : AppCompatActivity() {
             updateStatusTugas()
         }
         else{
+            isYesterday=true
             //load data siklus kemarin
+
+            checkTugasSiagaKemarin()
+
         }
-
-    }
-
-    private fun t() {
 
     }
 
@@ -319,8 +352,18 @@ class SecurityDashboardActivity : AppCompatActivity() {
     }
 
     private fun loadDataSiklus(){
+        var dateSiaga = if(!isYesterday){
+            dateNow()
+        } else{
+            val calendarKemarin = Calendar.getInstance()
+            calendarKemarin.add(Calendar.DATE, -1)
+            val dateKemarin : Date = calendarKemarin.time
+
+            Log.e(TAG, "LoadDataSiklus: Hari Kemarin ${Config.dateKemarin(dateKemarin)}")
+            Config.dateKemarin(dateKemarin)
+        }
         listSiklus.clear()
-        siklusTodayRef.whereEqualTo(TANGGAL_FIELD,dateNow())
+        siklusTodayRef.whereEqualTo(TANGGAL_FIELD,dateSiaga)
             .get()
             .addOnSuccessListener {
                 if(!it.isEmpty){

@@ -83,4 +83,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:contentDescription="@string/open_qr" />
 
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/mapView"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="14dp"
+        android:layout_marginStart="14dp"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
