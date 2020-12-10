@@ -70,7 +70,7 @@ class SecurityDashboardActivity : AppCompatActivity() {
 
         initListMalam()
         initDialog()
-
+        initDialogCompleteSiklus()
         initDB()
 
         //check is Login and get nama
@@ -88,6 +88,16 @@ class SecurityDashboardActivity : AppCompatActivity() {
                             }
                             Log.e(TAG, "onCreate: ${documentSnapshot.getString("nama")}" )
                             checkJadwalBertugas()
+                            /**
+                             * STEP 1 : Check JadwaL Bertugas hari ini
+                             * STEP 2 : jika ada jadwal check tugas siaga, ambil waktu terakhir absen
+                             * a1) jika tgl data terakhir beda (hari dengan kemarin)  status siaga belum beres, ADD TUGAS SIAGA BARU
+                             * b) jika data terakhir shift malam  check Tugas Siaga Telah Berakhir dan check jamSekarang > jam terakhir dari shift,
+                             * UPDATE STATUS SIAGA SELESAI -> Check tugas Siaga
+                             * a2) load Data siklus
+                             * -Jika data tugas siaga kosong, ADD
+                             */
+
                         }
                         else{
                             Log.e(TAG, "onCreate: Tidak ada User")
@@ -236,8 +246,8 @@ class SecurityDashboardActivity : AppCompatActivity() {
                                 it1
                             )
                         }}")
-                        initDialogCompleteSiklus()
-                        loadDataSiklus()
+//                        initDialogCompleteSiklus()
+//                        loadDataSiklus()
                     }
 
                     Log.d(TAG, "checkTugasSiaga: tgl $tglTugasSiaga , ayena ${Date()}")
@@ -250,18 +260,20 @@ class SecurityDashboardActivity : AppCompatActivity() {
                     if(hasilTglTugasSiaga != hasilTanggalSekarang){
                         Log.d(TAG, "checkTugasSiaga: beda tanggal")
                         if(statusTugasSiaga){
-                            Log.d(TAG, "checkTugasSiaga: status Tugas Siaga :  $statusTugasSiaga, add tugasSiaga hari ini")
+                            Log.d(TAG, "checkTugasSiaga: status Tugas Siaga :  $statusTugasSiaga, tambahkan tugasSiaga hari ini")
                             addTugasSiaga()
                         }else{
                             val jamTerakhirDariShift: Int
-
                             if(shift == "malam"){
                                 jamTerakhirDariShift = Config.ambilJam(listShiftMalam[listShiftMalam.size-1])
                                 checkTugasSiagaTelahBerakhir(jamTerakhirDariShift)
                             }
                         }
                     }
-                    
+                    else {
+                        Log.d(TAG, "checkTugasSiaga: loadDataSiklus")
+                        loadDataSiklus()
+                    }
                     Log.d(TAG, "checkTugasSiaga: $idTugasSiaga")
                 }
                 else{
@@ -308,9 +320,10 @@ class SecurityDashboardActivity : AppCompatActivity() {
                         dataSiklus.documentId = document.id
                         listSiklus.add(dataSiklus)
                         Log.d(TAG, "loadDataSiklus: Siklus ke ${listSiklus.size}")
-                        ambilWaktu(dataSiklus.pukul)
+                        ambilWaktu(dataSiklus.pukul);
 
                     }
+//                    pukul = listSiklus[listSiklus.size]
                     enableButton()
                     checkSiklusSudahBeres()
                     setAlarmForLastDataSiklus()
