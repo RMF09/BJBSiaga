@@ -17,6 +17,12 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.CircleOptions
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.firestore.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -33,6 +39,9 @@ import com.rmf.bjbsiaga.util.Config.Companion.dateNow
 import com.rmf.bjbsiaga.util.Config.Companion.jamSekarang
 import com.rmf.bjbsiaga.util.RMFRequestCode
 import kotlinx.android.synthetic.main.activity_detail_siklus.*
+import kotlinx.android.synthetic.main.activity_detail_siklus.back
+import kotlinx.android.synthetic.main.activity_detail_siklus.mapView
+import kotlinx.android.synthetic.main.activity_maps.*
 import org.json.JSONObject
 import java.io.File
 import java.util.*
@@ -40,7 +49,7 @@ import kotlin.collections.ArrayList
 import kotlin.concurrent.schedule
 
 
-class DetailSiklusActivity : AppCompatActivity() {
+class DetailSiklusActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var listRuangan : ArrayList<DataRuangan>
     private lateinit var list : ArrayList<DataDetailSiklus>
@@ -75,6 +84,7 @@ class DetailSiklusActivity : AppCompatActivity() {
 
     private var latRuanganTerpilih =0.0
     private var lngRuanganTerpilih =0.0
+    private lateinit var mMap: GoogleMap
 
     var broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent) {
@@ -82,11 +92,14 @@ class DetailSiklusActivity : AppCompatActivity() {
             // Get extra data included in the Intent
             id = intent.getStringExtra("id")
             idRuanganTerpilih = intent.getStringExtra("id_ruangan")
-            positionSelected = intent.getIntExtra("position_selected",0)
-            diCheckSelected = intent.getBooleanExtra("di_check",false)
+            positionSelected = intent.getIntExtra("position_selected", 0)
+            diCheckSelected = intent.getBooleanExtra("di_check", false)
             fotoSelected = intent.getStringExtra("foto")
 
-            Log.d(TAG, "onReceive: id: $id, id ruangan terpilih: $idRuanganTerpilih, posisi : $positionSelected, diCheck : $diCheckSelected")
+            Log.d(
+                TAG,
+                "onReceive: id: $id, id ruangan terpilih: $idRuanganTerpilih, posisi : $positionSelected, diCheck : $diCheckSelected"
+            )
             checkLastData()
 
         }
@@ -147,6 +160,14 @@ class DetailSiklusActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail_siklus)
 
+        var mapViewBundle :Bundle? =null
+        if(savedInstanceState!=null){
+            mapViewBundle = savedInstanceState.getBundle("MapViewBundleKey")
+        }
+
+        mapView.onCreate(mapViewBundle)
+        mapView.getMapAsync(this)
+
         initDialog()
         initDialogCompleteSiklus()
         idSiklus = intent.getStringExtra("id").toString()
@@ -173,7 +194,7 @@ class DetailSiklusActivity : AppCompatActivity() {
         }
 
         btn_open_camera.setOnClickListener {
-            startActivityForResult(Intent(this, Camera::class.java),1)
+            startActivityForResult(Intent(this, Camera::class.java), 1)
         }
     }
 
@@ -181,13 +202,13 @@ class DetailSiklusActivity : AppCompatActivity() {
         Log.d(TAG, "siklusBeres: id $idSiklus")
         idSiklus.let {
             siklusRef.document(it)
-                .update("sudahBeres",true)
+                .update("sudahBeres", true)
                 .addOnSuccessListener {
                     Log.d(TAG, "siklusBeres: success")
                     alertDialogCompleteSiklus.show()
                 }
                 .addOnFailureListener { e->
-                    Log.e(TAG, "siklusBeres: gagal $e" )
+                    Log.e(TAG, "siklusBeres: gagal $e")
                 }
         }
     }
@@ -225,7 +246,7 @@ class DetailSiklusActivity : AppCompatActivity() {
     private fun updateData(name: String){
         id?.let {
             detailSiklusRef.document(it)
-                .update("foto",name)
+                .update("foto", name)
                 .addOnSuccessListener {
                     Log.d(TAG, "updateData: Berhasil update Data")
                     //loadData()
@@ -245,7 +266,7 @@ class DetailSiklusActivity : AppCompatActivity() {
 //                .update("diCheck",true)
                 .set(dataDetailSiklus, SetOptions.merge())
                 .addOnFailureListener { e->
-                    Log.e(TAG, "checkQR: $e" )
+                    Log.e(TAG, "checkQR: $e")
 
                 }
                 .addOnSuccessListener {
@@ -296,7 +317,7 @@ class DetailSiklusActivity : AppCompatActivity() {
                 uploadFoto(file)
             }
         }else{
-            val result = IntentIntegrator.parseActivityResult(requestCode,resultCode,data)
+            val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
             if(result!=null){
                 if(result.contents==null){ Log.d(TAG, "onActivityResult: QR Kosong") }
                 else{ Log.d(TAG, "onActivityResult: ${result.contents}")
@@ -305,10 +326,14 @@ class DetailSiklusActivity : AppCompatActivity() {
                             val idRuangan = this.get("idRuangan")
                             if(idRuangan == idRuanganTerpilih){
                                 checkQR()
-                            }else{ Toast.makeText(this@DetailSiklusActivity,"Salah scan tempat!",Toast.LENGTH_LONG).show() }
+                            }else{ Toast.makeText(
+                                this@DetailSiklusActivity,
+                                "Salah scan tempat!",
+                                Toast.LENGTH_LONG
+                            ).show() }
                         }
                     }
-                    catch (e: Exception){ Log.e(TAG, "onActivityResult: $e" ) }
+                    catch (e: Exception){ Log.e(TAG, "onActivityResult: $e") }
                 }
             }
             else{ super.onActivityResult(requestCode, resultCode, data) }
@@ -439,7 +464,7 @@ class DetailSiklusActivity : AppCompatActivity() {
 
     private fun initDialog(){
         val builder = AlertDialog.Builder(this)
-        val view = layoutInflater.inflate(R.layout.dialog_progress,null)
+        val view = layoutInflater.inflate(R.layout.dialog_progress, null)
 
         textHeader = view.findViewById(R.id.text_header_progress)
         progressBar = view.findViewById(R.id.progress_bar)
@@ -459,7 +484,7 @@ class DetailSiklusActivity : AppCompatActivity() {
 
     fun initDialogCompleteSiklus(){
         val builder = AlertDialog.Builder(this)
-        val view = layoutInflater.inflate(R.layout.dialog_konfirmasi_ruangan_telah_selesai,null)
+        val view = layoutInflater.inflate(R.layout.dialog_konfirmasi_ruangan_telah_selesai, null)
 
         btnOKCompleteSiklus = view.findViewById(R.id.btn_ok_dialog_detail_siklus)
 
@@ -471,7 +496,7 @@ class DetailSiklusActivity : AppCompatActivity() {
         btnOKCompleteSiklus.setOnClickListener {
 
             alertDialogCompleteSiklus.dismiss()
-            Timer("finish",false).schedule(1000){
+            Timer("finish", false).schedule(1000){
                 finish()
             }
         }
@@ -489,5 +514,18 @@ class DetailSiklusActivity : AppCompatActivity() {
     override fun onPause() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver)
         super.onPause()
+    }
+
+    override fun onMapReady(googleMap: GoogleMap) {
+        mMap = googleMap
+        val latLngRuangan = LatLng(latRuanganTerpilih,lngRuanganTerpilih)
+        val markerOptionsRuangan =
+            MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+                .position(latLngRuangan).title("Ruangan")
+
+        //Circle
+
+        //Circle
+        val circleOptions = CircleOptions()
     }
 }
