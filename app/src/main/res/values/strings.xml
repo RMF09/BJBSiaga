@@ -58,4 +58,10 @@
     <string name="burning_hall">Burning Hall</string>
     <string name="belum_dicek">Belum dicek</string>
     <string name="title_activity_nav_security">NavSecurity</string>
+    <string name="shift">Shift</string>
+    
+    <string-array name="list_shift">
+        <item>Malam</item>
+        <item>Pagi</item>
+    </string-array>
 </resources>

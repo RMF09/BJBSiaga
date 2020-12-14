@@ -57,7 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/nama_jadwal"
-            android:textColor="@color/colorAccent"/>
+            android:textColor="@color/colorWhiteText"/>
 
         <EditText
             android:id="@+id/edit_nama"
@@ -70,6 +70,32 @@
             android:inputType="textPersonName"
             android:importantForAutofill="no"
             tools:ignore="LabelFor" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/shift"
+
+            android:textColor="@color/colorWhiteText"/>
+
+        <Spinner
+            android:id="@+id/spinner_shift"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:entries="@array/list_shift"
+            android:background="@drawable/spinner_bg"/>
+
+<!--        <EditText-->
+<!--            android:id="@+id/edit_shift"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:background="@drawable/rounded_corner_edit2"-->
+<!--            android:paddingHorizontal="18dp"-->
+<!--            android:paddingVertical="12dp"-->
+<!--            android:layout_marginBottom="8dp"-->
+<!--            android:inputType="textPersonName"-->
+<!--            android:importantForAutofill="no"-->
+<!--            tools:ignore="LabelFor" />-->
 
 
         <androidx.appcompat.widget.AppCompatButton
