@@ -29,6 +29,7 @@ import com.rmf.bjbsiaga.R
 import com.rmf.bjbsiaga.data.DataRuangan
 import com.rmf.bjbsiaga.data.DataSecurity
 import com.rmf.bjbsiaga.util.CollectionsFS
+import com.rmf.bjbsiaga.util.MapUtils.Companion.getMarkerIcon
 import kotlinx.android.synthetic.main.activity_maps.*
 import kotlinx.android.synthetic.main.activity_maps.btn_tambah_data
 
@@ -244,13 +245,6 @@ class TambahRuanganActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
 
-    fun getMarkerIcon(drawable : Drawable) : BitmapDescriptor{
-        val canvas = Canvas()
-        val bitmap = Bitmap.createBitmap(drawable.intrinsicWidth,drawable.intrinsicHeight,Bitmap.Config.ARGB_8888)
-        canvas.setBitmap(bitmap)
-        drawable.setBounds(0,0,drawable.intrinsicHeight,drawable.intrinsicHeight)
-        drawable.draw(canvas)
-        return BitmapDescriptorFactory.fromBitmap(bitmap)
-    }
+
 
 }

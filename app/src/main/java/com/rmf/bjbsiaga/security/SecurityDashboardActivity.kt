@@ -1,5 +1,6 @@
 package com.rmf.bjbsiaga.security
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +13,11 @@ import androidx.appcompat.app.AlertDialog
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.rmf.bjbsiaga.DialogSelesaiActivity
 import com.rmf.bjbsiaga.LoginActivity
 import com.rmf.bjbsiaga.R
@@ -27,10 +33,8 @@ import com.rmf.bjbsiaga.util.SharedPref
 import kotlinx.android.synthetic.main.activity_security_dashboard.*
 import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.concurrent.schedule
 import kotlin.random.Random
 
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
@@ -75,6 +79,8 @@ class SecurityDashboardActivity : AppCompatActivity() {
         initDialog()
         initDialogCompleteSiklus()
         initDB()
+
+        checkPermission()
 
         //check is Login and get nama
         if(SharedPref.getInstance(this)!!.isLoggedIn()){
@@ -127,6 +133,30 @@ class SecurityDashboardActivity : AppCompatActivity() {
         btn_siklus4.setOnClickListener {
             this.keDetailSiklus(3)
         }
+    }
+    private fun checkPermission(){
+        Dexter.withContext(this)
+            .withPermissions(
+                Manifest.permission.CAMERA,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+            .withListener(object : MultiplePermissionsListener {
+                override fun onPermissionRationaleShouldBeShown(
+                    p0: MutableList<PermissionRequest>?,
+                    p1: PermissionToken?
+                ) {
+                    p1?.continuePermissionRequest()
+                }
+
+                override fun onPermissionsChecked(p0: MultiplePermissionsReport?) {
+//                    if(p0!!.areAllPermissionsGranted()){
+//                        start()
+//                    }
+                }
+            })
+            .check()
     }
 
     @SuppressLint("SetTextI18n")
@@ -291,7 +321,7 @@ class SecurityDashboardActivity : AppCompatActivity() {
     }
 
     private fun checkTugasSiagaKemarin(){
-        var tglTugasSiaga : Date? = null
+        var tglTugasSiaga : Date?
 
         tugasSiagaRef.whereEqualTo("idJadwalBertugas", idJadwalBertugas)
             .orderBy(TANGGAL_FIELD,Query.Direction.DESCENDING)
@@ -352,7 +382,7 @@ class SecurityDashboardActivity : AppCompatActivity() {
     }
 
     private fun loadDataSiklus(){
-        var dateSiaga = if(!isYesterday){
+        val dateSiaga = if(!isYesterday){
             dateNow()
         } else{
             val calendarKemarin = Calendar.getInstance()
@@ -372,7 +402,7 @@ class SecurityDashboardActivity : AppCompatActivity() {
                         dataSiklus.documentId = document.id
                         listSiklus.add(dataSiklus)
                         Log.d(TAG, "loadDataSiklus: Siklus ke ${listSiklus.size}")
-                        ambilWaktu(dataSiklus.pukul);
+                        ambilWaktu(dataSiklus.pukul)
 
                     }
 //                    pukul = listSiklus[listSiklus.size]

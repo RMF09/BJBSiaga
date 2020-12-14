@@ -1,13 +1,18 @@
 package com.rmf.bjbsiaga.security
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.content.res.ColorStateList
+import android.graphics.Color
+import android.location.Location
 import android.net.Uri
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.util.Log
 import android.widget.Button
 import android.widget.ProgressBar
@@ -15,18 +20,24 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.zxing.integration.android.IntentIntegrator
+import com.google.zxing.integration.android.IntentIntegrator.REQUEST_CODE
 import com.rmf.bjbsiaga.R
 import com.rmf.bjbsiaga.adapter.RVAdapterSiklus
 import com.rmf.bjbsiaga.data.DataDetailSiklus
@@ -37,10 +48,10 @@ import com.rmf.bjbsiaga.util.Config.Companion.ID_SIKLUS
 import com.rmf.bjbsiaga.util.Config.Companion.TANGGAL_FIELD
 import com.rmf.bjbsiaga.util.Config.Companion.dateNow
 import com.rmf.bjbsiaga.util.Config.Companion.jamSekarang
+import com.rmf.bjbsiaga.util.MapUtils.Companion.getMarkerIcon
 import com.rmf.bjbsiaga.util.RMFRequestCode
 import kotlinx.android.synthetic.main.activity_detail_siklus.*
 import kotlinx.android.synthetic.main.activity_detail_siklus.back
-import kotlinx.android.synthetic.main.activity_detail_siklus.mapView
 import kotlinx.android.synthetic.main.activity_maps.*
 import org.json.JSONObject
 import java.io.File
@@ -49,7 +60,7 @@ import kotlin.collections.ArrayList
 import kotlin.concurrent.schedule
 
 
-class DetailSiklusActivity : AppCompatActivity(), OnMapReadyCallback {
+class DetailSiklusActivity : AppCompatActivity(),OnMapReadyCallback{
 
     private lateinit var listRuangan : ArrayList<DataRuangan>
     private lateinit var list : ArrayList<DataDetailSiklus>
@@ -84,7 +95,14 @@ class DetailSiklusActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private var latRuanganTerpilih =0.0
     private var lngRuanganTerpilih =0.0
+    private var latMyLocation =0.0
+    private var lngMyLocation =0.0
     private lateinit var mMap: GoogleMap
+    private var dalamJangkauanRuangan =false
+
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+
+    private val MAP_VIEW_BUNDLE_KEY = "MapViewBundleKey"
 
     var broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent) {
@@ -101,6 +119,7 @@ class DetailSiklusActivity : AppCompatActivity(), OnMapReadyCallback {
                 "onReceive: id: $id, id ruangan terpilih: $idRuanganTerpilih, posisi : $positionSelected, diCheck : $diCheckSelected"
             )
             checkLastData()
+            getCoordinatRuangan()
 
         }
     }
@@ -162,11 +181,15 @@ class DetailSiklusActivity : AppCompatActivity(), OnMapReadyCallback {
 
         var mapViewBundle :Bundle? =null
         if(savedInstanceState!=null){
-            mapViewBundle = savedInstanceState.getBundle("MapViewBundleKey")
+            mapViewBundle = savedInstanceState.getBundle(MAP_VIEW_BUNDLE_KEY)
         }
 
-        mapView.onCreate(mapViewBundle)
-        mapView.getMapAsync(this)
+
+        mapView2.onCreate(mapViewBundle)
+        mapView2.getMapAsync(this)
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        fetchMyLocation()
 
         initDialog()
         initDialogCompleteSiklus()
@@ -222,6 +245,9 @@ class DetailSiklusActivity : AppCompatActivity(), OnMapReadyCallback {
                         val dataRuangan = documentSnapshot.toObject(DataRuangan::class.java)
                         latRuanganTerpilih = dataRuangan!!.lat
                         lngRuanganTerpilih = dataRuangan.lng
+
+                        Log.d(TAG, "getCoordinatRuangan: $latRuanganTerpilih, $lngRuanganTerpilih")
+                        mapView2.getMapAsync(this)
 
                     }
                 }
@@ -341,8 +367,24 @@ class DetailSiklusActivity : AppCompatActivity(), OnMapReadyCallback {
 
     }
 
+    override fun onStop() {
+        super.onStop()
+        mapView2.onStop()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        mapView2.onLowMemory()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mapView2.onDestroy()
+    }
+
     override fun onStart() {
         super.onStart()
+        mapView2.onStart()
 
 
 //        detailSiklusRef.whereEqualTo(TANGGAL_FIELD, dateNow()).whereEqualTo("idSiklus", idSiklus)
@@ -502,6 +544,7 @@ class DetailSiklusActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+
     override fun onResume() {
         super.onResume()
         LocalBroadcastManager.getInstance(this)
@@ -509,23 +552,94 @@ class DetailSiklusActivity : AppCompatActivity(), OnMapReadyCallback {
                 broadcastReceiver,
                 IntentFilter(Config.ACTION_DATA_DETAIL_SIKLUS)
             )
+        mapView2.onPause()
     }
 
     override fun onPause() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver)
         super.onPause()
+        mapView2.onPause()
     }
 
-    override fun onMapReady(googleMap: GoogleMap) {
-        mMap = googleMap
-        val latLngRuangan = LatLng(latRuanganTerpilih,lngRuanganTerpilih)
-        val markerOptionsRuangan =
-            MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
-                .position(latLngRuangan).title("Ruangan")
+    override fun onMapReady(p0: GoogleMap) {
 
-        //Circle
+        mMap = p0
+        mMap.clear()
+        Log.d(TAG, "onMapReady: ADA")
+        val myLocation = LatLng(latMyLocation, lngMyLocation)
+        mMap.addMarker(MarkerOptions().position(myLocation).title("Disini"))
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 18f))
+
+        val roomLocation = LatLng(latRuanganTerpilih, lngRuanganTerpilih)
+        val icon =
+            ContextCompat.getDrawable(this,
+                R.drawable.ic_baseline_location_on_24
+            )?.let { it1 ->
+                getMarkerIcon(it1)
+            }
+        mMap.addMarker(MarkerOptions().position(roomLocation).title("Ruangan").icon(icon))
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(roomLocation, 18f))
 
         //Circle
         val circleOptions = CircleOptions()
+        circleOptions.apply {
+            center(roomLocation)
+            radius(5.0)
+            fillColor(Color.parseColor("#6817A2B8"))
+            strokeWidth(1f)
+            strokeColor(Color.parseColor("#17a2b8"))
+        }
+//        1km radius = 100.0 double
+        //1m radius = 0.1 double
+
+        mMap.addCircle(circleOptions)
+
+        val jarak = FloatArray(2)
+        Location.distanceBetween(myLocation.latitude,myLocation.longitude,circleOptions.center.latitude,circleOptions.center.longitude,jarak)
+
+        dalamJangkauanRuangan = jarak[0] <= circleOptions.radius
+
+        Log.d(TAG, "onMapReady: dalamJangkauan : $dalamJangkauanRuangan")
+        
+
     }
+
+    private fun fetchMyLocation() {
+        if (ActivityCompat.checkSelfPermission(
+                this, Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this, Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                REQUEST_CODE
+            )
+            return
+        }
+        val task: Task<Location> = fusedLocationProviderClient.lastLocation
+        task.addOnSuccessListener { location ->
+            if (location != null) {
+                val myLocation = LatLng(location.latitude, location.longitude)
+                Log.d(TAG, "fetchMyLocation: ${myLocation.latitude}, ${myLocation.longitude}")
+                latMyLocation = myLocation.latitude
+                lngMyLocation = myLocation.longitude
+                mapView2.getMapAsync(this)
+            }
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
+        super.onSaveInstanceState(outState, outPersistentState)
+        var mapViewBundle = outState.getBundle(MAP_VIEW_BUNDLE_KEY)
+        if (mapViewBundle == null) {
+            mapViewBundle = Bundle()
+            outState.putBundle(MAP_VIEW_BUNDLE_KEY, mapViewBundle)
+        }
+        mapView2.onSaveInstanceState(mapViewBundle)
+    }
+
+
+
 }

@@ -29,8 +29,17 @@
         android:roundIcon="@mipmap/ic_launcher_bjb_siaga2_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".DialogSelesaiActivity"
-            />
+        <activity
+            android:name=".NavSecurity"
+            android:label="@string/title_activity_nav_security"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".DialogSelesaiActivity" />
         <activity
             android:name=".security.CapturePotrait"
             android:screenOrientation="sensorPortrait"
@@ -58,19 +67,15 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name=".admin.TambahRuanganActivity" />
-        <activity android:name=".security.SecurityDashboardActivity" />
+        <activity android:name=".admin.TambahRuanganActivity"></activity>
+        <activity android:name=".security.SecurityDashboardActivity">
+
+        </activity>
         <activity android:name=".admin.InputJadwalActivity" />
         <activity android:name=".admin.TambahDataSecurityActivity" />
         <activity android:name=".admin.DataSecurityActivity" />
         <activity android:name=".admin.AdminDashboardActivity" />
-        <activity android:name=".LoginActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".LoginActivity"></activity>
         <activity android:name=".Splash" />
         <activity android:name=".security.Camera" />
 
