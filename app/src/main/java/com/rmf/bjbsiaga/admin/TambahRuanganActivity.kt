@@ -41,7 +41,7 @@ class TambahRuanganActivity : AppCompatActivity(), OnMapReadyCallback {
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     lateinit var locationRequest: LocationRequest
     val PERMISSION_LOCATION : Int =1
-    private  val TAG = "MapsActivity"
+    private val TAG = "MapsActivity"
 
     lateinit var markerCenter: Marker
     var lat : Double= 0.0

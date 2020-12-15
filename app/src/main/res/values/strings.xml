@@ -32,7 +32,7 @@
     <string name="input_data_security">Input Data Security</string>
     <string name="detail_siklus">Detail Siklus</string>
     <string name="input_jadwal">Input Jadwal</string>
-    <string name="nama_jadwal">Nama Jadwal</string>
+    <string name="nama_jadwal">Hari</string>
 
     <string name="capture">Capture</string>
     <string name="tambah_data_ruangan">Tambah Data Ruangan</string>
@@ -59,9 +59,20 @@
     <string name="belum_dicek">Belum dicek</string>
     <string name="title_activity_nav_security">NavSecurity</string>
     <string name="shift">Shift</string>
-    
-    <string-array name="list_shift">
+    <string name="senin">Senin</string>
+    <string name="malam">Malam</string>
+
+    <string-array name="list_shifts">
         <item>Malam</item>
         <item>Pagi</item>
+    </string-array>
+    <string-array name="list_day_names">
+        <item>Senin</item>
+        <item>Selasa</item>
+        <item>Rabu</item>
+        <item>Kamis</item>
+        <item>Jumat</item>
+        <item>Sabtu</item>
+        <item>Minggu</item>
     </string-array>
 </resources>

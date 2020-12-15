@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".admin.InputJadwalActivity">
+    tools:context=".admin.DataJadwalActivity">
 
     <ImageView
         android:id="@+id/imageView"
@@ -17,7 +17,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
@@ -41,55 +40,28 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/input_jadwal"
+            android:text="@string/jadwal"
             android:textColor="@color/colorWhiteText"
             android:textSize="20sp" />
     </LinearLayout>
-    <LinearLayout
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_data_jadwal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="14dp"
-        android:orientation="vertical"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        tools:layout_editor_absoluteX="12dp">
+        tools:listitem="@layout/item_jadwal" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/nama_jadwal"
-            android:textColor="@color/colorWhiteText"/>
-
-        <Spinner
-            android:id="@+id/spinner_days"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:entries="@array/list_day_names"
-            android:background="@drawable/spinner_bg"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/shift"
-
-            android:textColor="@color/colorWhiteText"/>
-
-        <Spinner
-            android:id="@+id/spinner_shift"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:entries="@array/list_shifts"
-            android:background="@drawable/spinner_bg"/>
-
-
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_tambah_data"
-            android:text="@string/tambah_data"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/colorWhiteText"
-            android:background="@drawable/ripple_effect"
-            android:layout_marginTop="18dp"/>
-    </LinearLayout>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btn_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:contentDescription="@string/open_camera"
+        android:src="@drawable/ic_baseline_add_24"
+        android:tint="@color/colorWhitePure"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
