@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.ContextMenu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.CollectionReference
@@ -26,6 +27,7 @@ class DataJadwalActivity : AppCompatActivity() {
 
     lateinit var db : FirebaseFirestore
     lateinit var jadwalRef: CollectionReference
+    private var isLoad =false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +36,7 @@ class DataJadwalActivity : AppCompatActivity() {
         initDB()
         setupRV()
         setupAdapter()
-        loadJadwal()
+
 
         btn_add.setOnClickListener {
             startActivity(Intent(this,InputJadwalActivity::class.java))
@@ -71,14 +73,28 @@ class DataJadwalActivity : AppCompatActivity() {
         jadwalRef = db.collection(CollectionsFS.JADWAL)
     }
     fun loadJadwal(){
+        list.clear()
+        adapter.notifyDataSetChanged()
+        isLoad=true
         jadwalRef.orderBy("priority", Query.Direction.ASCENDING).get()
             .addOnSuccessListener {
                 for (document in it){
                     val dataJadwal : DataJadwal = document.toObject(DataJadwal::class.java)
+                    dataJadwal.documentId = document.id
                     list.add(dataJadwal)
                 }
                 adapter.notifyDataSetChanged()
+                isLoad=false
             }
+            .addOnFailureListener {
+                Log.e("loadJadwal", "loadJadwal: $it" )
+                isLoad=false
+            }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(!isLoad) loadJadwal()
     }
 
 //    override fun onCreateContextMenu(
@@ -94,6 +110,7 @@ class DataJadwalActivity : AppCompatActivity() {
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
         var position =-1
+
         try {
             position = adapter.position
         }
@@ -103,12 +120,26 @@ class DataJadwalActivity : AppCompatActivity() {
         return when(item.itemId){
             R.id.hapus ->{
                 Log.d("ContextMenu", "onContextItemSelected: Hapus $position")
+                hapusItem(position)
                 return true
                 }
             else ->
                 super.onContextItemSelected(item)
         }
 
+    }
+    private fun hapusItem(position: Int){
+        jadwalRef.document(list[position].documentId)
+            .delete()
+            .addOnSuccessListener {
+                Toast.makeText(this, "berhasil dihapus", Toast.LENGTH_SHORT).show();
+                list.removeAt(position)
+                adapter.notifyItemRemoved(position)
+            }
+            .addOnFailureListener {
+                Log.e("hapus", "hapusItem: $it" )
+                Toast.makeText(this, "gagal dihapus", Toast.LENGTH_SHORT).show();
+            }
     }
 
 }
