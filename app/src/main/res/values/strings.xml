@@ -61,6 +61,7 @@
     <string name="shift">Shift</string>
     <string name="senin">Senin</string>
     <string name="malam">Malam</string>
+    <string name="hapus">Hapus</string>
 
     <string-array name="list_shifts">
         <item>Malam</item>

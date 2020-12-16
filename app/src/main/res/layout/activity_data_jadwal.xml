@@ -49,6 +49,8 @@
         android:id="@+id/rv_data_jadwal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingBottom="100dp"
+        android:clipToPadding="false"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
         tools:listitem="@layout/item_jadwal" />
 

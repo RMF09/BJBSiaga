@@ -3,6 +3,11 @@ package com.rmf.bjbsiaga.admin
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.view.ContextMenu
+import android.view.MenuItem
+import android.view.View
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -39,14 +44,21 @@ class DataJadwalActivity : AppCompatActivity() {
             finish()
         }
 
+        registerForContextMenu(rv_data_jadwal)
+
     }
 
     fun setupRV(){
-        rv_data_jadwal.layoutManager = LinearLayoutManager(
-            this,
-            LinearLayoutManager.VERTICAL,
-            false
+        rv_data_jadwal.layoutManager = GridLayoutManager(
+            this,2
         )
+        rv_data_jadwal.setHasFixedSize(true)
+//        rv_data_jadwal.layoutManager = LinearLayoutManager(
+//            this,
+//            LinearLayoutManager.VERTICAL,
+//            false
+//        )
+
     }
     fun setupAdapter(){
         list = ArrayList()
@@ -68,4 +80,35 @@ class DataJadwalActivity : AppCompatActivity() {
                 adapter.notifyDataSetChanged()
             }
     }
+
+//    override fun onCreateContextMenu(
+//        menu: ContextMenu?,
+//        v: View?,
+//        menuInfo: ContextMenu.ContextMenuInfo?
+//    ) {
+//        super.onCreateContextMenu(menu, v, menuInfo)
+//        menu?.setHeaderTitle("Pilih Opsi")
+//        val infalter = menuInflater
+//        infalter.inflate(R.menu.floatinga_context_menu,menu)
+//    }
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        var position =-1
+        try {
+            position = adapter.position
+        }
+        catch (e: Exception){
+            return super.onContextItemSelected(item)
+        }
+        return when(item.itemId){
+            R.id.hapus ->{
+                Log.d("ContextMenu", "onContextItemSelected: Hapus $position")
+                return true
+                }
+            else ->
+                super.onContextItemSelected(item)
+        }
+
+    }
+
 }
