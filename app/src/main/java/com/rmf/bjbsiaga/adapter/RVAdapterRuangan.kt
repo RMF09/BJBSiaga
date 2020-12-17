@@ -10,7 +10,7 @@ import com.rmf.bjbsiaga.data.DataSecurity
 import kotlinx.android.synthetic.main.item_data_ruangan.view.*
 
 
-class RVAdapterRuangan(var list: ArrayList<DataRuangan>) : RecyclerView.Adapter<RVAdapterRuangan.ViewHolder>() {
+class RVAdapterRuangan(var list: ArrayList<DataRuangan>,val clickListener: ClickListener) : RecyclerView.Adapter<RVAdapterRuangan.ViewHolder>() {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -25,7 +25,15 @@ class RVAdapterRuangan(var list: ArrayList<DataRuangan>) : RecyclerView.Adapter<
         holder.itemView.text_nomer.text = (position+1).toString()
         holder.itemView.text_nama_ruangan.text= data.namaRuangan
 
+        holder.itemView.setOnClickListener {
+            clickListener.onClickListener(data)
+        }
+
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+
+    interface ClickListener{
+        fun onClickListener(dataRuangan: DataRuangan)
+    }
 }

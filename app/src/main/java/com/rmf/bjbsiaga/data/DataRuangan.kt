@@ -2,7 +2,9 @@ package com.rmf.bjbsiaga.data
 
 import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.IgnoreExtraProperties
+import kotlinx.serialization.Serializable
 
+@Serializable
 @IgnoreExtraProperties
 data class DataRuangan(
     var namaRuangan: String="",

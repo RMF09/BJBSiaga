@@ -38,7 +38,7 @@
     <string name="tambah_data_ruangan">Tambah Data Ruangan</string>
     <string name="nama_ruangan">Nama Ruangan</string>
     <string name="keterangan">Keterangan</string>
-    <string name="koordinat_lokasi">Koordinat Lokasi</string>
+
     <string name="tambah_data">Tambah Data</string>
     <string name="password_lama">Password Lama</string>
     <string name="password_baru">Password Baru</string>
@@ -55,13 +55,17 @@
     <string name="open_qr">open qr</string>
     <string name="open_camera">open camera</string>
     <string name="_1">1</string>
-    <string name="burning_hall">Burning Hall</string>
+
     <string name="belum_dicek">Belum dicek</string>
     <string name="title_activity_nav_security">NavSecurity</string>
     <string name="shift">Shift</string>
     <string name="senin">Senin</string>
     <string name="malam">Malam</string>
     <string name="hapus">Hapus</string>
+    <string name="detail_ruangan">Detail Ruangan</string>
+    <string name="burning_hall">Burning Hall</string>
+    <string name="informasi_lokasi">Informasi Lokasi</string>
+    <string name="koordinat_lokasi">Koordinat Lokasi</string>
 
     <string-array name="list_shifts">
         <item>Malam</item>

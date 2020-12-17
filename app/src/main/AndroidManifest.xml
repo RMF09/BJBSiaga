@@ -29,11 +29,12 @@
         android:roundIcon="@mipmap/ic_launcher_bjb_siaga2_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".admin.DataJadwalActivity"></activity>
+        <activity android:name=".admin.DetailRuangan"></activity>
+        <activity android:name=".admin.DataJadwalActivity" />
         <activity
             android:name=".NavSecurity"
             android:label="@string/title_activity_nav_security"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".DialogSelesaiActivity" />
         <activity
             android:name=".security.CapturePotrait"
@@ -63,7 +64,7 @@
             android:value="@integer/google_play_services_version" />
 
         <activity android:name=".admin.TambahRuanganActivity" />
-        <activity android:name=".security.SecurityDashboardActivity"></activity>
+        <activity android:name=".security.SecurityDashboardActivity" />
         <activity android:name=".admin.InputJadwalActivity" />
         <activity android:name=".admin.TambahDataSecurityActivity" />
         <activity android:name=".admin.DataSecurityActivity" />

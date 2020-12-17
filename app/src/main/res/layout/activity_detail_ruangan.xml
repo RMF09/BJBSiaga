@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".admin.InputJadwalActivity">
-
+    tools:context=".admin.DetailRuangan">
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
@@ -41,57 +40,62 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/input_jadwal"
+            android:text="@string/detail_ruangan"
             android:textColor="@color/colorWhiteText"
             android:textSize="20sp" />
+
+
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/linearLayout3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="14dp"
+        android:gravity="center_horizontal"
         android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="70dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        tools:layout_editor_absoluteX="12dp">
+        tools:ignore="UseCompoundDrawables">
+
+        <ImageView
+            android:id="@+id/imageQR"
+            android:layout_width="200dp"
+            android:layout_height="200dp" />
 
         <TextView
+            android:id="@+id/text_nama_ruangan"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/nama_jadwal"
-            android:textColor="@color/colorWhiteText" />
-
-        <Spinner
-            android:id="@+id/spinner_days"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@drawable/spinner_bg"
-            android:entries="@array/list_day_names" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/shift"
-
-            android:textColor="@color/colorWhiteText" />
-
-        <Spinner
-            android:id="@+id/spinner_shift"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@drawable/spinner_bg"
-            android:entries="@array/list_shifts" />
-
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_tambah_data"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:background="@drawable/ripple_effect"
-            android:letterSpacing=".1"
-            android:text="@string/tambah_data"
-            android:textAllCaps="false"
-            android:textColor="@color/colorWhiteText" />
+            android:layout_marginTop="20dp"
+            android:text="@string/burning_hall"
+            android:textColor="@color/colorWhiteText"
+            android:textSize="24sp" />
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/textView10"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@color/colorAccentDark"
+        android:paddingHorizontal="18dp"
+        android:paddingVertical="8dp"
+        android:text="@string/informasi_lokasi"
+        android:textColor="@color/colorWhiteText"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:textSize="16sp"
+        android:text="@string/koordinat_lokasi"
+        android:textColor="@color/colorWhiteText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView10" />
 </androidx.constraintlayout.widget.ConstraintLayout>

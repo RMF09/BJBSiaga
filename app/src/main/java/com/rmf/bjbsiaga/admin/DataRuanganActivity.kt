@@ -16,9 +16,10 @@ import com.rmf.bjbsiaga.data.DataRuangan
 import com.rmf.bjbsiaga.data.DataSecurity
 import com.rmf.bjbsiaga.util.CollectionsFS
 import kotlinx.android.synthetic.main.activity_data_ruangan.*
+import java.io.Serializable
 
 
-class DataRuanganActivity : AppCompatActivity() {
+class DataRuanganActivity : AppCompatActivity(), RVAdapterRuangan.ClickListener {
     lateinit var list : ArrayList<DataRuangan>
     lateinit var adapter : RVAdapterRuangan
 
@@ -52,7 +53,7 @@ class DataRuanganActivity : AppCompatActivity() {
     }
     fun setupAdapter(){
         list = ArrayList()
-        adapter = RVAdapterRuangan(list)
+        adapter = RVAdapterRuangan(list,this)
         rv_data_ruangan.adapter =adapter
 
     }
@@ -69,5 +70,11 @@ class DataRuanganActivity : AppCompatActivity() {
                 }
                 adapter.notifyDataSetChanged()
             }
+    }
+
+    override fun onClickListener(dataRuangan: DataRuangan) {
+        Intent().apply {
+            putExtra("data",dataRuangan as Serializable)
+        }
     }
 }

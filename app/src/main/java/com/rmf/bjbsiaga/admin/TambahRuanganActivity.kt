@@ -4,42 +4,46 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.model.*
-import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.model.Place
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.MultiFormatWriter
+import com.google.zxing.WriterException
+import com.google.zxing.common.BitMatrix
+import com.journeyapps.barcodescanner.BarcodeEncoder
 import com.rmf.bjbsiaga.R
 import com.rmf.bjbsiaga.data.DataRuangan
-import com.rmf.bjbsiaga.data.DataSecurity
 import com.rmf.bjbsiaga.util.CollectionsFS
 import com.rmf.bjbsiaga.util.MapUtils.Companion.getMarkerIcon
 import kotlinx.android.synthetic.main.activity_maps.*
-import kotlinx.android.synthetic.main.activity_maps.btn_tambah_data
-
+import org.json.JSONException
+import org.json.JSONObject
+import java.io.ByteArrayOutputStream
 
 
 class TambahRuanganActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-    lateinit var locationRequest: LocationRequest
     val PERMISSION_LOCATION : Int =1
     private val TAG = "MapsActivity"
 
@@ -48,15 +52,13 @@ class TambahRuanganActivity : AppCompatActivity(), OnMapReadyCallback {
     var lng : Double= 0.0
 
     lateinit var db : FirebaseFirestore
+    private lateinit var storageReference: StorageReference
+    private lateinit var alertDialog: AlertDialog
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-//        mapFragment = supportFragmentManager
-//            .findFragmentById(R.id.map) as SupportMapFragment
-//        mapFragment.getMapAsync(this)
 
         initDB()
 
@@ -75,18 +77,81 @@ class TambahRuanganActivity : AppCompatActivity(), OnMapReadyCallback {
         }
         btn_tambah_data.setOnClickListener {
             if(validate()){
-                saveData(it)
+                btn_tambah_data.isEnabled=false
+                saveData()
             }
         }
 
     }
 
-    fun clearError(){
+    private fun showDialog(message: String, title: String){
+        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+        builder.apply {
+            setMessage(message)
+            setTitle(title)
+            setPositiveButton("OK"
+            ) { dialog, _ ->
+                dialog.dismiss()
+                if(title == "Berhasil")
+                    finish()
+            }
+        }
+        builder.setCancelable(false)
+        alertDialog = builder.create()
+        alertDialog.show()
+    }
+
+    private fun uploadQR(namaRuangan: String, bitmap: Bitmap){
+        val fileReference = storageReference.child(namaRuangan)
+        val baos =ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos)
+        val data = baos.toByteArray()
+
+        fileReference.putBytes(data)
+            .addOnSuccessListener {
+                Log.d(TAG, "uploadQR: berhasil")
+                showDialog("Tambah data ruangan berhasil", "Berhasil")
+                btn_tambah_data.isEnabled=true
+            }
+            .addOnFailureListener {
+                Log.e(TAG, "uploadQR: gagal $it")
+                showDialog("Tambah data Ruangan gagal. Silahkan coba lagi dan periksa jaringan Anda stabil", "Kesalahan")
+                btn_tambah_data.isEnabled=true
+            }
+    }
+
+    private fun generateQRCode(idRuangan: String){
+
+        val multiFormatWriter = MultiFormatWriter()
+        try {
+            val jsonFormat = JSONObject()
+            jsonFormat.put("idRuangan", idRuangan)
+            Log.d(TAG, "generateQRCode: $jsonFormat")
+            val bitMatrix : BitMatrix = multiFormatWriter.encode(
+                jsonFormat.toString(),
+                BarcodeFormat.QR_CODE,
+                200,
+                200
+            )
+            val barcodeEncoder = BarcodeEncoder()
+            val bitmap = barcodeEncoder.createBitmap(bitMatrix)
+
+            uploadQR(text_input_nama_ruangan.editText?.text.toString(),bitmap)
+        }
+        catch (je: JSONException){
+            Log.e(TAG, "generateQRCode: $je")
+        }
+        catch (we: WriterException){
+            Log.e(TAG, "generateQRCode: $we")
+        }
+    }
+
+    private fun clearError(){
         text_input_nama_ruangan.error=""
         text_input_koordinat_lokasi.error=""
     }
 
-    fun validate():Boolean{
+    private fun validate():Boolean{
 
         clearError()
 
@@ -108,22 +173,28 @@ class TambahRuanganActivity : AppCompatActivity(), OnMapReadyCallback {
 
     fun initDB(){
         db = FirebaseFirestore.getInstance()
+        storageReference = FirebaseStorage.getInstance().getReference("qrcode")
     }
 
-    fun saveData(view: View){
+    private fun saveData(){
 
         clearError()
         val namaRuangan: String = text_input_nama_ruangan.editText?.text.toString()
 
-        val dataRuangan = DataRuangan(namaRuangan,lat, lng)
-
-        db.collection(CollectionsFS.RUANGAN).document().set(dataRuangan)
+        val id =  db.collection(CollectionsFS.RUANGAN).document().id
+        val dataRuangan = DataRuangan(namaRuangan, lat, lng)
+        dataRuangan.documentId = id
+        Log.e(TAG, "saveData: id= $id")
+        db.collection(CollectionsFS.RUANGAN).document(id).set(dataRuangan)
             .addOnSuccessListener {
-                Snackbar.make(view,"Data berhasil disimpan",Snackbar.LENGTH_LONG).show()
+                Log.d(TAG, "saveData: ${dataRuangan.documentId}")
+                generateQRCode(id)
+
             }
+
             .addOnFailureListener {
-                Snackbar.make(view,"Data gagal disimpan",Snackbar.LENGTH_LONG).show()
-                Log.e(TAG, "saveData: ${it.toString()}" )
+                Log.e(TAG, "saveData: ${it}")
+                btn_tambah_data.isEnabled=true
             }
 
     }
@@ -142,21 +213,13 @@ class TambahRuanganActivity : AppCompatActivity(), OnMapReadyCallback {
             val test = mMap.cameraPosition
             markerCenter.position =test.target
             text_input_koordinat_lokasi.editText?.setText("${markerCenter.position.latitude},${markerCenter.position.longitude}")
-            Log.d(TAG, "Map Coordinate: " + markerCenter.position);
+            Log.d(TAG, "Map Coordinate: " + markerCenter.position)
             lat= markerCenter.position.latitude
             lng= markerCenter.position.longitude
         }
     }
 
-    fun setUpLocation(){
-        locationRequest= LocationRequest()
-        locationRequest.apply {
-            interval=30000
-            fastestInterval=3000
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        }
-    }
-    fun updateGPS(){
+    private fun updateGPS(){
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
         if (ActivityCompat.checkSelfPermission(
@@ -168,17 +231,22 @@ class TambahRuanganActivity : AppCompatActivity(), OnMapReadyCallback {
             fusedLocationProviderClient.lastLocation.addOnSuccessListener {
                 Log.d(
                     TAG,
-                    "updateGPS: Lat: ${it.latitude} Long: ${it.longitude} accuray : ${it.accuracy} "
+                    "updateGPS: Lat: ${it?.latitude} Long: ${it?.longitude} accuray : ${it?.accuracy} "
                 )
                 mMap.clear()
                 val myLocation = LatLng(it.latitude, it.longitude)
                 val icon =
-                    ContextCompat.getDrawable(this,
+                    ContextCompat.getDrawable(
+                        this,
                         R.drawable.ic_baseline_location_on_24_transparent
                     )?.let { it1 ->
                         getMarkerIcon(it1)
                     }
-                markerCenter = mMap.addMarker(MarkerOptions().position(myLocation).title("Marker in Sydney").icon(icon))
+                markerCenter = mMap.addMarker(
+                    MarkerOptions().position(myLocation).title("Marker in Sydney").icon(
+                        icon
+                    )
+                )
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 16f))
             }
         }
@@ -218,7 +286,7 @@ class TambahRuanganActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onResume() {
         super.onResume()
-        mapView.onResume();
+        mapView.onResume()
     }
 
     override fun onStart() {

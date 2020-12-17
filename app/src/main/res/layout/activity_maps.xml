@@ -113,7 +113,7 @@
                     android:layout_marginBottom="4dp"
                     android:background="@drawable/rounded_corner_edit2"
                     android:hint="@string/nama_ruangan"
-                    android:inputType="textPassword"
+                    android:inputType="text"
                     android:maxLines="1"
                     android:paddingHorizontal="16dp"
                     android:paddingVertical="16dp"
@@ -140,7 +140,7 @@
                     android:layout_marginBottom="4dp"
                     android:background="@drawable/rounded_corner_edit2"
                     android:hint="@string/koordinat_lokasi"
-                    android:inputType="textPassword"
+                    android:inputType="text"
                     android:maxLines="1"
                     android:paddingHorizontal="16dp"
                     android:paddingVertical="16dp"
@@ -149,6 +149,8 @@
                     android:textSize="16sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
+
+
 
 
             <androidx.appcompat.widget.AppCompatButton
