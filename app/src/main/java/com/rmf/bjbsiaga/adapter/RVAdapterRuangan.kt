@@ -1,5 +1,6 @@
 package com.rmf.bjbsiaga.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,7 +27,7 @@ class RVAdapterRuangan(var list: ArrayList<DataRuangan>,val clickListener: Click
         holder.itemView.text_nama_ruangan.text= data.namaRuangan
 
         holder.itemView.setOnClickListener {
-            clickListener.onClickListener(data)
+            clickListener.onClickListener(data,it.context)
         }
 
     }
@@ -34,6 +35,6 @@ class RVAdapterRuangan(var list: ArrayList<DataRuangan>,val clickListener: Click
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
     interface ClickListener{
-        fun onClickListener(dataRuangan: DataRuangan)
+        fun onClickListener(dataRuangan: DataRuangan,context: Context)
     }
 }

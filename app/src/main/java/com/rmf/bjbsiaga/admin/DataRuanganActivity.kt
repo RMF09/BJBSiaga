@@ -1,22 +1,19 @@
 package com.rmf.bjbsiaga.admin
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import com.rmf.bjbsiaga.R
 import com.rmf.bjbsiaga.adapter.RVAdapterRuangan
-import com.rmf.bjbsiaga.adapter.RVAdapterSecurity
 import com.rmf.bjbsiaga.data.DataRuangan
-import com.rmf.bjbsiaga.data.DataSecurity
 import com.rmf.bjbsiaga.util.CollectionsFS
 import kotlinx.android.synthetic.main.activity_data_ruangan.*
-import java.io.Serializable
+
+
 
 
 class DataRuanganActivity : AppCompatActivity(), RVAdapterRuangan.ClickListener {
@@ -72,9 +69,10 @@ class DataRuanganActivity : AppCompatActivity(), RVAdapterRuangan.ClickListener 
             }
     }
 
-    override fun onClickListener(dataRuangan: DataRuangan) {
+    override fun onClickListener(dataRuangan: DataRuangan, context: Context) {
         Intent().apply {
-            putExtra("data",dataRuangan as Serializable)
+            putExtra("data",dataRuangan)
+            context.startActivity(this)
         }
     }
 }
