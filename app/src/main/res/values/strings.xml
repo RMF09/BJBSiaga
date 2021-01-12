@@ -66,6 +66,8 @@
     <string name="burning_hall">Burning Hall</string>
     <string name="informasi_lokasi">Informasi Lokasi</string>
     <string name="koordinat_lokasi">Koordinat Lokasi</string>
+    <string name="unduh_qrcode">Unduh QRCODE</string>
+    <string name="detail_user">Detail User</string>
 
     <string-array name="list_shifts">
         <item>Malam</item>

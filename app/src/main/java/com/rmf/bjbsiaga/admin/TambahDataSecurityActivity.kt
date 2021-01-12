@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -21,6 +22,7 @@ class TambahDataSecurityActivity : AppCompatActivity() {
 
     private val TAG = "TambahDataSecurityActiv"
     lateinit var mAuth : FirebaseAuth
+    private lateinit var alertDialog: AlertDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,10 +35,7 @@ class TambahDataSecurityActivity : AppCompatActivity() {
             finish()
         }
         btn_tambah_data.setOnClickListener {
-            if(validate(it)){
-//                registerNewUser(it,edit_email.text.toString(), edit_password.text.toString())
-                saveData(it)
-            }
+            if(validate(it)) saveData()
         }
     }
 
@@ -44,7 +43,7 @@ class TambahDataSecurityActivity : AppCompatActivity() {
         db = FirebaseFirestore.getInstance()
     }
 
-    fun saveData(view: View){
+    fun saveData(){
 
         val nama = edit_nama.text.toString()
         val email = edit_email.text.toString()
@@ -58,13 +57,30 @@ class TambahDataSecurityActivity : AppCompatActivity() {
 
         db.collection(CollectionsFS.SECURITY).document().set(dataSecurity)
             .addOnSuccessListener {
-                Snackbar.make(view,"Data berhasil disimpan",Snackbar.LENGTH_LONG).show()
+                this.showDialog("Data User berhasil ditambahkan","Berhasil")
             }
             .addOnFailureListener {
-                Snackbar.make(view,"Data gagal disimpan",Snackbar.LENGTH_LONG).show()
-                Log.e(TAG, "saveData: ${it.toString()}" )
+                this.showDialog("Data User gagal ditambahkan","Kesalahan")
+                Log.e(TAG, "saveData: $it." )
             }
 
+    }
+
+    private fun showDialog(message: String, title: String){
+        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+        builder.apply {
+            setMessage(message)
+            setTitle(title)
+            setPositiveButton("OK"
+            ) { dialog, _ ->
+                dialog.dismiss()
+                if(title == "Berhasil")
+                    finish()
+            }
+        }
+        builder.setCancelable(false)
+        alertDialog = builder.create()
+        alertDialog.show()
     }
 
     fun initFirebaseAuth(){

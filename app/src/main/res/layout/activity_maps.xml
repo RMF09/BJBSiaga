@@ -159,8 +159,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="18dp"
                 android:layout_marginBottom="8dp"
-                android:background="@drawable/ripple_effect"
                 android:text="@string/tambah_data"
+                android:background="@drawable/ripple_effect"
                 android:letterSpacing=".1"
                 android:textAllCaps="false"
                 android:textColor="@color/colorWhiteText" />

@@ -1,8 +1,11 @@
 package com.rmf.bjbsiaga.data
 
+import android.os.Parcelable
 import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.IgnoreExtraProperties
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 @IgnoreExtraProperties
 data class DataSecurity (
     val nama: String="",
@@ -12,7 +15,7 @@ data class DataSecurity (
     val unitKerja: String="",
     val password: String="",
     val role: String=""
-){
+):Parcelable{
     @get:Exclude
     var documentId: String=""
 }

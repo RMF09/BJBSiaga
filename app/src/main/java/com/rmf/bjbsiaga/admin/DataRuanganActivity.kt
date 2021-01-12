@@ -31,7 +31,6 @@ class DataRuanganActivity : AppCompatActivity(), RVAdapterRuangan.ClickListener 
         initDB()
         setupRV()
         setupAdapter()
-        loadSecurity()
 
         btn_add.setOnClickListener {
             startActivity(Intent(this,TambahRuanganActivity::class.java))
@@ -41,14 +40,14 @@ class DataRuanganActivity : AppCompatActivity(), RVAdapterRuangan.ClickListener 
         }
     }
 
-    fun setupRV(){
+    private fun setupRV(){
         rv_data_ruangan.layoutManager = LinearLayoutManager(
             this,
             LinearLayoutManager.VERTICAL,
             false
         )
     }
-    fun setupAdapter(){
+    private fun setupAdapter(){
         list = ArrayList()
         adapter = RVAdapterRuangan(list,this)
         rv_data_ruangan.adapter =adapter
@@ -59,6 +58,7 @@ class DataRuanganActivity : AppCompatActivity(), RVAdapterRuangan.ClickListener 
         ruanganRef = db.collection(CollectionsFS.RUANGAN)
     }
     fun loadSecurity(){
+        list.clear()
         ruanganRef.get()
             .addOnSuccessListener {
                 for (document in it){
@@ -70,9 +70,14 @@ class DataRuanganActivity : AppCompatActivity(), RVAdapterRuangan.ClickListener 
     }
 
     override fun onClickListener(dataRuangan: DataRuangan, context: Context) {
-        Intent().apply {
+        Intent(this,DetailRuangan::class.java).apply {
             putExtra("data",dataRuangan)
             context.startActivity(this)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadSecurity()
     }
 }

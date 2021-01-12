@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".admin.TambahDataSecurityActivity">
+    tools:context=".admin.EditUser">
 
     <ImageView
         android:id="@+id/imageView"
@@ -40,7 +40,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tambah Data Security"
+            android:text="Edit Data Security"
             android:textColor="@color/colorWhiteText"
             android:textSize="20sp" />
     </LinearLayout>
@@ -100,6 +100,7 @@
             android:layout_marginBottom="8dp"
             android:background="@drawable/rounded_corner_edit2"
             android:inputType="text"
+            android:textColor="@color/colorWhiteText"
             android:paddingHorizontal="18dp"
             android:paddingVertical="12dp" />
 
@@ -154,12 +155,12 @@
             android:textColor="@color/colorWhiteText"/>
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_tambah_data"
+            android:id="@+id/btn_edit_data"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:background="@drawable/ripple_effect"
-            android:text="Tambah data"
+            android:text="Edit data"
             android:textColor="@color/colorWhiteText" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

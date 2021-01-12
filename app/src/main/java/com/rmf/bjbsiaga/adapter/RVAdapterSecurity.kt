@@ -1,5 +1,6 @@
 package com.rmf.bjbsiaga.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,7 +9,7 @@ import com.rmf.bjbsiaga.R
 import com.rmf.bjbsiaga.data.DataSecurity
 import kotlinx.android.synthetic.main.item_data_security.view.*
 
-class RVAdapterSecurity(var list: ArrayList<DataSecurity>) : RecyclerView.Adapter<RVAdapterSecurity.ViewHolder>() {
+class RVAdapterSecurity(var list: ArrayList<DataSecurity>, val clickListener: ClickListener) : RecyclerView.Adapter<RVAdapterSecurity.ViewHolder>() {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -23,7 +24,15 @@ class RVAdapterSecurity(var list: ArrayList<DataSecurity>) : RecyclerView.Adapte
         holder.itemView.text_nomer.text = (position+1).toString()
         holder.itemView.text_nama.text=data.nama
         holder.itemView.text_email.text=data.email
+
+        holder.itemView.setOnClickListener {
+           clickListener.onClickListener(data,it.context)
+        }
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+
+    interface ClickListener{
+        fun onClickListener(dataSecurity: DataSecurity,context: Context)
+    }
 }

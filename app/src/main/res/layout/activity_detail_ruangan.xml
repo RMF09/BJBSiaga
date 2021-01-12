@@ -83,7 +83,7 @@
         android:background="@color/colorAccentDark"
         android:paddingHorizontal="18dp"
         android:paddingVertical="8dp"
-        android:text="@string/informasi_lokasi"
+        android:text="@string/koordinat_lokasi"
         android:textColor="@color/colorWhiteText"
         android:textSize="18sp"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
@@ -99,4 +99,18 @@
         android:textColor="@color/colorWhiteText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView10" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_unduh_qrcode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/unduh_qrcode"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/ripple_effect"
+        android:letterSpacing=".1"
+        android:textColor="@color/colorWhiteText"
+        android:padding="14dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

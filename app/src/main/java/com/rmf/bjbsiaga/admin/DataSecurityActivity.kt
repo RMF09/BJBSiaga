@@ -21,7 +21,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class DataSecurityActivity : AppCompatActivity() {
+class DataSecurityActivity : AppCompatActivity(), RVAdapterSecurity.ClickListener {
 
     lateinit var list : ArrayList<DataSecurity>
     lateinit var adapter : RVAdapterSecurity
@@ -40,10 +40,6 @@ class DataSecurityActivity : AppCompatActivity() {
         setupRV()
         setupAdapter()
 
-
-        startAt10()
-        loadSecurity()
-
         back.setOnClickListener {
             finish()
         }
@@ -60,7 +56,7 @@ class DataSecurityActivity : AppCompatActivity() {
     }
     fun setupAdapter(){
         list = ArrayList()
-        adapter = RVAdapterSecurity(list)
+        adapter = RVAdapterSecurity(list,this)
         rv_data_security.adapter =adapter
 
     }
@@ -72,36 +68,28 @@ class DataSecurityActivity : AppCompatActivity() {
         securityRef = db.collection(CollectionsFS.SECURITY)
     }
     fun loadSecurity(){
-        securityRef.whereEqualTo("nama","Ilham").get()
+        securityRef.get()
             .addOnSuccessListener {
                 for (document in it){
                     val dataSecurity : DataSecurity = document.toObject(DataSecurity::class.java)
-                    Log.d(TAG, "loadSecurity: ${dataSecurity.email}")
+                    dataSecurity.documentId = document.id
+                    Log.d(TAG, "loadSecurity: ${document.id}")
                     list.add(dataSecurity)
                 }
                 adapter.notifyDataSetChanged()
             }
     }
 
-    fun startAt10() {
-        val alarmIntent = Intent(applicationContext, AlarmReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(applicationContext, 0, alarmIntent, 0)
-
-        val manager = applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val calendar: Calendar = Calendar.getInstance()
-        calendar.set(Calendar.HOUR_OF_DAY, 6)
-        calendar.set(Calendar.MINUTE, 5)
-        calendar.set(Calendar.SECOND, 0)
-
-        if (calendar.time < Date()) {
-            calendar.add(Calendar.DAY_OF_MONTH, 1)
+    override fun onClickListener(dataSecurity: DataSecurity, context: Context) {
+        Intent(this,DetailUser::class.java).apply {
+            putExtra("data",dataSecurity)
+            putExtra("id",dataSecurity.documentId)
+            context.startActivity(this)
         }
+    }
 
-
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            manager.setExactAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent
-            )
-        }
+    override fun onResume() {
+        super.onResume()
+        loadSecurity()
     }
 }
