@@ -68,6 +68,8 @@ class DataSecurityActivity : AppCompatActivity(), RVAdapterSecurity.ClickListene
         securityRef = db.collection(CollectionsFS.SECURITY)
     }
     fun loadSecurity(){
+        list.clear()
+        adapter.notifyDataSetChanged()
         securityRef.get()
             .addOnSuccessListener {
                 for (document in it){

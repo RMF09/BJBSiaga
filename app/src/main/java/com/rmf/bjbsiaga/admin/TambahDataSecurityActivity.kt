@@ -35,6 +35,7 @@ class TambahDataSecurityActivity : AppCompatActivity() {
             finish()
         }
         btn_tambah_data.setOnClickListener {
+            btn_tambah_data.isEnabled=false
             if(validate(it)) saveData()
         }
     }
@@ -63,7 +64,6 @@ class TambahDataSecurityActivity : AppCompatActivity() {
                 this.showDialog("Data User gagal ditambahkan","Kesalahan")
                 Log.e(TAG, "saveData: $it." )
             }
-
     }
 
     private fun showDialog(message: String, title: String){
@@ -111,11 +111,13 @@ class TambahDataSecurityActivity : AppCompatActivity() {
         if(nama.isEmpty()){
             edit_nama.requestFocus()
             Snackbar.make(view,"Nama diperlukan",Snackbar.LENGTH_LONG).show()
+            btn_tambah_data.isEnabled=true
             return false
         }
         if(edit_nik.text.toString().isEmpty()){
             edit_nik.requestFocus()
             Snackbar.make(view,"NIK diperlukan",Snackbar.LENGTH_LONG).show()
+            btn_tambah_data.isEnabled=true
             return false
         }
         if(unitKerja.isEmpty()){
@@ -126,28 +128,33 @@ class TambahDataSecurityActivity : AppCompatActivity() {
         if(email.isEmpty()){
             edit_email.requestFocus()
             Snackbar.make(view,"Email diperlukan",Snackbar.LENGTH_LONG).show()
+            btn_tambah_data.isEnabled=true
             return false
         }
 
         if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
             edit_email.requestFocus()
             Snackbar.make(view,"Harap masukan email dengan benar",Snackbar.LENGTH_LONG).show()
+            btn_tambah_data.isEnabled=true
             return false
         }
 
         if(edit_no_wa.text.toString().isEmpty()){
             edit_no_wa.requestFocus()
             Snackbar.make(view,"Nomor WhatsApp diperlukan",Snackbar.LENGTH_LONG).show()
+            btn_tambah_data.isEnabled=true
             return false
         }
         if(password.isEmpty()){
             edit_password.requestFocus()
             Snackbar.make(view,"Password diperlukan",Snackbar.LENGTH_LONG).show()
+            btn_tambah_data.isEnabled=true
             return false
         }
         if(edit_password.length()<6){
             edit_password.requestFocus()
             Snackbar.make(view,"Password harus lebih dari 6 karakter",Snackbar.LENGTH_LONG).show()
+            btn_tambah_data.isEnabled=true
             return false
         }
         return true

@@ -1,15 +1,13 @@
 package com.rmf.bjbsiaga.admin
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.ContextMenu
 import android.view.MenuItem
-import android.view.View
 import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -20,7 +18,7 @@ import com.rmf.bjbsiaga.util.CollectionsFS
 import kotlinx.android.synthetic.main.activity_data_jadwal.*
 
 
-class DataJadwalActivity : AppCompatActivity() {
+class DataJadwalActivity : AppCompatActivity(), RVAdapterJadwal.ClickListener {
 
     lateinit var list : ArrayList<DataJadwal>
     lateinit var adapter : RVAdapterJadwal
@@ -64,7 +62,7 @@ class DataJadwalActivity : AppCompatActivity() {
     }
     fun setupAdapter(){
         list = ArrayList()
-        adapter = RVAdapterJadwal(list)
+        adapter = RVAdapterJadwal(list,this)
         rv_data_jadwal.adapter =adapter
 
     }
@@ -97,19 +95,8 @@ class DataJadwalActivity : AppCompatActivity() {
         if(!isLoad) loadJadwal()
     }
 
-//    override fun onCreateContextMenu(
-//        menu: ContextMenu?,
-//        v: View?,
-//        menuInfo: ContextMenu.ContextMenuInfo?
-//    ) {
-//        super.onCreateContextMenu(menu, v, menuInfo)
-//        menu?.setHeaderTitle("Pilih Opsi")
-//        val infalter = menuInflater
-//        infalter.inflate(R.menu.floatinga_context_menu,menu)
-//    }
-
     override fun onContextItemSelected(item: MenuItem): Boolean {
-        var position =-1
+        val position: Int
 
         try {
             position = adapter.position
@@ -126,20 +113,28 @@ class DataJadwalActivity : AppCompatActivity() {
             else ->
                 super.onContextItemSelected(item)
         }
-
     }
     private fun hapusItem(position: Int){
         jadwalRef.document(list[position].documentId)
             .delete()
             .addOnSuccessListener {
-                Toast.makeText(this, "berhasil dihapus", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "berhasil dihapus", Toast.LENGTH_SHORT).show()
                 list.removeAt(position)
                 adapter.notifyItemRemoved(position)
             }
             .addOnFailureListener {
                 Log.e("hapus", "hapusItem: $it" )
-                Toast.makeText(this, "gagal dihapus", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "gagal dihapus", Toast.LENGTH_SHORT).show()
             }
     }
+
+    override fun onClickListener(dataJadwal: DataJadwal, context: Context) {
+        Intent(this,DetailJadwal::class.java).apply {
+            putExtra("id",dataJadwal.documentId)
+            putExtra("data",dataJadwal)
+            startActivity(this)
+        }
+    }
+
 
 }

@@ -8,6 +8,7 @@ data class DataJadwalBertugas (
 
     val idJadwal: String= "",
     val nikPetugas: Long= 0,
+    val nama: String= "",
     val shift: String="",
     val hari: String=""
 ){

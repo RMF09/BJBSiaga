@@ -9,7 +9,7 @@ import com.rmf.bjbsiaga.R
 import com.rmf.bjbsiaga.data.DataJadwal
 import kotlinx.android.synthetic.main.item_jadwal.view.*
 
-class RVAdapterJadwal(var list: ArrayList<DataJadwal>) : RecyclerView.Adapter<RVAdapterJadwal.ViewHolder>() {
+class RVAdapterJadwal(var list: ArrayList<DataJadwal>, val clickListener: ClickListener) : RecyclerView.Adapter<RVAdapterJadwal.ViewHolder>() {
 
     public var position: Int =0
 
@@ -33,6 +33,9 @@ class RVAdapterJadwal(var list: ArrayList<DataJadwal>) : RecyclerView.Adapter<RV
         holder.itemView.setOnLongClickListener {
             this.position = holder.adapterPosition
             return@setOnLongClickListener false
+        }
+        holder.itemView.setOnClickListener {
+            clickListener.onClickListener(data,it.context)
         }
     }
 
@@ -59,5 +62,9 @@ class RVAdapterJadwal(var list: ArrayList<DataJadwal>) : RecyclerView.Adapter<RV
         ) {
             menu?.add(Menu.NONE,R.id.hapus,Menu.NONE,"Hapus")
         }
+    }
+
+    interface ClickListener{
+        fun onClickListener(dataJadwal: DataJadwal,context: Context)
     }
 }

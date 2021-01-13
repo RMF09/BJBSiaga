@@ -46,6 +46,7 @@ class EditUser : AppCompatActivity() {
         btn_edit_data.setOnClickListener {
             if(validate(it))editData()
         }
+        back.setOnClickListener { finish() }
     }
 
     fun initDB(){
