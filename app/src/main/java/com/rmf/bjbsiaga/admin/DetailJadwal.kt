@@ -26,6 +26,8 @@ import com.rmf.bjbsiaga.data.DataJadwalBertugas
 import com.rmf.bjbsiaga.data.DataSecurity
 import com.rmf.bjbsiaga.util.CollectionsFS
 import kotlinx.android.synthetic.main.activity_detail_jadwal.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 class DetailJadwal : AppCompatActivity(), RVAdapterSecurity.ClickListener {
     private lateinit var id: String
@@ -46,6 +48,8 @@ class DetailJadwal : AppCompatActivity(), RVAdapterSecurity.ClickListener {
     private var initialLoadPersonAdd =false
     private lateinit var adapterSecurity: RVAdapterSecurity
     private var unitKerjaDipilih = ""
+
+    private var listPersonSelected: ArrayList<DataSecurity> = ArrayList()
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,6 +82,7 @@ class DetailJadwal : AppCompatActivity(), RVAdapterSecurity.ClickListener {
         }
 
         btn_add_person.setOnClickListener {
+            listPersonSelected.clear()
             alertDialog.show()
             loadDataSecurity()
         }
@@ -152,10 +157,17 @@ class DetailJadwal : AppCompatActivity(), RVAdapterSecurity.ClickListener {
 
         //Action UI
         editCari.doAfterTextChanged {
-            if(it?.length!! > 1){
+            if(it?.length!! >=1){
 
-                Log.d(TAG, "doAfterTextChanged: ${it.toString()}")
+                Log.d(TAG, "doAfterTextChanged: $it")
                 cariSecurity(it.toString())
+            }
+            else if(it.isEmpty()){
+                listPersonAdd.clear()
+                listPersonAdd.addAll(allDataPerson)
+                adapterSecurity.notifyDataSetChanged()
+                Log.d(TAG, "do after Text Changed: ${it.length}  ")
+
             }
         }
     }
@@ -199,22 +211,45 @@ class DetailJadwal : AppCompatActivity(), RVAdapterSecurity.ClickListener {
         listPersonAdd.clear()
         adapterSecurity.notifyDataSetChanged()
         Log.d(TAG, "cariSecurity! $nama")
-        for(data in allDataPerson){
-            if(data.nama.toLowerCase().contains(nama.toLowerCase())){
+
+        for (data in allDataPerson) {
+            if(data.nama.toLowerCase(Locale.ROOT).contains(nama.toLowerCase(Locale.ROOT))) {
                 listPersonAdd.add(data)
                 Log.d(TAG, "cariSecurity: ketemu $nama")
             }
         }
+
         Log.d(TAG, "cariSecurity: size ${listPersonAdd.size}")
 
-        if(listPersonAdd.size==0 && nama==""){
-            listPersonAdd = allDataPerson
-            Log.d(TAG, "cariSecurity: allDataPerson ${listPersonAdd.size}")
-        }
         adapterSecurity.notifyDataSetChanged()
     }
 
     override fun onClickListener(dataSecurity: DataSecurity, context: Context) {
+        if(dataSecurity.terpilih){
+            dataSecurity.terpilih = false
+            adapterSecurity.notifyDataSetChanged()
+            listPersonSelected.remove(dataSecurity)
+            Log.d(TAG, "onClickListener: unselected : ${listPersonSelected.size}")
+        }
+        else{
+            //check Data di list person selected
+            dataSecurity.terpilih = true
+            adapterSecurity.notifyDataSetChanged()
+            Log.d(TAG, "onClickListener: diklik")
+            var kosong=true
+            for(data in listPersonSelected){
+                if(data.nik== dataSecurity.nik){
+                    kosong = false
+                    Log.d(TAG, "cariSecurity: kosong $kosong ${dataSecurity.nama} ${dataSecurity.nik}")
+                }
+            }
+            //Akhir Cek lagi
+            if(kosong){
+                listPersonSelected.add(dataSecurity)
+                Toast.makeText(this, "${dataSecurity.nama} dipilih", Toast.LENGTH_SHORT).show()
+                Log.d(TAG, "onClickListener: ${dataSecurity.nama} dipilih ${listPersonSelected.size} ")
+            }
+        }
 
     }
 

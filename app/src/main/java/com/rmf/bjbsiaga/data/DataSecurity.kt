@@ -8,7 +8,7 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 @IgnoreExtraProperties
 data class DataSecurity (
-    val nama: String="",
+    var nama: String="",
     val email: String="",
     val nik: Long =0,
     val noWA: Long =0,
@@ -18,4 +18,6 @@ data class DataSecurity (
 ):Parcelable{
     @get:Exclude
     var documentId: String=""
+    @get:Exclude
+    var terpilih: Boolean=false
 }
