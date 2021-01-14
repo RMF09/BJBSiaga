@@ -68,6 +68,9 @@
     <string name="koordinat_lokasi">Koordinat Lokasi</string>
     <string name="unduh_qrcode">Unduh QRCODE</string>
     <string name="detail_user">Detail User</string>
+    <string name="daftar_security">Daftar Security</string>
+    <string name="detail_jadwal_hari_senin">Detail Jadwal Hari Senin</string>
+    <string name="tambah">Tambah</string>
 
     <string-array name="list_shifts">
         <item>Malam</item>

@@ -43,7 +43,7 @@
             android:id="@+id/header_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Detail Jadwal Hari Senin"
+            android:text="@string/detail_jadwal_hari_senin"
             android:textColor="@color/colorWhiteText"
             android:textSize="20sp" />
 
@@ -61,7 +61,7 @@
         android:background="@drawable/spinner_bg"
         android:dropDownWidth="300dp"
         android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
-        android:paddingRight="14dp"
+        android:paddingEnd="14dp"
         android:popupBackground="@android:color/white"
         android:popupElevation="3dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -74,7 +74,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
-        android:text="Daftar Security"
+        android:text="@string/daftar_security"
         android:textColor="@color/colorWhiteText"
         android:textSize="18sp"
         android:layout_marginStart="20dp"
@@ -90,5 +90,15 @@
         app:layout_constraintTop_toBottomOf="@+id/textView11"
         tools:itemCount="2"
         tools:listitem="@layout/item_jadwal_security"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btn_add_person"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_baseline_person_add_alt_1_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="20dp"
+        android:contentDescription="@string/description_image" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

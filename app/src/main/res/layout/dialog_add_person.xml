@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="24dp"
+    android:paddingBottom="10dp"
+    android:background="@color/colorPD">
+
+    <EditText
+        android:id="@+id/edit_cari_security"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Cari Nama Security"
+        android:drawableEnd="@drawable/quantum_ic_search_grey600_24"
+        android:drawableTint="@color/colorAccent"
+        android:background="@drawable/rounded_corner_edit"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="10dp"
+        android:textColorHint="@color/colorGrey"
+        android:textColor="@color/colorWhiteText"
+        android:layout_marginBottom="10dp"
+        android:maxLines="1"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_below="@id/edit_cari_security"
+        android:id="@+id/rv_add_person_list"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        tools:listitem="@layout/item_data_security" />
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_below="@id/rv_add_person_list"
+        android:id="@+id/btn_tambah"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:text="@string/tambah"
+        android:inputType="textNoSuggestions"
+        android:textColor="@color/colorAccent"
+        android:paddingHorizontal="12dp"
+        android:layout_alignParentEnd="true"/>
+
+</RelativeLayout>

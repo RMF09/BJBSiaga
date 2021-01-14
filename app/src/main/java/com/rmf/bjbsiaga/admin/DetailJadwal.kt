@@ -1,24 +1,33 @@
 package com.rmf.bjbsiaga.admin
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.EditText
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.AppCompatButton
+import androidx.core.widget.addTextChangedListener
+import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.rmf.bjbsiaga.R
 import com.rmf.bjbsiaga.adapter.RVAdapterJadwalSecurity
+import com.rmf.bjbsiaga.adapter.RVAdapterSecurity
 import com.rmf.bjbsiaga.data.DataJadwal
 import com.rmf.bjbsiaga.data.DataJadwalBertugas
+import com.rmf.bjbsiaga.data.DataSecurity
 import com.rmf.bjbsiaga.util.CollectionsFS
 import kotlinx.android.synthetic.main.activity_detail_jadwal.*
 
-class DetailJadwal : AppCompatActivity() {
+class DetailJadwal : AppCompatActivity(), RVAdapterSecurity.ClickListener {
     private lateinit var id: String
     private lateinit var dataJadwal: DataJadwal
     private val TAG = "DetailJadwal"
@@ -26,8 +35,17 @@ class DetailJadwal : AppCompatActivity() {
     private lateinit var adapter: RVAdapterJadwalSecurity
     private lateinit var list: ArrayList<DataJadwalBertugas>
 
-    lateinit var db : FirebaseFirestore
-    lateinit var jadwalBertugasRef: CollectionReference
+    private lateinit var db : FirebaseFirestore
+    private lateinit var jadwalBertugasRef: CollectionReference
+    private lateinit var securityRef: CollectionReference
+
+    private lateinit var alertDialog: AlertDialog
+
+    private var listPersonAdd: ArrayList<DataSecurity> = ArrayList()
+    private val allDataPerson: ArrayList<DataSecurity> =ArrayList()
+    private var initialLoadPersonAdd =false
+    private lateinit var adapterSecurity: RVAdapterSecurity
+    private var unitKerjaDipilih = ""
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,21 +57,12 @@ class DetailJadwal : AppCompatActivity() {
 
         initDB()
         setupRV()
+        initialDialog()
 
         Log.d(TAG, "onCreate: documentID = $id, data :  ${dataJadwal.hari}")
         header_text.text = "Detail Jadwal Hari ${dataJadwal.hari}"
 
-        back.setOnClickListener { finish() }
-
-        val dataUnitKerja = arrayOf("KCP Cipanas","KCP Cianjur")
-        val adapterSpinner = ArrayAdapter<String>(
-            this,
-            R.layout.spinner_selected_item,
-            dataUnitKerja)
-        adapterSpinner.setDropDownViewResource(R.layout.spinner_dropdown)
-
-        spinner_unit_kerja.adapter = adapterSpinner
-        adapterSpinner.notifyDataSetChanged()
+        loadDataUnitKerja()
 
         spinner_unit_kerja.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onItemSelected(
@@ -65,17 +74,32 @@ class DetailJadwal : AppCompatActivity() {
                 Log.d(TAG, "onItemSelected: ${parent?.selectedItem}")
                 loadData()
             }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                TODO("Not yet implemented")
-            }
-
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
+
+        btn_add_person.setOnClickListener {
+            alertDialog.show()
+            loadDataSecurity()
+        }
+        back.setOnClickListener { finish() }
+    }
+
+    private fun loadDataUnitKerja() {
+        val dataUnitKerja = arrayOf("KCP Cipanas","KCP Cianjur")
+        val adapterSpinner = ArrayAdapter<String>(
+            this,
+            R.layout.spinner_selected_item,
+            dataUnitKerja)
+        adapterSpinner.setDropDownViewResource(R.layout.spinner_dropdown)
+
+        spinner_unit_kerja.adapter = adapterSpinner
+        adapterSpinner.notifyDataSetChanged()
     }
 
     private fun initDB() {
         db = FirebaseFirestore.getInstance()
         jadwalBertugasRef = db.collection(CollectionsFS.JADWAL_BERTUGAS)
+        securityRef = db.collection(CollectionsFS.SECURITY)
     }
 
     private fun setupRV(){
@@ -101,6 +125,97 @@ class DetailJadwal : AppCompatActivity() {
 
                 Log.e(TAG, "loadData: $it")
             }
+    }
+
+    @SuppressLint("InflateParams")
+    private fun initialDialog(){
+        val builder = AlertDialog.Builder(this)
+        val view = layoutInflater.inflate(R.layout.dialog_add_person,null)
+
+        var editCari:EditText
+        var btnTambah: AppCompatButton
+        var rvListPerson: RecyclerView
+        view.apply {
+            editCari = findViewById(R.id.edit_cari_security)
+            btnTambah = findViewById(R.id.btn_tambah)
+            rvListPerson =  findViewById(R.id.rv_add_person_list)
+            builder.setView(this)
+        }
+        alertDialog = builder.create()
+        alertDialog.setCancelable(true)
+
+        //Setup RV & List
+        adapterSecurity = RVAdapterSecurity(listPersonAdd,this)
+
+        rvListPerson.layoutManager = LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false)
+        rvListPerson.adapter =adapterSecurity
+
+        //Action UI
+        editCari.doAfterTextChanged {
+            if(it?.length!! > 1){
+
+                Log.d(TAG, "doAfterTextChanged: ${it.toString()}")
+                cariSecurity(it.toString())
+            }
+        }
+    }
+
+    private fun loadDataSecurity(){
+
+        var beda=false
+        if(!initialLoadPersonAdd || unitKerjaDipilih!=spinner_unit_kerja.selectedItem.toString()){
+            allDataPerson.clear()
+            unitKerjaDipilih = spinner_unit_kerja.selectedItem.toString()
+            beda=true
+        }
+
+        listPersonAdd.clear()
+        adapterSecurity.notifyDataSetChanged()
+        securityRef.whereEqualTo("unitKerja",spinner_unit_kerja.selectedItem.toString())
+            .get()
+            .addOnSuccessListener {
+                Log.d(TAG, "loadDataSecurity: ada : ${it.size()} ")
+                for(document in it){
+                    val dataSecurity: DataSecurity = document.toObject(DataSecurity::class.java)
+                    dataSecurity.documentId = document.id
+                    listPersonAdd.add(dataSecurity)
+                    Log.d(TAG, "loadDataSecurity: ${dataSecurity.documentId}")
+
+                    if(!initialLoadPersonAdd || beda){
+                        allDataPerson.add(dataSecurity)
+                    }
+                }
+                adapterSecurity.notifyDataSetChanged()
+                initialLoadPersonAdd=true
+            }
+            .addOnFailureListener {
+                Log.e(TAG, "loadDataSecurity: it")
+                alertDialog.dismiss()
+                Toast.makeText(this, "Kesalahan mengambil data, Harap coba lagi", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun cariSecurity(nama: String){
+        listPersonAdd.clear()
+        adapterSecurity.notifyDataSetChanged()
+        Log.d(TAG, "cariSecurity! $nama")
+        for(data in allDataPerson){
+            if(data.nama.toLowerCase().contains(nama.toLowerCase())){
+                listPersonAdd.add(data)
+                Log.d(TAG, "cariSecurity: ketemu $nama")
+            }
+        }
+        Log.d(TAG, "cariSecurity: size ${listPersonAdd.size}")
+
+        if(listPersonAdd.size==0 && nama==""){
+            listPersonAdd = allDataPerson
+            Log.d(TAG, "cariSecurity: allDataPerson ${listPersonAdd.size}")
+        }
+        adapterSecurity.notifyDataSetChanged()
+    }
+
+    override fun onClickListener(dataSecurity: DataSecurity, context: Context) {
+
     }
 
 
