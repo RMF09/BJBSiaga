@@ -6,13 +6,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.EditText
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatButton
-import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,6 +22,7 @@ import com.rmf.bjbsiaga.data.DataJadwalBertugas
 import com.rmf.bjbsiaga.data.DataSecurity
 import com.rmf.bjbsiaga.util.CollectionsFS
 import kotlinx.android.synthetic.main.activity_detail_jadwal.*
+import kotlinx.android.synthetic.main.dialog_add_person.*
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -50,6 +47,15 @@ class DetailJadwal : AppCompatActivity(), RVAdapterSecurity.ClickListener {
     private var unitKerjaDipilih = ""
 
     private var listPersonSelected: ArrayList<DataSecurity> = ArrayList()
+
+    private lateinit var textSecurityTerpilih: TextView
+    private var beresTambahSecurity = false
+    private lateinit var btnTambahSecurity: AppCompatButton
+
+    private var jumlahSemuaSecurity =0
+
+    private lateinit var textKeterangan: TextView
+    private lateinit var editCariSecurity: EditText
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,6 +90,10 @@ class DetailJadwal : AppCompatActivity(), RVAdapterSecurity.ClickListener {
         btn_add_person.setOnClickListener {
             listPersonSelected.clear()
             alertDialog.show()
+            btnTambahSecurity.text="Tambah"
+            textSecurityTerpilih.text=""
+            beresTambahSecurity=false
+            textKeterangan.text =""
             loadDataSecurity()
         }
         back.setOnClickListener { finish() }
@@ -117,8 +127,8 @@ class DetailJadwal : AppCompatActivity(), RVAdapterSecurity.ClickListener {
     private fun loadData(){
         list.clear()
         adapter.notifyDataSetChanged()
-        jadwalBertugasRef.whereEqualTo("unitKerja",spinner_unit_kerja.selectedItem.toString())
-            .whereEqualTo("shift",dataJadwal.shift).get()
+        jadwalBertugasRef.whereEqualTo("idJadwal",id)
+            .whereEqualTo("unitKerja",spinner_unit_kerja.selectedItem.toString()).get()
             .addOnSuccessListener {
                 for(document in it){
                     val dataJadwalBertugas: DataJadwalBertugas = document.toObject(DataJadwalBertugas::class.java)
@@ -137,13 +147,14 @@ class DetailJadwal : AppCompatActivity(), RVAdapterSecurity.ClickListener {
         val builder = AlertDialog.Builder(this)
         val view = layoutInflater.inflate(R.layout.dialog_add_person,null)
 
-        var editCari:EditText
-        var btnTambah: AppCompatButton
+
         var rvListPerson: RecyclerView
         view.apply {
-            editCari = findViewById(R.id.edit_cari_security)
-            btnTambah = findViewById(R.id.btn_tambah)
+            editCariSecurity = findViewById(R.id.edit_cari_security)
+            btnTambahSecurity = findViewById(R.id.btn_tambah)
             rvListPerson =  findViewById(R.id.rv_add_person_list)
+            textSecurityTerpilih = findViewById(R.id.text_security_terpilih)
+            textKeterangan = findViewById(R.id.keterangan)
             builder.setView(this)
         }
         alertDialog = builder.create()
@@ -156,7 +167,7 @@ class DetailJadwal : AppCompatActivity(), RVAdapterSecurity.ClickListener {
         rvListPerson.adapter =adapterSecurity
 
         //Action UI
-        editCari.doAfterTextChanged {
+        editCariSecurity.doAfterTextChanged {
             if(it?.length!! >=1){
 
                 Log.d(TAG, "doAfterTextChanged: $it")
@@ -170,8 +181,20 @@ class DetailJadwal : AppCompatActivity(), RVAdapterSecurity.ClickListener {
 
             }
         }
+        btnTambahSecurity.setOnClickListener {
+            if(beresTambahSecurity){
+                alertDialog.dismiss()
+                loadData()
+            }
+            else{
+                alertDialog.setCancelable(false)
+                textSecurityTerpilih.text = "Harap tunggu..."
+                addPersonSelectedToJadwal(0)
+            }
+        }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun loadDataSecurity(){
 
         var beda=false
@@ -187,30 +210,55 @@ class DetailJadwal : AppCompatActivity(), RVAdapterSecurity.ClickListener {
             .get()
             .addOnSuccessListener {
                 Log.d(TAG, "loadDataSecurity: ada : ${it.size()} ")
-                for(document in it){
-                    val dataSecurity: DataSecurity = document.toObject(DataSecurity::class.java)
-                    dataSecurity.documentId = document.id
-                    listPersonAdd.add(dataSecurity)
-                    Log.d(TAG, "loadDataSecurity: ${dataSecurity.documentId}")
+                jumlahSemuaSecurity =it.size()
+                if(!it.isEmpty){
+                    for(document in it){
+                        val dataSecurity: DataSecurity = document.toObject(DataSecurity::class.java)
+                        dataSecurity.documentId = document.id
+                        listPersonAdd.add(dataSecurity)
+                        Log.d(TAG, "loadDataSecurity: ${dataSecurity.documentId}")
 
-                    if(!initialLoadPersonAdd || beda){
-                        allDataPerson.add(dataSecurity)
+                        if(!initialLoadPersonAdd || beda){
+                            allDataPerson.add(dataSecurity)
+                        }
                     }
+                    filterDataSecurity()
+                    adapterSecurity.notifyDataSetChanged()
+                    initialLoadPersonAdd=true
                 }
-                adapterSecurity.notifyDataSetChanged()
-                initialLoadPersonAdd=true
+               else{
+                   //Tidak Ada Data Security
+                   textKeterangan.text =
+                       "Tidak Ada Data Security di ${spinner_unit_kerja.selectedItem}"
+               }
+
             }
             .addOnFailureListener {
-                Log.e(TAG, "loadDataSecurity: it")
+                Log.e(TAG, "loadDataSecurity: $it")
                 alertDialog.dismiss()
                 Toast.makeText(this, "Kesalahan mengambil data, Harap coba lagi", Toast.LENGTH_SHORT).show()
             }
     }
+    private fun filterDataSecurity(){
+        Log.d(TAG, "filterDataSecurity: list size ${listPersonAdd.size} ${list.size}")
 
+        //check position
+        for (dataPetugasTerjadwal in list){
+            val iterator = listPersonAdd.iterator()
+            while (iterator.hasNext()) {
+                val item = iterator.next()
+                if (dataPetugasTerjadwal.nikPetugas == item.nik) {
+                    iterator.remove()
+                }
+            }
+        }
+        adapterSecurity.notifyDataSetChanged()
+        Log.d(TAG, "filterDataSecurity: hasil filter, list size ${listPersonAdd.size} list allDataPerson.size = ${allDataPerson.size}")
+    }
     private fun cariSecurity(nama: String){
         listPersonAdd.clear()
         adapterSecurity.notifyDataSetChanged()
-        Log.d(TAG, "cariSecurity! $nama")
+        Log.d(TAG, "cariSecurity! $nama allDataPerson size = ${allDataPerson.size}")
 
         for (data in allDataPerson) {
             if(data.nama.toLowerCase(Locale.ROOT).contains(nama.toLowerCase(Locale.ROOT))) {
@@ -246,11 +294,50 @@ class DetailJadwal : AppCompatActivity(), RVAdapterSecurity.ClickListener {
             //Akhir Cek lagi
             if(kosong){
                 listPersonSelected.add(dataSecurity)
-                Toast.makeText(this, "${dataSecurity.nama} dipilih", Toast.LENGTH_SHORT).show()
                 Log.d(TAG, "onClickListener: ${dataSecurity.nama} dipilih ${listPersonSelected.size} ")
             }
         }
 
+        if(listPersonSelected.size==0){
+            textSecurityTerpilih.text =""
+        }else{
+            textSecurityTerpilih.text = "${listPersonSelected.size} Security terpilih"
+        }
+
+        Log.d(TAG, "onClickListener: person selected: $listPersonSelected")
+
+    }
+
+    private fun addPersonSelectedToJadwal(position: Int){
+       val dataSecurityTerpilih = listPersonSelected[position]
+
+       val dataJadwalBertugas = DataJadwalBertugas(
+           id,
+           dataSecurityTerpilih.nik,
+           dataSecurityTerpilih.nama,
+           dataJadwal.shift,
+           dataJadwal.hari,dataSecurityTerpilih.unitKerja)
+
+       jadwalBertugasRef.document().set(dataJadwalBertugas)
+           .addOnSuccessListener {
+               val posNext = position +1
+               if(posNext<=listPersonSelected.size-1){
+                   addPersonSelectedToJadwal(posNext)
+               }
+               else{
+                   //beres
+                   beresTambahSecurity=true
+                   btnTambahSecurity.text= "OK"
+                   textSecurityTerpilih.text = "Berhasil ditambahkan"
+                   alertDialog.setCancelable(true)
+               }
+           }
+           .addOnFailureListener {
+               Log.e(TAG, "addPersonSelectedToJadwal: $it" )
+               alertDialog.setCancelable(true)
+               alertDialog.dismiss()
+               beresTambahSecurity =false
+           }
     }
 
 

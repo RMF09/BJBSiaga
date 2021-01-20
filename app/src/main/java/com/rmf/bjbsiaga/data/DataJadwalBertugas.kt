@@ -10,7 +10,8 @@ data class DataJadwalBertugas (
     val nikPetugas: Long= 0,
     val nama: String= "",
     val shift: String="",
-    val hari: String=""
+    val hari: String="",
+    val unitKerja: String=""
 ){
     @get:Exclude
     var documentId: String=""

@@ -6,13 +6,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:gravity="center"
-    android:padding="24dp"
+    android:paddingTop="24dp"
     android:paddingBottom="10dp"
     android:background="@color/colorPD">
 
     <EditText
         android:id="@+id/edit_cari_security"
-        android:layout_width="match_parent"
+        android:layout_width="280dp"
         android:layout_height="wrap_content"
         android:hint="Cari Nama Security"
         android:drawableEnd="@drawable/quantum_ic_search_grey600_24"
@@ -23,13 +23,25 @@
         android:textColorHint="@color/colorGrey"
         android:textColor="@color/colorWhiteText"
         android:layout_marginBottom="10dp"
+        android:layout_centerHorizontal="true"
         android:maxLines="1"/>
     <androidx.recyclerview.widget.RecyclerView
         android:layout_below="@id/edit_cari_security"
         android:id="@+id/rv_add_person_list"
         android:layout_width="match_parent"
         android:layout_height="400dp"
+        android:visibility="invisible"
         tools:listitem="@layout/item_data_security" />
+
+    <TextView
+        android:id="@+id/text_security_terpilih"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorWhiteText"
+        android:layout_marginTop="10dp"
+        android:textSize="16sp"
+        android:layout_below="@id/rv_add_person_list"
+        android:layout_marginStart="16dp"/>
     <androidx.appcompat.widget.AppCompatButton
         android:layout_below="@id/rv_add_person_list"
         android:id="@+id/btn_tambah"
@@ -41,5 +53,16 @@
         android:textColor="@color/colorAccent"
         android:paddingHorizontal="12dp"
         android:layout_alignParentEnd="true"/>
+
+    <TextView
+        android:id="@+id/keterangan"
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/colorWhiteText"
+        android:text="Belum Ada Data Security Di Cabang KCP Cipanas"
+        android:textSize="18sp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="140dp"/>
 
 </RelativeLayout>
