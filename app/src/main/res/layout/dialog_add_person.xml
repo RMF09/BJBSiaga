@@ -30,7 +30,6 @@
         android:id="@+id/rv_add_person_list"
         android:layout_width="match_parent"
         android:layout_height="400dp"
-        android:visibility="invisible"
         tools:listitem="@layout/item_data_security" />
 
     <TextView

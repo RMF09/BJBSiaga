@@ -91,9 +91,11 @@ class DetailJadwal : AppCompatActivity(), RVAdapterSecurity.ClickListener {
             listPersonSelected.clear()
             alertDialog.show()
             btnTambahSecurity.text="Tambah"
+            btnTambahSecurity.isEnabled=false
             textSecurityTerpilih.text=""
             beresTambahSecurity=false
             textKeterangan.text =""
+
             loadDataSecurity()
         }
         back.setOnClickListener { finish() }
@@ -225,13 +227,16 @@ class DetailJadwal : AppCompatActivity(), RVAdapterSecurity.ClickListener {
                     filterDataSecurity()
                     adapterSecurity.notifyDataSetChanged()
                     initialLoadPersonAdd=true
+                    btnTambahSecurity.isEnabled=true
                 }
                else{
                    //Tidak Ada Data Security
                    textKeterangan.text =
                        "Tidak Ada Data Security di ${spinner_unit_kerja.selectedItem}"
+                    btnTambahSecurity.text = "Ok"
+                    beresTambahSecurity = true
+                    btnTambahSecurity.isEnabled=true
                }
-
             }
             .addOnFailureListener {
                 Log.e(TAG, "loadDataSecurity: $it")
@@ -243,17 +248,25 @@ class DetailJadwal : AppCompatActivity(), RVAdapterSecurity.ClickListener {
         Log.d(TAG, "filterDataSecurity: list size ${listPersonAdd.size} ${list.size}")
 
         //check position
+        var jumlahItemDihapus = 0
         for (dataPetugasTerjadwal in list){
             val iterator = listPersonAdd.iterator()
             while (iterator.hasNext()) {
                 val item = iterator.next()
                 if (dataPetugasTerjadwal.nikPetugas == item.nik) {
                     iterator.remove()
+                    jumlahItemDihapus++
                 }
             }
         }
         adapterSecurity.notifyDataSetChanged()
         Log.d(TAG, "filterDataSecurity: hasil filter, list size ${listPersonAdd.size} list allDataPerson.size = ${allDataPerson.size}")
+
+        if(jumlahItemDihapus==allDataPerson.size){
+            textKeterangan.text = "Semua data security telah dijadwalkan disini"
+            beresTambahSecurity=true
+            btnTambahSecurity.text="Ok"
+        }
     }
     private fun cariSecurity(nama: String){
         listPersonAdd.clear()
@@ -272,6 +285,7 @@ class DetailJadwal : AppCompatActivity(), RVAdapterSecurity.ClickListener {
         adapterSecurity.notifyDataSetChanged()
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onClickListener(dataSecurity: DataSecurity, context: Context) {
         if(dataSecurity.terpilih){
             dataSecurity.terpilih = false
