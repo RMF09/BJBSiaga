@@ -12,7 +12,7 @@ import com.rmf.bjbsiaga.data.DataJadwalBertugas
 import com.rmf.bjbsiaga.data.DataSecurity
 import kotlinx.android.synthetic.main.item_jadwal_security.view.*
 
-class RVAdapterJadwalSecurity(var list: ArrayList<DataJadwalBertugas>) : RecyclerView.Adapter<RVAdapterJadwalSecurity.ViewHolder>() {
+class RVAdapterJadwalSecurity(var list: ArrayList<DataJadwalBertugas>, val hapusClickListener: HapusClickListener) : RecyclerView.Adapter<RVAdapterJadwalSecurity.ViewHolder>() {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -28,6 +28,10 @@ class RVAdapterJadwalSecurity(var list: ArrayList<DataJadwalBertugas>) : Recycle
         holder.itemView.text_nama.text=data.nama
         holder.itemView.text_shift.text=data.shift
         holder.itemView.image_shift.setImageDrawable(checkIcon(holder.itemView.context,data.shift))
+
+        holder.itemView.img_hapus.setOnClickListener {
+            hapusClickListener.onClickListener(data)
+        }
     }
 
     private fun checkIcon(context: Context, shift: String) : Drawable? {
@@ -38,5 +42,9 @@ class RVAdapterJadwalSecurity(var list: ArrayList<DataJadwalBertugas>) : Recycle
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+
+    interface HapusClickListener{
+        fun onClickListener(dataJadwalBertugas: DataJadwalBertugas)
+    }
 
 }

@@ -29,7 +29,8 @@
         android:roundIcon="@mipmap/ic_launcher_bjb_siaga2_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".admin.DetailJadwal"></activity>
+        <activity android:name=".admin.PilihCabang"></activity>
+        <activity android:name=".admin.DetailJadwal" />
         <activity android:name=".admin.EditUser" />
         <activity android:name=".admin.DetailUser" />
         <activity android:name=".admin.DetailRuangan" />

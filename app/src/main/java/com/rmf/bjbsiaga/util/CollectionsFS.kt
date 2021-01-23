@@ -10,5 +10,6 @@ class CollectionsFS {
         const val SIKLUS: String= "Siklus"
         const val JADWAL_BERTUGAS: String= "JadwalBertugas"
         const val TUGAS_SIAGA: String= "TugasSiaga"
+        const val CABANG: String= "Cabang"
     }
 }

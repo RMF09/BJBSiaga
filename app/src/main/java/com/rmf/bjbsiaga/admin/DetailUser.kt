@@ -34,6 +34,7 @@ class DetailUser : AppCompatActivity() {
             phone.text = this?.noWA.toString()
             unit_kerja.text = this?.unitKerja
         }!!
+
         id = intent.getStringExtra("id").toString()
 
         Log.d(TAG, "onCreate: Document ID = $id")

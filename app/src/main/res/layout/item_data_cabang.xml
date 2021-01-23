@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+        <TextView
+            android:id="@+id/text_nomer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1"
+            android:layout_marginLeft="12dp"
+            android:textColor="@color/colorWhitePure"
+            android:textSize="26sp"/>
+        <LinearLayout
+            android:layout_toRightOf="@id/text_nomer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="20dp"
+            >
+            <TextView
+                android:id="@+id/text_nama_cabang"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="KCP Cipanas"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorWhiteText"/>
+            <TextView
+                android:id="@+id/text_jumlah_ruangan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2 Ruangan"
+                android:textColor="@color/colorWhiteText"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorGrey"
+        android:layout_marginHorizontal="16dp"/>
+
+
+</LinearLayout>
