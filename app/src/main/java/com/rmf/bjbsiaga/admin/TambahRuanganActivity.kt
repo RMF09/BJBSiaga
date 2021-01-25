@@ -2,6 +2,7 @@ package com.rmf.bjbsiaga.admin
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Build
@@ -54,12 +55,17 @@ class TambahRuanganActivity : AppCompatActivity(), OnMapReadyCallback {
     lateinit var db : FirebaseFirestore
     private lateinit var storageReference: StorageReference
     private lateinit var alertDialog: AlertDialog
-
+    
+    private var idCabang: String =""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
 
+        
+        idCabang = intent.getStringExtra("id_cabang").toString()
+        Log.d(TAG, "onCreate: id_cabang $idCabang")
+        
         initDB()
 
         var mapViewBundle :Bundle? =null
@@ -93,6 +99,10 @@ class TambahRuanganActivity : AppCompatActivity(), OnMapReadyCallback {
             ) { dialog, _ ->
                 dialog.dismiss()
                 if(title == "Berhasil")
+                    Intent().apply {
+                        putExtra("status",true)
+                        setResult(2,this)
+                    }
                     finish()
             }
         }
@@ -182,7 +192,7 @@ class TambahRuanganActivity : AppCompatActivity(), OnMapReadyCallback {
         val namaRuangan: String = text_input_nama_ruangan.editText?.text.toString()
 
         val id =  db.collection(CollectionsFS.RUANGAN).document().id
-        val dataRuangan = DataRuangan(namaRuangan, lat, lng)
+        val dataRuangan = DataRuangan(namaRuangan, lat, lng,idCabang)
         dataRuangan.documentId = id
         Log.e(TAG, "saveData: id= $id")
         db.collection(CollectionsFS.RUANGAN).document(id).set(dataRuangan)

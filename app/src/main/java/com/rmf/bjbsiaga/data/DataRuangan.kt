@@ -11,7 +11,8 @@ import kotlinx.serialization.Serializable
 data class DataRuangan(
     var namaRuangan: String="",
     var lat: Double= 0.0,
-    var lng: Double= 0.0
+    var lng: Double= 0.0,
+    var idCabang: String=""
 ) : Parcelable{
     @get:Exclude
     var documentId: String=""

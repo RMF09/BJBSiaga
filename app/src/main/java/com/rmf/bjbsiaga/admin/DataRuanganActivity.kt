@@ -1,9 +1,11 @@
 package com.rmf.bjbsiaga.admin
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -22,18 +24,32 @@ class DataRuanganActivity : AppCompatActivity(), RVAdapterRuangan.ClickListener 
 
     lateinit var db : FirebaseFirestore
     lateinit var ruanganRef: CollectionReference
+    lateinit var cabangRef: CollectionReference
 
     private  val TAG = "DataRuangan"
+    private var idCabang: String=""
+    private var namaCabang: String=""
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_data_ruangan)
+
+        idCabang = intent.getStringExtra("id_cabang").toString()
+        namaCabang = intent.getStringExtra("nama_cabang").toString()
+        header_text.text = "Data Ruangan $namaCabang"
+
         initDB()
         setupRV()
         setupAdapter()
 
+        loadDataRuangan(false)
+
         btn_add.setOnClickListener {
-            startActivity(Intent(this,TambahRuanganActivity::class.java))
+            Intent(this,TambahRuanganActivity::class.java).apply {
+                putExtra("id_cabang",idCabang)
+                startActivityForResult(this,2)
+            }
         }
         back.setOnClickListener {
             finish()
@@ -56,16 +72,22 @@ class DataRuanganActivity : AppCompatActivity(), RVAdapterRuangan.ClickListener 
     fun initDB(){
         db = FirebaseFirestore.getInstance()
         ruanganRef = db.collection(CollectionsFS.RUANGAN)
+        cabangRef = db.collection(CollectionsFS.CABANG)
     }
-    fun loadSecurity(){
+    fun loadDataRuangan(statusTambah: Boolean){
         list.clear()
-        ruanganRef.get()
+        ruanganRef.whereEqualTo("idCabang",idCabang)
+            .get()
             .addOnSuccessListener {
                 for (document in it){
                     val dataRuangan : DataRuangan = document.toObject(DataRuangan::class.java)
                     list.add(dataRuangan)
                 }
                 adapter.notifyDataSetChanged()
+
+                if(statusTambah){
+                    updateCountRuanganCabang(list.size)
+                }
             }
     }
 
@@ -76,8 +98,26 @@ class DataRuanganActivity : AppCompatActivity(), RVAdapterRuangan.ClickListener 
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        loadSecurity()
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if(requestCode==2){
+            val statusTambahRuangan = data?.getBooleanExtra("status",false)
+
+            statusTambahRuangan?.let { loadDataRuangan(it) }
+            Log.d(TAG, "onActivityResult: status : $statusTambahRuangan")
+        }
+    }
+
+    private fun updateCountRuanganCabang(size: Int){
+        Log.d(TAG, "updateCountRuanganCabang: jumlah Ruangan = $size")
+        cabangRef.document(idCabang).update("jumlahRuangan",size)
+            .addOnSuccessListener {
+                Log.d(TAG, "updateCountRuanganCabang: Berhasil")
+            }
+            .addOnFailureListener {
+                Log.e(TAG, "updateCountRuanganCabang: Gagal $it")
+            }
     }
 }

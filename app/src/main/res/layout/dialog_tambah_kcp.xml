@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/text_header_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Masukan Nama Cabang"
+        android:textSize="16sp"
+        android:textColor="@color/colorP"
+        android:layout_marginBottom="12dp"/>
+    <EditText
+        android:id="@+id/edit_nama_cabang"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:maxLines="1"
+        tools:ignore="LabelFor" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_tambah_dialog_cabang"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tambah Cabang"
+        android:paddingHorizontal="14dp"
+        android:textAllCaps="false"
+        android:textColor="@color/colorWhiteText"
+        android:background="@drawable/button"
+        android:enabled="true"
+        android:layout_marginTop="16dp"/>
+
+
+</LinearLayout>
