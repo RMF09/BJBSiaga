@@ -77,6 +77,7 @@ class PilihCabang : AppCompatActivity(), RVAdapterCabang.ClickListener {
     }
 
     private fun loadData() {
+        list.clear()
         cabangRef.get()
             .addOnSuccessListener {
                 Log.d(TAG, "loadData: ${it.size()}")

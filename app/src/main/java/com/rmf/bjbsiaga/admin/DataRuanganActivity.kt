@@ -81,6 +81,7 @@ class DataRuanganActivity : AppCompatActivity(), RVAdapterRuangan.ClickListener 
             .addOnSuccessListener {
                 for (document in it){
                     val dataRuangan : DataRuangan = document.toObject(DataRuangan::class.java)
+                    dataRuangan.documentId = document.id
                     list.add(dataRuangan)
                 }
                 adapter.notifyDataSetChanged()
@@ -93,8 +94,10 @@ class DataRuanganActivity : AppCompatActivity(), RVAdapterRuangan.ClickListener 
 
     override fun onClickListener(dataRuangan: DataRuangan, context: Context) {
         Intent(this,DetailRuangan::class.java).apply {
+            Log.d(TAG, "onClickListener id: ${dataRuangan.documentId}")
+            putExtra("id",dataRuangan.documentId)
             putExtra("data",dataRuangan)
-            context.startActivity(this)
+            startActivityForResult(this,2)
         }
     }
 

@@ -2,13 +2,17 @@ package com.rmf.bjbsiaga.admin
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.PermissionToken
@@ -18,6 +22,7 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
 import com.rmf.bjbsiaga.R
 import com.rmf.bjbsiaga.data.DataRuangan
+import com.rmf.bjbsiaga.util.CollectionsFS
 import kotlinx.android.synthetic.main.activity_detail_ruangan.*
 import java.io.File
 
@@ -25,6 +30,10 @@ import java.io.File
 class DetailRuangan : AppCompatActivity() {
     private lateinit var storage: FirebaseStorage
     private  val TAG = "DetailRuangan"
+    private lateinit var ruanganRef: CollectionReference
+    private lateinit var db : FirebaseFirestore
+    private var id : String = ""
+
 
 
     @SuppressLint("SetTextI18n")
@@ -37,8 +46,11 @@ class DetailRuangan : AppCompatActivity() {
 
         text_nama_ruangan.text = dataRuangan?.namaRuangan
 
-        val lat = dataRuangan?.lat.toString()
-        val lng = dataRuangan?.lng.toString()
+        id = intent.getStringExtra("id").toString()
+
+        Log.d(TAG, "onCreate: $id")
+        val lat = dataRuangan!!.lat.toString()
+        val lng = dataRuangan.lng.toString()
         text_koordinat_lokasi.text = "$lat, $lng"
 
         back.setOnClickListener { finish() }
@@ -66,6 +78,10 @@ class DetailRuangan : AppCompatActivity() {
 
         }
 
+        btn_hapus.setOnClickListener {
+            konfirmasiHapus()
+        }
+
         if(!dataRuangan?.namaRuangan.isNullOrEmpty()){
             dataRuangan?.namaRuangan?.let { initStorage(it) }
         }
@@ -83,16 +99,75 @@ class DetailRuangan : AppCompatActivity() {
         }
         val localFile = File(rootPath, "${namaRuangan}.png")
 
-
         imageRef.getFile(localFile).addOnSuccessListener {
 
             Log.d(TAG, "onCreate: berhasil download ke lokal ${it.totalByteCount}")
+            showDialog()
 
 
         }.addOnFailureListener{
             Log.e(TAG, "onCreate: $it")
 
         }
+    }
+
+    private fun showDialog(){
+        val builder = AlertDialog.Builder(this)
+        builder.apply {
+            setTitle("Berhasil")
+            setMessage("QRCode berhasil disimpan di penyimpanan perangkat Anda")
+            setPositiveButton("OK"){ dialog, _ ->
+                dialog.dismiss()
+            }
+        }
+        val alertDialog = builder.create()
+        alertDialog.show()
+    }
+
+    private fun konfirmasiHapus(){
+        val builder = AlertDialog.Builder(this)
+        builder.apply {
+            setTitle("Hapus Ruangan")
+            setMessage("Anda yakin ingin menghapus ruangan ini?")
+            setPositiveButton("Ya"){ dialog, _ ->
+                dialog.dismiss()
+                hapusRuangan()
+            }
+            setNegativeButton("Batal"){dialog, _ ->
+                dialog.dismiss()
+            }
+        }
+        val alertDialog = builder.create()
+        alertDialog.show()
+    }
+
+    private fun showDialogHapus(){
+        val builder = AlertDialog.Builder(this)
+        builder.apply {
+            setTitle("Berhasil")
+            setMessage("Ruangan berhasil dihapus")
+            setPositiveButton("OK"){ dialog, _ ->
+                dialog.dismiss()
+                Intent().apply {
+                    putExtra("status",true)
+                    setResult(2,this)
+                }
+                finish()
+            }
+        }
+        val alertDialog = builder.create()
+        alertDialog.show()
+    }
+
+    private fun hapusRuangan(){
+        ruanganRef.document(id)
+            .delete()
+            .addOnSuccessListener {
+                showDialogHapus()
+            }
+            .addOnFailureListener {
+                Log.e(TAG, "hapusRuangan: $it" )
+            }
     }
 
 
@@ -113,6 +188,8 @@ class DetailRuangan : AppCompatActivity() {
             .addOnFailureListener {
                 btn_unduh_qrcode.isEnabled=false
             }
+        db = FirebaseFirestore.getInstance()
+        ruanganRef = db.collection(CollectionsFS.RUANGAN)
 
     }
 }

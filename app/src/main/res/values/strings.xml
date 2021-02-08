@@ -71,6 +71,7 @@
     <string name="daftar_security">Daftar Security</string>
     <string name="detail_jadwal_hari_senin">Detail Jadwal Hari Senin</string>
     <string name="tambah">Tambah</string>
+    <string name="hapus_ruangan">Hapus Ruangan</string>
 
     <string-array name="list_shifts">
         <item>Malam</item>

@@ -73,13 +73,15 @@
         <activity android:name=".admin.TambahDataSecurityActivity" />
         <activity android:name=".admin.DataSecurityActivity" />
         <activity android:name=".admin.AdminDashboardActivity">
+
+        </activity>
+        <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity" />
         <activity android:name=".Splash" />
         <activity android:name=".security.Camera" />
 

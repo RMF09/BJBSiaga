@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.rmf.bjbsiaga.R
 import com.rmf.bjbsiaga.data.DataSecurity
 import com.rmf.bjbsiaga.util.CollectionsFS
@@ -19,7 +20,10 @@ class DetailUser : AppCompatActivity() {
 
     lateinit var db : FirebaseFirestore
     lateinit var securityRef: CollectionReference
+    lateinit var jadwalSecurityRef: CollectionReference
     private lateinit var alertDialog: AlertDialog
+
+    private var nikPetugas: Long? =0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +37,7 @@ class DetailUser : AppCompatActivity() {
             email.text = this?.email
             phone.text = this?.noWA.toString()
             unit_kerja.text = this?.unitKerja
+            nikPetugas = this?.nik
         }!!
 
         id = intent.getStringExtra("id").toString()
@@ -73,17 +78,31 @@ class DetailUser : AppCompatActivity() {
     private fun initDB(){
         db = FirebaseFirestore.getInstance()
         securityRef = db.collection(CollectionsFS.SECURITY)
+        jadwalSecurityRef = db.collection(CollectionsFS.JADWAL_BERTUGAS)
     }
 
     private fun hapusData() {
-        securityRef.document(id)
-            .delete()
-            .addOnSuccessListener {
-                showDialog("Data Security berhasil dihapus","Berhasil")
+        val query: Query = jadwalSecurityRef.whereEqualTo("nikPetugas",nikPetugas)
+        query.get().addOnCompleteListener {
+            if(it.isSuccessful){
+                for(data in it.result){
+                    jadwalSecurityRef.document(data.id).delete()
+                }
+
+                securityRef.document(id)
+                    .delete()
+                    .addOnSuccessListener {
+                        showDialog("Data Security berhasil dihapus","Berhasil")
+                    }
+                    .addOnFailureListener {
+                        showDialog("Data Security gagal dihapus","Kesalahan")
+                    }
             }
-            .addOnFailureListener {
-                showDialog("Data Security gagal dihapus","Kesalahan")
+            else{
+                Log.e(TAG, "hapusData: ${it.exception}" )
             }
+        }
+
     }
 
     private fun showDialog(message: String, title: String){
