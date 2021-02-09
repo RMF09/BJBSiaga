@@ -12,23 +12,19 @@ class NotifAlarm {
 
     companion object{
 
-        fun set(applicationContext: Context,jam: Int, menit: Int){
-            Log.d("setAlarm", "set: $jam.$menit")
+        fun set(applicationContext: Context,calendar: Calendar){
+            Log.d("setAlarm", "set: ${calendar.get(Calendar.HOUR_OF_DAY)}.${calendar.get(Calendar.MINUTE)}")
             val alarmIntent = Intent(applicationContext, AlarmReceiver::class.java)
             val pendingIntent = PendingIntent.getBroadcast(applicationContext, 0, alarmIntent, 0)
 
             val manager = applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            val calendar: Calendar = Calendar.getInstance()
-            calendar.set(Calendar.HOUR_OF_DAY, jam)
-            calendar.set(Calendar.MINUTE, menit)
-            calendar.set(Calendar.SECOND, 0)
 
-
-            if (calendar.time < Date()) {
-                //sudah terlewat besok aja
-                calendar.add(Calendar.DAY_OF_MONTH,1)
-                Log.d("setAlarm", "set: kalewat tambah hari")
-            }
+            Log.d("setAlarm", "${calendar.time}, ${Date()}")
+//            if (calendar.time < Date()) {
+//                //sudah terlewat besok aja
+//                calendar.add(Calendar.DAY_OF_MONTH,1)
+//                Log.d("setAlarm", "set: kalewat tambah hari")
+//            }
             Log.d("setAlarm", "set: alarm!")
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                 manager.setExactAndAllowWhileIdle(

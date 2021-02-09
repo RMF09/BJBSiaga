@@ -3,13 +3,13 @@ package com.rmf.bjbsiaga.security
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -52,8 +52,10 @@ class SecurityDashboardActivity : AppCompatActivity() {
     private lateinit var jadwalBertugasRef: CollectionReference
     private lateinit var tugasSiagaRef: CollectionReference
 
-    private var NIK: Long? = 0
-    private val TAG = "SecurityDashboardActivi"
+    companion object{
+        private var NIK: Long? =0
+        private const val TAG = "SecurityDashboardActivi"
+    }
     private var pergiKeDetailSiklus =false
     private var membuatSiklusBaru =false
 
@@ -68,7 +70,9 @@ class SecurityDashboardActivity : AppCompatActivity() {
     private lateinit var textTitleCompleteSiklus: TextView
     private lateinit var textKeteranganCompleteSiklus: TextView
     private lateinit var btnOKCompleteSiklus: Button
-    private var isYesterday = false
+
+    private var checkHariKamari  = false
+    private var currentCalendar=  Calendar.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,21 +96,12 @@ class SecurityDashboardActivity : AppCompatActivity() {
 
                             NIK = documentSnapshot.getLong("nik")
                             text_nama.text = documentSnapshot.getString("nama")
-                            AnimationUtils.loadAnimation(this,R.anim.fade_in).apply {
+                            AnimationUtils.loadAnimation(this, R.anim.fade_in).apply {
                                 text_nama.startAnimation(this)
                             }
-                            Log.e(TAG, "onCreate: ${documentSnapshot.getString("nama")}" )
-                            checkJadwalBertugas()
-                            /**
-                             * STEP 1 : Check JadwaL Bertugas hari ini
-                             * STEP 2 : jika ada jadwal check tugas siaga, ambil waktu terakhir absen
-                             * a1) jika tgl data terakhir beda (hari dengan kemarin)  status siaga belum beres, ADD TUGAS SIAGA BARU
-                             * b) jika data terakhir shift malam  check Tugas Siaga Telah Berakhir dan check jamSekarang > jam terakhir dari shift,
-                             * UPDATE STATUS SIAGA SELESAI -> Check tugas Siaga
-                             * a2) load Data siklus
-                             * -Jika data tugas siaga kosong, ADD
-                             */
-
+                            Log.e(TAG, "onCreate: ${documentSnapshot.getString("nama")}")
+                            val hariSekarang = Config.Today()
+                            checkJadwalBertugas(hariSekarang)
                         }
                         else{
                             Log.e(TAG, "onCreate: Tidak ada User")
@@ -114,7 +109,7 @@ class SecurityDashboardActivity : AppCompatActivity() {
                     }
             }
         }else{
-            startActivity(Intent(this,LoginActivity::class.java))
+            startActivity(Intent(this, LoginActivity::class.java))
             finish()
         }
 
@@ -162,7 +157,7 @@ class SecurityDashboardActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     fun initDialogCompleteSiklus(){
         val builder = AlertDialog.Builder(this)
-        val view = layoutInflater.inflate(R.layout.dialog_konfirmasi_ruangan_telah_selesai,null)
+        val view = layoutInflater.inflate(R.layout.dialog_konfirmasi_ruangan_telah_selesai, null)
 
         view.apply {
             textTitleCompleteSiklus = findViewById(R.id.text_title_complete)
@@ -209,17 +204,18 @@ class SecurityDashboardActivity : AppCompatActivity() {
 
     @SuppressLint("SimpleDateFormat")
     fun setAlarmForLastDataSiklus(){
-        val data = listSiklus[listSiklus.size-1]
-        Log.e(TAG, "setAlarmForLastDataSiklus: sudah beres? ${data.sudahBeres}" )
+        val data = listSiklus[listSiklus.size - 1]
+        Log.e(TAG, "setAlarmForLastDataSiklus: sudah beres? ${data.sudahBeres}")
         if(!data.sudahBeres){
             try {
-                val df = SimpleDateFormat("HH.mm")
-                val calendar = Calendar.getInstance()
-                calendar.time =df.parse(data.pukul)
+//                val df = SimpleDateFormat("d-MM-yyyy HH.mm")
+//                val calendar = Calendar.getInstance()
+//                val time = "${data.tanggal} ${data.pukul}"
+//                calendar.time =df.parse(time)
 
-                NotifAlarm.set(this,
-                    calendar.get(Calendar.HOUR_OF_DAY),
-                    calendar.get(Calendar.MINUTE))
+                NotifAlarm.set(
+                    this,
+                    currentCalendar)
             }
             catch (e: Exception){
                 Log.e(TAG, "setAlarmForLastDataSiklus: $e")
@@ -227,12 +223,13 @@ class SecurityDashboardActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkJadwalBertugas(){
+    @SuppressLint("SimpleDateFormat")
+    private fun checkJadwalBertugas(day: String){
         Log.d(TAG, "checkJadwalBertugas: nikPetugas : $NIK")
-        val hariSekarang = Config.Today()
-        Log.d(TAG, "checkJadwalBertugas: Hari ini : $hariSekarang")
-        jadwalBertugasRef.whereEqualTo("nikPetugas",NIK)
-            .whereEqualTo("hari", hariSekarang)
+
+        Log.d(TAG, "checkJadwalBertugas: Hari: $day")
+        jadwalBertugasRef.whereEqualTo("nikPetugas", NIK)
+            .whereEqualTo("hari", day)
             .get()
             .addOnSuccessListener {
                 if(!it.isEmpty){
@@ -249,6 +246,20 @@ class SecurityDashboardActivity : AppCompatActivity() {
                 }
                 else{
                     Log.d(TAG, "checkJadwalBertugas: Tidak ada jadwal untuk anda")
+
+                    if(!checkHariKamari){
+                        //cek kamari
+                        val calendar =  Calendar.getInstance()
+                        calendar.add(Calendar.DAY_OF_MONTH,-1)
+
+                        currentCalendar = calendar
+                        val namaHari =  SimpleDateFormat("EEEE").format(currentCalendar.time)
+                        Log.d(TAG, "checkJadwalBertugas: hari kamari : $namaHari")
+
+                        checkJadwalBertugas(namaHari)
+                        checkHariKamari=true
+
+                    }
                 }
             }
             .addOnFailureListener {
@@ -259,10 +270,9 @@ class SecurityDashboardActivity : AppCompatActivity() {
 
 
     private fun checkTugasSiaga(){
-        var tglTugasSiaga : Date? = null
 
         tugasSiagaRef.whereEqualTo("idJadwalBertugas", idJadwalBertugas)
-            .orderBy(TANGGAL_FIELD,Query.Direction.DESCENDING)
+            .orderBy(TANGGAL_FIELD, Query.Direction.DESCENDING)
             .limit(1)
             .get()
             .addOnSuccessListener {
@@ -271,44 +281,19 @@ class SecurityDashboardActivity : AppCompatActivity() {
                         val dataTugasSiaga = document.toObject(DataTugasSiaga::class.java)
                         dataTugasSiaga.documentId = document.id
                         idTugasSiaga = dataTugasSiaga.documentId
-                        tglTugasSiaga = dataTugasSiaga.tanggal
                         statusTugasSiaga = dataTugasSiaga.statusSudahBeres
-                        tanggalTugasSiga = Config.convertTanggalTimeStamp2(tglTugasSiaga)
-                        Log.d(TAG, "checkTugasSiaga:  ${dataTugasSiaga.tanggal} ${dataTugasSiaga.tanggal?.let { it1 ->
-                            Config.convertTanggalTimeStamp(
-                                it1
-                            )
-                        }}")
-//                        initDialogCompleteSiklus()
-//                        loadDataSiklus()
-                    }
-
-                    Log.d(TAG, "checkTugasSiaga: tgl $tglTugasSiaga , ayena ${Date()}")
-
-                    val hasilTglTugasSiaga = Config.convertTanggalTimeStamp(tglTugasSiaga)
-                    val hasilTanggalSekarang = dateNow()
-
-                    Log.d(TAG, "checkTugasSiaga: hasil tanggal $hasilTglTugasSiaga, ayena $hasilTanggalSekarang")
-
-                    if(hasilTglTugasSiaga != hasilTanggalSekarang){
-                        Log.d(TAG, "checkTugasSiaga: beda tanggal")
-                        if(statusTugasSiaga){
-                            Log.d(TAG, "checkTugasSiaga: status Tugas Siaga :  $statusTugasSiaga, tambahkan tugasSiaga hari ini")
-                            addTugasSiaga()
-                        }else{
-                            val jamTerakhirDariShift: Int
-                            if(shift == "malam"){
-                                jamTerakhirDariShift = Config.ambilJam(listShiftMalam[listShiftMalam.size-1])
-                                checkTugasSiagaTelahBerakhir(jamTerakhirDariShift)
-                            }
-                        }
-                    }
-                    //end beda tanggal
-                    else {
-                        Log.d(TAG, "checkTugasSiaga: loadDataSiklus")
+                        tanggalTugasSiga = Config.convertTanggalTimeStamp2(dataTugasSiaga.tanggal)
+                        Log.d(
+                            TAG, "checkTugasSiaga:  ${dataTugasSiaga.tanggal} ${
+                                dataTugasSiaga.tanggal?.let { it1 ->
+                                    Config.convertTanggalTimeStamp(
+                                        it1
+                                    )
+                                }
+                            }"
+                        )
                         loadDataSiklus()
                     }
-                    Log.d(TAG, "checkTugasSiaga: $idTugasSiaga")
                 }
                 else{
                     Log.d(TAG, "checkTugasSiaga: Tidak ada tugas siaga")
@@ -320,80 +305,28 @@ class SecurityDashboardActivity : AppCompatActivity() {
             }
     }
 
-    private fun checkTugasSiagaKemarin(){
-        var tglTugasSiaga : Date?
-
-        tugasSiagaRef.whereEqualTo("idJadwalBertugas", idJadwalBertugas)
-            .orderBy(TANGGAL_FIELD,Query.Direction.DESCENDING)
-            .limit(1)
-            .get()
-            .addOnSuccessListener {
-                if(!it.isEmpty){
-                    for (document in it){
-                        val dataTugasSiaga = document.toObject(DataTugasSiaga::class.java)
-                        dataTugasSiaga.documentId = document.id
-                        idTugasSiaga = dataTugasSiaga.documentId
-                        tglTugasSiaga = dataTugasSiaga.tanggal
-                        statusTugasSiaga = dataTugasSiaga.statusSudahBeres
-                        tanggalTugasSiga = Config.convertTanggalTimeStamp2(tglTugasSiaga)
-                        Log.d(TAG, "checkTugasSiagaKemarin:  ${dataTugasSiaga.tanggal} ${dataTugasSiaga.tanggal?.let { it1 ->
-                            Config.convertTanggalTimeStamp(
-                                it1
-                            )
-                        }}")
-
-                    }
-                    loadDataSiklus()
-                }
-            }
-            .addOnFailureListener {
-                Log.e(TAG, "checkTugasSiagaKemarin: $it" )
-            }
-    }
-
-    private fun checkTugasSiagaTelahBerakhir(jamTerakhirDariShift: Int) {
-        val calendar = Calendar.getInstance()
-        val jamSekarang =  calendar.get(Calendar.HOUR_OF_DAY)
-        Log.d(TAG, "checkTugasSiagaTelahBerakhir: jam Sekarang :  $jamSekarang")
-
-        if(jamSekarang>jamTerakhirDariShift){
-            updateStatusTugas()
-        }
-        else{
-            isYesterday=true
-            //load data siklus kemarin
-
-            checkTugasSiagaKemarin()
-
-        }
-
-    }
-
     private fun addTugasSiaga(){
-        val dataTugasSiaga = DataTugasSiaga(idJadwalBertugas,false, Date())
+        val dataTugasSiaga = DataTugasSiaga(idJadwalBertugas, false, Date())
         tugasSiagaRef.document().set(dataTugasSiaga)
             .addOnSuccessListener {
                 Log.d(TAG, "addTugasSiaga: berhasil")
                 checkTugasSiaga()
             }
             .addOnFailureListener {
-                Log.e(TAG, "addTugasSiaga: $it" )
+                Log.e(TAG, "addTugasSiaga: $it")
             }
     }
 
     private fun loadDataSiklus(){
-        val dateSiaga = if(!isYesterday){
+        val dateSiaga = if(!checkHariKamari){
             dateNow()
         } else{
-            val calendarKemarin = Calendar.getInstance()
-            calendarKemarin.add(Calendar.DATE, -1)
-            val dateKemarin : Date = calendarKemarin.time
-
-            Log.e(TAG, "LoadDataSiklus: Hari Kemarin ${Config.dateKemarin(dateKemarin)}")
-            Config.dateKemarin(dateKemarin)
+            Log.e(TAG, "LoadDataSiklus: Hari Kemarin ${Config.dateKemarin(currentCalendar.time)}")
+            Config.dateKemarin(currentCalendar.time)
         }
+
         listSiklus.clear()
-        siklusTodayRef.whereEqualTo(TANGGAL_FIELD,dateSiaga)
+        siklusTodayRef.whereEqualTo(TANGGAL_FIELD, dateSiaga).orderBy("siklusKe", Query.Direction.ASCENDING)
             .get()
             .addOnSuccessListener {
                 if(!it.isEmpty){
@@ -403,6 +336,8 @@ class SecurityDashboardActivity : AppCompatActivity() {
                         listSiklus.add(dataSiklus)
                         Log.d(TAG, "loadDataSiklus: Siklus ke ${listSiklus.size}")
                         ambilWaktu(dataSiklus.pukul)
+
+
 
                     }
 //                    pukul = listSiklus[listSiklus.size]
@@ -417,27 +352,67 @@ class SecurityDashboardActivity : AppCompatActivity() {
             }
     }
 
+    @SuppressLint("SimpleDateFormat")
+    private fun ambilJam(pukul: String):Int{
+        val df2 = SimpleDateFormat("HH.mm")
+        val calendar = Calendar.getInstance()
+        calendar.time = df2.parse(pukul)
+
+        return calendar.get(Calendar.HOUR_OF_DAY)
+    }
+
+    @SuppressLint("SimpleDateFormat")
     private fun enableButton() {
-        for(i in 1..listSiklus.size){
-            when(i){
-                1 -> btn_siklus1.isEnabled=true
-                2 -> btn_siklus2.isEnabled=true
-                3 -> btn_siklus3.isEnabled=true
-                4 -> btn_siklus4.isEnabled=true
+
+        for((i,data) in listSiklus.withIndex()){
+
+            try {
+                val df = SimpleDateFormat("d-MM-yyyy HH.mm")
+                val calendar = Calendar.getInstance()
+                val time = "${data.tanggal} ${data.pukul}"
+                calendar.time =df.parse(time)
+
+                Log.d(TAG, "enableButton: ${calendar.time}, ${Date()}")
+
+                //ambil jam
+                val hasilJam = ambilJam(data.pukul)
+
+
+                if(hasilJam == ambilJam(listShiftMalam[2])){
+                    Log.d(TAG, "enableButton: hasilJam : $hasilJam, ${ambilJam(listShiftMalam[2])}")
+                    calendar.add(Calendar.DAY_OF_MONTH,1)
+                    Log.d(TAG, "enableButton: hasil calendar :  ${calendar.time} ")
+                }
+
+                if(calendar.time < Date()){
+                    Log.d(TAG, "enableButton: checkWaktu $i")
+                    when(i){
+                        0 -> btn_siklus1.isEnabled=true
+                        1 -> btn_siklus2.isEnabled=true
+                        2 -> btn_siklus3.isEnabled=true
+                        3 -> btn_siklus4.isEnabled=true
+                    }
+                }
             }
+            catch (e: Exception){
+                Log.e(TAG, "enableButton: $e")
+            }
+
+
+//            if(listSiklus[i].pu)
         }
 
     }
 
     private fun insertSiklusBaru() {
         val dataSiklus = DataSiklus(
-            "siklus ${listSiklus.size+1}",
+            "siklus ${listSiklus.size + 1}",
             randomWaktu(listSiklus.size),
-            listSiklus.size+1,
+            listSiklus.size + 1,
             dateNow(),
             false,
             idTugasSiaga
-            )
+        )
         siklusTodayRef.document().set(dataSiklus)
             .addOnSuccessListener {
                 Log.d(TAG, "insertSiklusBaru: Berhasil")
@@ -471,8 +446,11 @@ class SecurityDashboardActivity : AppCompatActivity() {
 
         listSiklus.sortWith(compareBy { it.siklusKe })
 
-        val lastData = listSiklus[listSiklus.size-1]
-        Log.d(TAG, "checkSiklusSudahBeres: ${lastData.documentId} ${lastData.nama} ${lastData.sudahBeres}")
+        val lastData = listSiklus[listSiklus.size - 1]
+        Log.d(
+            TAG,
+            "checkSiklusSudahBeres: ${lastData.documentId} ${lastData.nama} ${lastData.sudahBeres}"
+        )
 
         for((i, data) in listSiklus.withIndex()){
             Log.d(TAG, "checkSiklusSudahBeres: $i ${data.documentId}")
@@ -487,7 +465,7 @@ class SecurityDashboardActivity : AppCompatActivity() {
             Log.d(TAG, "checkSiklusSudahBeres: Sudah beres semua! Update status Tugas Siaga! ")
             if(!alertDialogCompleteSiklus.isShowing && !tampilDialogSiklusComplete){
 //                alertDialogCompleteSiklus.show()
-                Intent(this,DialogSelesaiActivity::class.java).apply {
+                Intent(this, DialogSelesaiActivity::class.java).apply {
                     putExtra("tanggal", tanggalTugasSiga)
                     startActivity(this)
                 }
@@ -502,13 +480,13 @@ class SecurityDashboardActivity : AppCompatActivity() {
 
     private fun updateStatusTugas() {
         tugasSiagaRef.document(idTugasSiaga)
-            .update("statusSudahBeres",true)
+            .update("statusSudahBeres", true)
             .addOnSuccessListener {
                 Log.d(TAG, "updateStatusTugas: Berhasil Update Status Tugas Siaga")
                 checkTugasSiaga()
             }
             .addOnFailureListener {
-                Log.e(TAG, "updateStatusTugas: $it" )
+                Log.e(TAG, "updateStatusTugas: $it")
             }
     }
 
@@ -520,12 +498,13 @@ class SecurityDashboardActivity : AppCompatActivity() {
         if(listSiklus.size<5 && !membuatSiklusBaru){
             membuatSiklusBaru=true
             val dataSiklus = DataSiklus(
-                "siklus ${siklusKeBaru}",
+                "siklus $siklusKeBaru",
                 randomWaktu(listSiklus.size),
                 siklusKeBaru,
                 dateNow(),
                 false,
-                idTugasSiaga)
+                idTugasSiaga
+            )
 
             siklusTodayRef.document()
                 .set(dataSiklus)
@@ -534,7 +513,7 @@ class SecurityDashboardActivity : AppCompatActivity() {
 
                     loadDataSiklus()
                 }
-                .addOnFailureListener {e->
+                .addOnFailureListener { e->
                     Log.e(TAG, "buatSiklusBaru: gagal $e")
                 }
         }
@@ -545,7 +524,7 @@ class SecurityDashboardActivity : AppCompatActivity() {
         alertDialogBuilder.show()
 
     }
-    lateinit var alertDialogBuilder : AlertDialog.Builder
+    private lateinit var alertDialogBuilder : AlertDialog.Builder
     private fun initDialog(){
         alertDialogBuilder = AlertDialog.Builder(this).apply {
             setTitle("Keluar Aplikasi")
@@ -566,10 +545,16 @@ class SecurityDashboardActivity : AppCompatActivity() {
             val df = SimpleDateFormat("HH.mm")
             val calendar = Calendar.getInstance()
             calendar.time =df.parse(waktu)
-            Log.d(TAG, "ambilWaktu: jam:${calendar.get(Calendar.HOUR_OF_DAY)}, menit:${calendar.get(Calendar.MINUTE)}")
+            Log.d(
+                TAG, "ambilWaktu: jam:${calendar.get(Calendar.HOUR_OF_DAY)}, menit:${
+                    calendar.get(
+                        Calendar.MINUTE
+                    )
+                }"
+            )
         }
         catch (e: ParseException){
-            Log.e(TAG, "ambilWaktu: $e" )
+            Log.e(TAG, "ambilWaktu: $e")
         }
     }
     @SuppressLint("SimpleDateFormat")
@@ -578,19 +563,34 @@ class SecurityDashboardActivity : AppCompatActivity() {
             val df = SimpleDateFormat("HH.mm")
             val calendar = Calendar.getInstance()
             calendar.time =df.parse(listShiftMalam[siklus])
-            Log.d(TAG, "dari: jam:${calendar.get(Calendar.HOUR_OF_DAY)}, menit:${calendar.get(Calendar.MINUTE)}")
+            Log.d(
+                TAG, "dari: jam:${calendar.get(Calendar.HOUR_OF_DAY)}, menit:${
+                    calendar.get(
+                        Calendar.MINUTE
+                    )
+                }"
+            )
 
             val calendar2 = Calendar.getInstance()
 
-            calendar2.time =df.parse(listShiftMalam[siklus+1])
+            calendar2.time =df.parse(listShiftMalam[siklus + 1])
 
-            calendar2.time =df.parse(listShiftMalam[siklus+1])
-            Log.d(TAG, "sampai: jam:${calendar2.get(Calendar.HOUR_OF_DAY)}, menit:${calendar.get(Calendar.MINUTE)}")
+            calendar2.time =df.parse(listShiftMalam[siklus + 1])
+            Log.d(
+                TAG, "sampai: jam:${calendar2.get(Calendar.HOUR_OF_DAY)}, menit:${
+                    calendar.get(
+                        Calendar.MINUTE
+                    )
+                }"
+            )
 
             val randomJamDari = calendar.get(Calendar.HOUR_OF_DAY)
             val randomJamSampai = calendar2.get(Calendar.HOUR_OF_DAY) -1
 
-            Log.d(TAG, "randomWaktu: dari jam ${calendar.get(Calendar.HOUR_OF_DAY)} - $randomJamSampai")
+            Log.d(
+                TAG,
+                "randomWaktu: dari jam ${calendar.get(Calendar.HOUR_OF_DAY)} - $randomJamSampai"
+            )
 
             val hasilJamSampai: Calendar = Calendar.getInstance()
             hasilJamSampai.apply {
@@ -600,19 +600,19 @@ class SecurityDashboardActivity : AppCompatActivity() {
             }
 
             val randomJam = if(randomJamDari==22){
-                val listJam :IntArray = intArrayOf(22,23,0)
+                val listJam :IntArray = intArrayOf(22, 23, 0)
                 val index =  Random.nextInt(listJam.size)
                 listJam[index]
             }else{
-                Random.nextInt(randomJamDari,randomJamSampai)
+                Random.nextInt(randomJamDari, randomJamSampai)
             }
-            val randomMinute = Random.nextInt(0,30)
+            val randomMinute = Random.nextInt(0, 30)
             Log.d(TAG, "randomWaktu: hasil random : $randomJam.$randomMinute ")
 
             "$randomJam.$randomMinute"
 
         } catch (e: ParseException){
-            Log.e(TAG, "ramdomWaktu: $e" )
+            Log.e(TAG, "ramdomWaktu: $e")
             "0.0"
         }
     }

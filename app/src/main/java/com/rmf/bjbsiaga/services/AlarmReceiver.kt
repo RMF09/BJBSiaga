@@ -1,5 +1,6 @@
 package com.rmf.bjbsiaga.services
 
+import android.annotation.SuppressLint
 import com.rmf.bjbsiaga.R
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -10,18 +11,24 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Build
-import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.rmf.bjbsiaga.security.SecurityDashboardActivity
 
 
 class AlarmReceiver : BroadcastReceiver() {
-    override fun onReceive(context: Context?, intent: Intent?) {
-        Toast.makeText(context, "Im Running", Toast.LENGTH_SHORT).show()
-        val notifyID = 1
-        val CHANNEL_ID = "alarm_security" // The id of the channel.
+
+    companion object{
+        const val notifyID = 1
+        const val CHANNEL_ID = "alarm_security" // The id of the channel.
         val name: CharSequence = "notif alarm" // The user-visible name of the channel.
+
+    }
+
+    @SuppressLint("UnsafeProtectedBroadcastReceiver")
+    override fun onReceive(context: Context?, intent: Intent?) {
+
+
 
         val notificationIntent = Intent(context, SecurityDashboardActivity::class.java)
         notificationIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
