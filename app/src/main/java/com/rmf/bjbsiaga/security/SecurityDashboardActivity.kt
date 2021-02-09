@@ -208,10 +208,15 @@ class SecurityDashboardActivity : AppCompatActivity() {
         Log.e(TAG, "setAlarmForLastDataSiklus: sudah beres? ${data.sudahBeres}")
         if(!data.sudahBeres){
             try {
-//                val df = SimpleDateFormat("d-MM-yyyy HH.mm")
-//                val calendar = Calendar.getInstance()
-//                val time = "${data.tanggal} ${data.pukul}"
-//                calendar.time =df.parse(time)
+                val df = SimpleDateFormat("d-MM-yyyy HH.mm")
+                val calendar = Calendar.getInstance()
+                val time = "${data.tanggal} ${data.pukul}"
+                calendar.time =df.parse(time)
+                currentCalendar.apply {
+                    set(Calendar.HOUR_OF_DAY,calendar.get(Calendar.HOUR_OF_DAY))
+                    set(Calendar.MINUTE,calendar.get(Calendar.MINUTE))
+                }
+
 
                 NotifAlarm.set(
                     this,
