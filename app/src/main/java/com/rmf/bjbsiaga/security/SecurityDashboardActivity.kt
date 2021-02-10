@@ -66,10 +66,6 @@ class SecurityDashboardActivity : AppCompatActivity() {
     private var tanggalTugasSiga= ""
     private var tampilDialogSiklusComplete=false
 
-    private lateinit var alertDialogCompleteSiklus: AlertDialog
-    private lateinit var textTitleCompleteSiklus: TextView
-    private lateinit var textKeteranganCompleteSiklus: TextView
-    private lateinit var btnOKCompleteSiklus: Button
 
     private var checkHariKamari  = false
     private var currentCalendar=  Calendar.getInstance()
@@ -81,7 +77,6 @@ class SecurityDashboardActivity : AppCompatActivity() {
 
         initListMalam()
         initDialog()
-        initDialogCompleteSiklus()
         initDB()
 
         checkPermission()
@@ -154,31 +149,7 @@ class SecurityDashboardActivity : AppCompatActivity() {
             .check()
     }
 
-    @SuppressLint("SetTextI18n")
-    fun initDialogCompleteSiklus(){
-        val builder = AlertDialog.Builder(this)
-        val view = layoutInflater.inflate(R.layout.dialog_konfirmasi_ruangan_telah_selesai, null)
 
-        view.apply {
-            textTitleCompleteSiklus = findViewById(R.id.text_title_complete)
-            textKeteranganCompleteSiklus = findViewById(R.id.text_keterangan)
-            btnOKCompleteSiklus = findViewById(R.id.btn_ok_dialog_detail_siklus)
-
-            textTitleCompleteSiklus.text = "Tugas Siaga Selesai!"
-            textKeteranganCompleteSiklus.text = "Tugas Siaga Anda pada hari $tanggalTugasSiga telah selesai"
-
-        }
-
-        builder.setView(view)
-        alertDialogCompleteSiklus = builder.create()
-        alertDialogCompleteSiklus.setCancelable(false)
-        alertDialogCompleteSiklus.window?.setWindowAnimations(R.style.DialogAnimation)
-
-        btnOKCompleteSiklus.setOnClickListener {
-            alertDialogCompleteSiklus.dismiss()
-
-        }
-    }
 
     private fun keDetailSiklus(index: Int){
         if(listSiklus.size >0){
@@ -201,6 +172,7 @@ class SecurityDashboardActivity : AppCompatActivity() {
             add("07.00")
         }
     }
+
 
     @SuppressLint("SimpleDateFormat")
     fun setAlarmForLastDataSiklus(){
@@ -246,8 +218,8 @@ class SecurityDashboardActivity : AppCompatActivity() {
                         hari = dataJadwalBertugas.hari
                         shift = dataJadwalBertugas.shift
                     }
-                    //loadDataSiklus()
-                    checkTugasSiaga()
+
+                        checkTugasSiaga()
                 }
                 else{
                     Log.d(TAG, "checkJadwalBertugas: Tidak ada jadwal untuk anda")
@@ -276,6 +248,7 @@ class SecurityDashboardActivity : AppCompatActivity() {
 
     private fun checkTugasSiaga(){
 
+        //ambil tugas terakhir
         tugasSiagaRef.whereEqualTo("idJadwalBertugas", idJadwalBertugas)
             .orderBy(TANGGAL_FIELD, Query.Direction.DESCENDING)
             .limit(1)
@@ -297,7 +270,26 @@ class SecurityDashboardActivity : AppCompatActivity() {
                                 }
                             }"
                         )
-                        loadDataSiklus()
+
+                        if(!statusTugasSiaga){
+                            Log.d(TAG, "checkTugasSiaga: Sudah Beres : $statusTugasSiaga")
+                            if(shift=="Malam" && checkHariKamari){
+                                //Kondisi jam 00.00 - 08.00
+                                val jam = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+                                if(jam < 8){
+                                    loadDataSiklus()
+                                }else{
+                                    Log.d(TAG, "checkTugasSiaga: Shift Malam Sudah Berakhir ")
+                                }
+                            }else{
+                                loadDataSiklus()
+                            }
+                        }
+                        else{
+                            Log.d(TAG, "checkTugasSiaga: Sudah Beres : $statusTugasSiaga")
+                            tampilkanBeresBersiaga()
+                        }
+
                     }
                 }
                 else{
@@ -323,15 +315,11 @@ class SecurityDashboardActivity : AppCompatActivity() {
     }
 
     private fun loadDataSiklus(){
-        val dateSiaga = if(!checkHariKamari){
-            dateNow()
-        } else{
-            Log.e(TAG, "LoadDataSiklus: Hari Kemarin ${Config.dateKemarin(currentCalendar.time)}")
-            Config.dateKemarin(currentCalendar.time)
-        }
 
         listSiklus.clear()
-        siklusTodayRef.whereEqualTo(TANGGAL_FIELD, dateSiaga).orderBy("siklusKe", Query.Direction.ASCENDING)
+        siklusTodayRef
+            .whereEqualTo("idTugasSiaga",idTugasSiaga)
+            .orderBy("siklusKe", Query.Direction.ASCENDING)
             .get()
             .addOnSuccessListener {
                 if(!it.isEmpty){
@@ -341,9 +329,6 @@ class SecurityDashboardActivity : AppCompatActivity() {
                         listSiklus.add(dataSiklus)
                         Log.d(TAG, "loadDataSiklus: Siklus ke ${listSiklus.size}")
                         ambilWaktu(dataSiklus.pukul)
-
-
-
                     }
 //                    pukul = listSiklus[listSiklus.size]
                     enableButton()
@@ -376,19 +361,19 @@ class SecurityDashboardActivity : AppCompatActivity() {
                 val calendar = Calendar.getInstance()
                 val time = "${data.tanggal} ${data.pukul}"
                 calendar.time =df.parse(time)
-
-                Log.d(TAG, "enableButton: ${calendar.time}, ${Date()}")
-
                 //ambil jam
                 val hasilJam = ambilJam(data.pukul)
+                Log.d(TAG, "enableButton: hasil  jam : $hasilJam ,check kamari $checkHariKamari")
 
-
-                if(hasilJam == ambilJam(listShiftMalam[2])){
-                    Log.d(TAG, "enableButton: hasilJam : $hasilJam, ${ambilJam(listShiftMalam[2])}")
-                    calendar.add(Calendar.DAY_OF_MONTH,1)
-                    Log.d(TAG, "enableButton: hasil calendar :  ${calendar.time} ")
+                //Khusus shift malam
+                //Kondisi saat 19 - 23, dibesokken jadwalna
+                if(!checkHariKamari && shift=="Malam"){
+                    if(hasilJam in 0..7){
+                        calendar.add(Calendar.DAY_OF_MONTH,1)
+                    }
                 }
 
+                Log.d(TAG, "enableButton: caclendar : ${calendar.time}, ayena ${Date()}")
                 if(calendar.time < Date()){
                     Log.d(TAG, "enableButton: checkWaktu $i")
                     when(i){
@@ -410,6 +395,7 @@ class SecurityDashboardActivity : AppCompatActivity() {
     }
 
     private fun insertSiklusBaru() {
+
         val dataSiklus = DataSiklus(
             "siklus ${listSiklus.size + 1}",
             randomWaktu(listSiklus.size),
@@ -468,19 +454,22 @@ class SecurityDashboardActivity : AppCompatActivity() {
         //Final Destination
         if(listSiklus.size==4 && lastData.sudahBeres){
             Log.d(TAG, "checkSiklusSudahBeres: Sudah beres semua! Update status Tugas Siaga! ")
-            if(!alertDialogCompleteSiklus.isShowing && !tampilDialogSiklusComplete){
-//                alertDialogCompleteSiklus.show()
-                Intent(this, DialogSelesaiActivity::class.java).apply {
-                    putExtra("tanggal", tanggalTugasSiga)
-                    startActivity(this)
-                }
-
-                tampilDialogSiklusComplete=true
+            if(!tampilDialogSiklusComplete){
+                tampilkanBeresBersiaga()
             }
             if(!statusTugasSiaga){
                 updateStatusTugas()
             }
         }
+    }
+
+    private fun tampilkanBeresBersiaga(){
+        Intent(this, DialogSelesaiActivity::class.java).apply {
+            putExtra("tanggal", tanggalTugasSiga)
+            startActivity(this)
+        }
+
+        tampilDialogSiklusComplete=true
     }
 
     private fun updateStatusTugas() {

@@ -14,6 +14,8 @@ class NotifAlarm {
 
         fun set(applicationContext: Context,calendar: Calendar){
             Log.d("setAlarm", "set: ${calendar.get(Calendar.HOUR_OF_DAY)}.${calendar.get(Calendar.MINUTE)}")
+            calendar.set(Calendar.MILLISECOND,0)
+
             val alarmIntent = Intent(applicationContext, AlarmReceiver::class.java)
             val pendingIntent = PendingIntent.getBroadcast(applicationContext, 0, alarmIntent, 0)
 
