@@ -1,4 +1,4 @@
-package com.rmf.bjbsiaga.ui.gallery
+package com.rmf.bjbsiaga.ui.jadwal
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

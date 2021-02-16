@@ -22,7 +22,10 @@ import kotlinx.android.synthetic.main.item_detail_siklus.view.*
 class RVAdapterSiklus(var list: ArrayList<DataDetailSiklus>) : RecyclerView.Adapter<RVAdapterSiklus.ViewHolder>() {
 
     var selected=false
-    val TAG ="RVAdapterSiklus"
+
+    companion object{
+        const val TAG ="RVAdapterSiklus"
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_detail_siklus,parent,false))
@@ -70,6 +73,7 @@ class RVAdapterSiklus(var list: ArrayList<DataDetailSiklus>) : RecyclerView.Adap
                 Color.parseColor("#"+Integer.toHexString(ContextCompat.getColor(context,R.color.colorAccentDark))))
 
             Intent(Config.ACTION_DATA_DETAIL_SIKLUS).apply {
+                putExtra("nama_lokasi",list[position].nama)
                 putExtra("id",list[position].documentId)
                 putExtra("id_ruangan", list[position].idRuangan)
                 putExtra("position_selected",position)

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".admin.DataSecurityActivity">
+    tools:context=".ui.jadwal.JadwalFragment">
 
     <ImageView
         android:id="@+id/imageView"
@@ -13,11 +13,11 @@
         android:contentDescription="@string/description_image"
         android:scaleType="centerCrop"
         android:src="@drawable/artboard1"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
@@ -30,30 +30,24 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="UseCompoundDrawables">
 
-        <ImageView
-            android:id="@+id/back"
-            android:layout_width="27dp"
-            android:layout_height="27dp"
-            android:layout_marginEnd="12dp"
-            android:src="@drawable/back"
-            android:contentDescription="@string/description_image" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/input_data_supervisor"
+            android:layout_marginStart="39dp"
+            android:text="@string/jadwal"
             android:textColor="@color/colorWhiteText"
             android:textSize="20sp" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_data_security"
+        android:id="@+id/rv_data_jadwal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:paddingBottom="100dp"
+        android:clipToPadding="false"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        tools:listitem="@layout/item_data_security" />
+        tools:listitem="@layout/item_jadwal" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_add"
@@ -61,9 +55,9 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
+        android:contentDescription="@string/open_camera"
         android:src="@drawable/ic_baseline_add_24"
+        android:tint="@color/colorWhitePure"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

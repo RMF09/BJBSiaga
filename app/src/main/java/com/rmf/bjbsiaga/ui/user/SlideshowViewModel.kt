@@ -1,4 +1,4 @@
-package com.rmf.bjbsiaga.ui.slideshow
+package com.rmf.bjbsiaga.ui.user
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

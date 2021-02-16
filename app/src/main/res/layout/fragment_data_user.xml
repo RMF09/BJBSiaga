@@ -4,19 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".admin.DataSecurityActivity">
-
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:contentDescription="@string/description_image"
-        android:scaleType="centerCrop"
-        android:src="@drawable/artboard1"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    tools:context=".ui.user.DataUserFragment">
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -30,18 +18,11 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="UseCompoundDrawables">
 
-        <ImageView
-            android:id="@+id/back"
-            android:layout_width="27dp"
-            android:layout_height="27dp"
-            android:layout_marginEnd="12dp"
-            android:src="@drawable/back"
-            android:contentDescription="@string/description_image" />
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/input_data_supervisor"
+            android:layout_marginStart="39dp"
+            android:text="@string/pilih_user"
             android:textColor="@color/colorWhiteText"
             android:textSize="20sp" />
     </LinearLayout>
@@ -53,17 +34,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        tools:listitem="@layout/item_data_security" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btn_add"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp"
-        android:src="@drawable/ic_baseline_add_24"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        tools:listitem="@layout/item_data_user_type"
+        tools:itemCount="2"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

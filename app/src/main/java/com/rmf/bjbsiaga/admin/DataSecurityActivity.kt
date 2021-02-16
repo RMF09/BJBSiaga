@@ -1,7 +1,5 @@
 package com.rmf.bjbsiaga.admin
 
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -10,14 +8,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.rmf.bjbsiaga.R
 import com.rmf.bjbsiaga.adapter.RVAdapterSecurity
 import com.rmf.bjbsiaga.data.DataSecurity
-import com.rmf.bjbsiaga.services.AlarmReceiver
 import com.rmf.bjbsiaga.util.CollectionsFS
 import kotlinx.android.synthetic.main.activity_data_security.*
-import java.util.*
 import kotlin.collections.ArrayList
 
 
@@ -83,7 +78,7 @@ class DataSecurityActivity : AppCompatActivity(), RVAdapterSecurity.ClickListene
     }
 
     override fun onClickListener(dataSecurity: DataSecurity, context: Context) {
-        Intent(this,DetailUser::class.java).apply {
+        Intent(this,DetailSecurity::class.java).apply {
             putExtra("data",dataSecurity)
             putExtra("id",dataSecurity.documentId)
             context.startActivity(this)

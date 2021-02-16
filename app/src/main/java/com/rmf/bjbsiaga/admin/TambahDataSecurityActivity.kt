@@ -36,7 +36,7 @@ class TambahDataSecurityActivity : AppCompatActivity() {
         }
         btn_tambah_data.setOnClickListener {
             btn_tambah_data.isEnabled=false
-            if(validate(it)) saveData()
+            if(validate()) saveData()
         }
     }
 
@@ -46,12 +46,12 @@ class TambahDataSecurityActivity : AppCompatActivity() {
 
     fun saveData(){
 
-        val nama = edit_nama.text.toString()
-        val email = edit_email.text.toString()
-        val nik : Long = edit_nik.text.toString().toLong()
-        val unitKerja = edit_unit_kerja.text.toString()
-        val noWA : Long = edit_no_wa.text.toString().toLong()
-        val password = edit_password.text.toString()
+        val nama = edit_nama.editText?.text.toString()
+        val email = edit_email.editText?.text.toString()
+        val nik : Long = edit_nik.editText?.text.toString().toLong()
+        val unitKerja = edit_unit_kerja.editText?.text.toString()
+        val noWA : Long = edit_no_wa.editText?.text.toString().toLong()
+        val password = edit_password.editText?.text.toString()
 
         val dataSecurity =
             DataSecurity(nama, email, nik, noWA, unitKerja,password,Config.USER_LOGIN_USER)
@@ -86,74 +86,65 @@ class TambahDataSecurityActivity : AppCompatActivity() {
     fun initFirebaseAuth(){
         mAuth = FirebaseAuth.getInstance()
     }
-//    fun registerNewUser(view:View, email: String, password: String){
-//        mAuth.createUserWithEmailAndPassword(email,password)
-//            .addOnCompleteListener {
-//                if(it.isSuccessful){
-//                    Log.d(TAG, "registerNewUser: success")
-//                    val user = mAuth.currentUser
-//                    saveData(view,user!!.uid)
-//
-//                }else{
-//                    if(it.exception.toString() == ConstantValue.EMAIL_SUDAH_DIGUNAKAN){
-//                        Snackbar.make(view,"Alamat Email sudah digunakan oleh akun lain",Snackbar.LENGTH_LONG).show()
-//                    }
-//                    Log.w(TAG, "registerNewUser: failure ${it.exception.toString()}" )
-//                }
-//            }
-//    }
-    fun validate(view: View) : Boolean{
-        val nama = edit_nama.text.toString()
-        val email = edit_email.text.toString()
-        val unitKerja = edit_unit_kerja.text.toString()
-        val password =  edit_password.text.toString()
+    fun validate() : Boolean{
+
+        edit_nama.error = ""
+        edit_nik.error = ""
+        edit_email.error = ""
+        edit_unit_kerja.error = ""
+        edit_no_wa.error = ""
+        edit_password.error =""
+        val nama = edit_nama.editText?.text.toString()
+        val email = edit_email.editText?.text.toString()
+        val unitKerja = edit_unit_kerja.editText?.text.toString()
+        val password =  edit_password.editText?.text.toString()
 
         if(nama.isEmpty()){
             edit_nama.requestFocus()
-            Snackbar.make(view,"Nama diperlukan",Snackbar.LENGTH_LONG).show()
+            edit_nama.error ="Nama diperlukan"
             btn_tambah_data.isEnabled=true
             return false
         }
-        if(edit_nik.text.toString().isEmpty()){
+        if(edit_nik.editText?.text.toString().isEmpty()){
             edit_nik.requestFocus()
-            Snackbar.make(view,"NIK diperlukan",Snackbar.LENGTH_LONG).show()
+            edit_nik.error="NIK diperlukan"
             btn_tambah_data.isEnabled=true
             return false
         }
         if(unitKerja.isEmpty()){
             edit_unit_kerja.requestFocus()
-            Snackbar.make(view,"Unit Kerja diperlukan",Snackbar.LENGTH_LONG).show()
+            edit_unit_kerja.error="Unit Kerja diperlukan"
             return false
         }
         if(email.isEmpty()){
             edit_email.requestFocus()
-            Snackbar.make(view,"Email diperlukan",Snackbar.LENGTH_LONG).show()
+            edit_email.error ="Email diperlukan"
             btn_tambah_data.isEnabled=true
             return false
         }
 
         if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
             edit_email.requestFocus()
-            Snackbar.make(view,"Harap masukan email dengan benar",Snackbar.LENGTH_LONG).show()
+            edit_email.error ="Harap masukan email dengan benar"
             btn_tambah_data.isEnabled=true
             return false
         }
 
-        if(edit_no_wa.text.toString().isEmpty()){
+        if(edit_no_wa.editText?.text.toString().isEmpty()){
             edit_no_wa.requestFocus()
-            Snackbar.make(view,"Nomor WhatsApp diperlukan",Snackbar.LENGTH_LONG).show()
+            edit_no_wa.error = "Nomor WhatsApp diperlukan"
             btn_tambah_data.isEnabled=true
             return false
         }
         if(password.isEmpty()){
             edit_password.requestFocus()
-            Snackbar.make(view,"Password diperlukan",Snackbar.LENGTH_LONG).show()
+            edit_password.error = "Password diperlukan"
             btn_tambah_data.isEnabled=true
             return false
         }
-        if(edit_password.length()<6){
+        if(edit_password.editText?.length()!! <6){
             edit_password.requestFocus()
-            Snackbar.make(view,"Password harus lebih dari 6 karakter",Snackbar.LENGTH_LONG).show()
+            edit_password.error ="Password harus lebih dari 6 karakter"
             btn_tambah_data.isEnabled=true
             return false
         }

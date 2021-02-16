@@ -16,22 +16,23 @@
     <string name="action_settings">Settings</string>
 
     <string name="kosong" />
-    <string name="menu_home">Home</string>
-    <string name="menu_gallery">Gallery</string>
-    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_home">Beranda</string>
+    <string name="menu_input_user">Input User</string>
+    <string name="menu_ruangan">Ruangan</string>
     <string name="harap_tunggu">Harap tunggu…</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="masuk">Masuk</string>
     <string name="input_user">Input User</string>
+    <string name="input_jadwal">Input Jadwal</string>
     <string name="reksa_mf">Reksa MF</string>
     <string name="jadwal">Jadwal</string>
     <string name="ruangan">Ruangan</string>
     <string name="keluar">Keluar</string>
     <string name="data_ruangan">Data Ruangan</string>
     <string name="input_data_security">Input Data Security</string>
+    <string name="input_data_supervisor">Input Data Supervisor</string>
     <string name="detail_siklus">Detail Siklus</string>
-    <string name="input_jadwal">Input Jadwal</string>
     <string name="nama_jadwal">Hari</string>
 
     <string name="capture">Capture</string>
@@ -72,6 +73,7 @@
     <string name="detail_jadwal_hari_senin">Detail Jadwal Hari Senin</string>
     <string name="tambah">Tambah</string>
     <string name="hapus_ruangan">Hapus Ruangan</string>
+    <string name="pilih_user">Pilih User</string>
 
     <string-array name="list_shifts">
         <item>Malam</item>

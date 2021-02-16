@@ -15,7 +15,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 
-class NavSecurity : AppCompatActivity() {
+class NavAdmin : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
 
@@ -35,7 +35,7 @@ class NavSecurity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow
+                R.id.nav_home, R.id.nav_data_user, R.id.nav_input_jadwal, R.id.nav_ruangan
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)

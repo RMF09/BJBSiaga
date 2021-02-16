@@ -69,7 +69,8 @@
         android:src="@drawable/ic_baseline_photo_camera_24"
         android:tint="@color/colorWhitePure"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:backgroundTint="@color/colorDisable"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_open_camera_qr"
@@ -79,6 +80,7 @@
         android:layout_marginBottom="14dp"
         android:src="@drawable/ic_baseline_camera_24"
         android:tint="@color/colorWhitePure"
+        app:backgroundTint="@color/colorDisable"
         app:layout_constraintBottom_toTopOf="@id/btn_open_camera"
         app:layout_constraintEnd_toEndOf="parent"
         android:contentDescription="@string/open_qr" />
@@ -95,6 +97,7 @@
             android:id="@+id/mapView2"
             android:layout_width="240dp"
             android:layout_height="240dp"
+            android:visibility="gone"
             />
     </RelativeLayout>
 

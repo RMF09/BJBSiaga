@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+        <TextView
+            android:id="@+id/text_nomer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1"
+            android:layout_marginLeft="12dp"
+            android:textColor="@color/colorWhitePure"
+            android:textSize="26sp"/>
+        <LinearLayout
+            android:layout_toRightOf="@id/text_nomer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="20dp"
+            >
+            <TextView
+                android:id="@+id/text_nama"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reksa MF"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorWhiteText"/>
+            <TextView
+                android:id="@+id/text_nik"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="60860"
+                android:textColor="@color/colorWhiteText"
+                android:textStyle="italic"/>
+        </LinearLayout>
+
+    </RelativeLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorGrey"
+        android:layout_marginHorizontal="16dp"/>
+
+
+</LinearLayout>

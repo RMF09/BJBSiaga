@@ -29,16 +29,24 @@
         android:roundIcon="@mipmap/ic_launcher_bjb_siaga2_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".admin.PilihCabang"></activity>
+        <activity android:name=".admin.TambahDataSupervisorActivity"></activity>
+        <activity android:name=".admin.DataSupervisorActivity" />
+        <activity android:name=".admin.PilihCabang" />
         <activity android:name=".admin.DetailJadwal" />
-        <activity android:name=".admin.EditUser" />
-        <activity android:name=".admin.DetailUser" />
+        <activity android:name=".admin.EditSecurity" />
+        <activity android:name=".admin.DetailSecurity" />
         <activity android:name=".admin.DetailRuangan" />
         <activity android:name=".admin.DataJadwalActivity" />
         <activity
-            android:name=".NavSecurity"
+            android:name=".NavAdmin"
             android:label="@string/title_activity_nav_security"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".DialogSelesaiActivity" />
         <activity
             android:name=".security.CapturePotrait"
@@ -72,16 +80,8 @@
         <activity android:name=".admin.InputJadwalActivity" />
         <activity android:name=".admin.TambahDataSecurityActivity" />
         <activity android:name=".admin.DataSecurityActivity" />
-        <activity android:name=".admin.AdminDashboardActivity">
-
-        </activity>
-        <activity android:name=".LoginActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".admin.AdminDashboardActivity" />
+        <activity android:name=".LoginActivity" />
         <activity android:name=".Splash" />
         <activity android:name=".security.Camera" />
 

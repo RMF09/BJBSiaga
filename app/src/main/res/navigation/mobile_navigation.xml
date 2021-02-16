@@ -9,17 +9,47 @@
         android:id="@+id/nav_home"
         android:name="com.rmf.bjbsiaga.ui.home.HomeFragment"
         android:label="@string/kosong"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_nav_home_to_nav_input_jadwal"
+            app:destination="@id/nav_input_jadwal"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_data_user"
+            app:destination="@id/nav_data_user"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_ruangan"
+            app:destination="@id/nav_ruangan"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
+
+
+    </fragment>
 
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="com.rmf.bjbsiaga.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
+        android:id="@+id/nav_input_jadwal"
+        android:name="com.rmf.bjbsiaga.ui.jadwal.JadwalFragment"
+        android:label="@string/kosong"
+        tools:layout="@layout/fragment_jadwal" />
 
     <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="com.rmf.bjbsiaga.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
+        android:id="@+id/nav_data_user"
+        android:name="com.rmf.bjbsiaga.ui.user.DataUserFragment"
+        android:label="@string/kosong"
+        tools:layout="@layout/fragment_data_user" />
+
+    <fragment
+        android:id="@+id/nav_ruangan"
+        android:name="com.rmf.bjbsiaga.ui.ruangan.RuanganFragment"
+        android:label="@string/kosong"
+        tools:layout="@layout/fragment_ruangan" />
 </navigation>

@@ -73,7 +73,11 @@ class DetailSiklusActivity : AppCompatActivity(),OnMapReadyCallback{
     private lateinit var storageReference: StorageReference
     private lateinit var siklusTodayRef: CollectionReference
 
-    private val TAG = "DetailSiklusActivity"
+    companion object{
+
+        const val TAG = "DetailSiklusActivity"
+        const val MAP_VIEW_BUNDLE_KEY = "MapViewBundleKey"
+    }
 
     private var idSiklus =""
     private var siklus=0
@@ -82,13 +86,13 @@ class DetailSiklusActivity : AppCompatActivity(),OnMapReadyCallback{
     private var positionSelected: Int=0
     private var diCheckSelected: Boolean=false
     private var fotoSelected: String?=""
+    private var namaLokasiSelected:String?=""
 
     private lateinit var alertDialog: AlertDialog
     private lateinit var progressBar: ProgressBar
     private lateinit var textProgress: TextView
     private lateinit var textHeader: TextView
     private lateinit var btnOK: Button
-
 
     private lateinit var alertDialogCompleteSiklus : AlertDialog
     private lateinit var btnOKCompleteSiklus: Button
@@ -100,11 +104,13 @@ class DetailSiklusActivity : AppCompatActivity(),OnMapReadyCallback{
     private lateinit var mMap: GoogleMap
     private var dalamJangkauanRuangan =false
 
+    private lateinit var alertDialogDiluarJangkauan: AlertDialog
+
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
-    private val MAP_VIEW_BUNDLE_KEY = "MapViewBundleKey"
 
-    var broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+
+    private var broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent) {
 
             // Get extra data included in the Intent
@@ -113,6 +119,7 @@ class DetailSiklusActivity : AppCompatActivity(),OnMapReadyCallback{
             positionSelected = intent.getIntExtra("position_selected", 0)
             diCheckSelected = intent.getBooleanExtra("di_check", false)
             fotoSelected = intent.getStringExtra("foto")
+            namaLokasiSelected = intent.getStringExtra("nama_lokasi")
 
             Log.d(
                 TAG,
@@ -135,9 +142,6 @@ class DetailSiklusActivity : AppCompatActivity(),OnMapReadyCallback{
 
             btn_open_camera.apply {
                 isEnabled=false
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                    backgroundTintList = ColorStateList.valueOf(getColor(R.color.colorDisable))
-                }
             }
         }
         else{
@@ -184,6 +188,9 @@ class DetailSiklusActivity : AppCompatActivity(),OnMapReadyCallback{
             mapViewBundle = savedInstanceState.getBundle(MAP_VIEW_BUNDLE_KEY)
         }
 
+        btn_open_camera.isEnabled=false
+        btn_open_camera_qr.isEnabled=false
+
 
         mapView2.onCreate(mapViewBundle)
         mapView2.getMapAsync(this)
@@ -193,6 +200,8 @@ class DetailSiklusActivity : AppCompatActivity(),OnMapReadyCallback{
 
         initDialog()
         initDialogCompleteSiklus()
+
+
         idSiklus = intent.getStringExtra("id").toString()
         siklus = intent.getIntExtra("siklus", 0)
         text_header_siklus.text = "Detail Siklus $siklus"
@@ -208,11 +217,15 @@ class DetailSiklusActivity : AppCompatActivity(),OnMapReadyCallback{
         }
 
         btn_open_camera_qr.setOnClickListener {
-            IntentIntegrator(this).apply {
-                setOrientationLocked(true)
-                setBeepEnabled(false)
-                captureActivity = CapturePotrait::class.java
-                initiateScan()
+            if(dalamJangkauanRuangan){
+                IntentIntegrator(this).apply {
+                    setOrientationLocked(true)
+                    setBeepEnabled(false)
+                    captureActivity = CapturePotrait::class.java
+                    initiateScan()
+                }
+            }else{
+                namaLokasiSelected?.let { it1 -> showDialogDiluarJangkauan(it1) }
             }
         }
 
@@ -221,7 +234,7 @@ class DetailSiklusActivity : AppCompatActivity(),OnMapReadyCallback{
         }
     }
 
-    fun siklusBeres(){
+    private fun siklusBeres(){
         Log.d(TAG, "siklusBeres: id $idSiklus")
         idSiklus.let {
             siklusRef.document(it)
@@ -248,7 +261,6 @@ class DetailSiklusActivity : AppCompatActivity(),OnMapReadyCallback{
 
                         Log.d(TAG, "getCoordinatRuangan: $latRuanganTerpilih, $lngRuanganTerpilih")
                         mapView2.getMapAsync(this)
-
                     }
                 }
         }
@@ -429,7 +441,7 @@ class DetailSiklusActivity : AppCompatActivity(),OnMapReadyCallback{
                         loadData()
                     }
                 }
-                .addOnFailureListener { Log.e(TAG, "insertData: ${it.toString()}") }
+                .addOnFailureListener { Log.e(TAG, "insertData: $it") }
         }
     }
 
@@ -456,7 +468,7 @@ class DetailSiklusActivity : AppCompatActivity(),OnMapReadyCallback{
                     insertData()
                 }
             }
-            .addOnFailureListener { Log.e(TAG, "loadData: ${it.toString()}") }
+            .addOnFailureListener { Log.e(TAG, "loadData: $it") }
     }
 
 
@@ -467,7 +479,7 @@ class DetailSiklusActivity : AppCompatActivity(),OnMapReadyCallback{
                 for ((i, document) in it.withIndex()){
                     val dataRuangan: DataRuangan = document.toObject(DataRuangan::class.java)
                     listRuangan.add(dataRuangan)
-                    listRuangan.get(i).documentId = document.id
+                    listRuangan[i].documentId = document.id
                     Log.d(
                         TAG,
                         "loadResourceRuangan: ${listRuangan[i].namaRuangan}, ${listRuangan[i].documentId}"
@@ -477,7 +489,7 @@ class DetailSiklusActivity : AppCompatActivity(),OnMapReadyCallback{
                 loadData()
             }
         }
-            .addOnFailureListener { Log.e(TAG, "loadResourceRuangan: ${it.toString()}") }
+            .addOnFailureListener { Log.e(TAG, "loadResourceRuangan: $it") }
     }
 
 
@@ -504,6 +516,20 @@ class DetailSiklusActivity : AppCompatActivity(),OnMapReadyCallback{
         rv_data_siklus.adapter= adapter
     }
 
+    private fun showDialogDiluarJangkauan(namaLokasi : String){
+        val builder = AlertDialog.Builder(this)
+        builder.apply {
+            setTitle("Peringatan!")
+            setMessage("Tidak dapat memindai QRCode, Anda diluar jangkauan ruangan $namaLokasi")
+            setPositiveButton("Ok"){ dialog, _ ->
+                dialog.dismiss()
+            }
+            setCancelable(false)
+        }
+        alertDialogDiluarJangkauan = builder.create()
+        alertDialogDiluarJangkauan.show()
+    }
+
     private fun initDialog(){
         val builder = AlertDialog.Builder(this)
         val view = layoutInflater.inflate(R.layout.dialog_progress, null)
@@ -524,7 +550,7 @@ class DetailSiklusActivity : AppCompatActivity(),OnMapReadyCallback{
         }
     }
 
-    fun initDialogCompleteSiklus(){
+    private fun initDialogCompleteSiklus(){
         val builder = AlertDialog.Builder(this)
         val view = layoutInflater.inflate(R.layout.dialog_konfirmasi_ruangan_telah_selesai, null)
 

@@ -6,8 +6,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.animation.AnimationUtils
-import android.widget.Button
-import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.CollectionReference
@@ -45,6 +43,7 @@ class SecurityDashboardActivity : AppCompatActivity() {
     private lateinit var idTugasSiaga: String
     private lateinit var listSiklus: ArrayList<DataSiklus>
     private lateinit var listShiftMalam: ArrayList<String>
+    private lateinit var listShiftPagi: ArrayList<String>
 
     private lateinit var db: FirebaseFirestore
     private lateinit var jadwalRef: CollectionReference
@@ -75,7 +74,7 @@ class SecurityDashboardActivity : AppCompatActivity() {
         setContentView(R.layout.activity_security_dashboard)
         text_nama.text=""
 
-        initListMalam()
+        initListShift()
         initDialog()
         initDB()
 
@@ -149,8 +148,6 @@ class SecurityDashboardActivity : AppCompatActivity() {
             .check()
     }
 
-
-
     private fun keDetailSiklus(index: Int){
         if(listSiklus.size >0){
             pergiKeDetailSiklus=true
@@ -162,7 +159,7 @@ class SecurityDashboardActivity : AppCompatActivity() {
         }
     }
 
-    private fun initListMalam() {
+    private fun initListShift() {
         listShiftMalam = ArrayList()
         listShiftMalam.apply {
             add("19.00")
@@ -170,6 +167,14 @@ class SecurityDashboardActivity : AppCompatActivity() {
             add("01.00")
             add("04.00")
             add("07.00")
+        }
+        listShiftPagi = ArrayList()
+        listShiftPagi.apply {
+            add("7.00")
+            add("10.00")
+            add("13.00")
+            add("16.00")
+            add("19.00")
         }
     }
 
@@ -337,7 +342,7 @@ class SecurityDashboardActivity : AppCompatActivity() {
                     Log.d(TAG, "loadDataSiklus: ada ${listSiklus.size}")
                 }else{
                     Log.d(TAG, "loadDataSiklus: Kosong ${listSiklus.size}")
-                    insertSiklusBaru()
+                    buatSiklusBaru()
                 }
             }
     }
@@ -394,22 +399,51 @@ class SecurityDashboardActivity : AppCompatActivity() {
 
     }
 
-    private fun insertSiklusBaru() {
+    private fun buatSiklusBaru() {
 
-        val dataSiklus = DataSiklus(
-            "siklus ${listSiklus.size + 1}",
-            randomWaktu(listSiklus.size),
-            listSiklus.size + 1,
-            dateNow(),
-            false,
-            idTugasSiaga
-        )
-        siklusTodayRef.document().set(dataSiklus)
-            .addOnSuccessListener {
-                Log.d(TAG, "insertSiklusBaru: Berhasil")
-                loadDataSiklus()
-            }
+        val siklusKeBaru =listSiklus.size+1
+        Log.d(TAG, "buatSiklusBaru: kadie $siklusKeBaru")
+
+        if(listSiklus.size<5 && !membuatSiklusBaru){
+            membuatSiklusBaru=true
+            val dataSiklus = DataSiklus(
+                "siklus $siklusKeBaru",
+                randomWaktu(listSiklus.size),
+                siklusKeBaru,
+                dateNow(),
+                false,
+                idTugasSiaga
+            )
+
+            siklusTodayRef.document()
+                .set(dataSiklus)
+                .addOnSuccessListener {
+                    Log.d(TAG, "buatSiklusBaru: berhasil")
+
+                    loadDataSiklus()
+                }
+                .addOnFailureListener { e->
+                    Log.e(TAG, "buatSiklusBaru: gagal $e")
+                }
+        }
     }
+
+//    private fun insertSiklusBaru() {
+//
+//        val dataSiklus = DataSiklus(
+//            "siklus ${listSiklus.size + 1}",
+//            randomWaktu(listSiklus.size),
+//            listSiklus.size + 1,
+//            dateNow(),
+//            false,
+//            idTugasSiaga
+//        )
+//        siklusTodayRef.document().set(dataSiklus)
+//            .addOnSuccessListener {
+//                Log.d(TAG, "insertSiklusBaru: Berhasil")
+//                loadDataSiklus()
+//            }
+//    }
 
     private fun initDB() {
         listSiklus = ArrayList()
@@ -484,34 +518,7 @@ class SecurityDashboardActivity : AppCompatActivity() {
             }
     }
 
-    private fun buatSiklusBaru() {
 
-        val siklusKeBaru =listSiklus.size+1
-        Log.d(TAG, "buatSiklusBaru: kadie $siklusKeBaru")
-
-        if(listSiklus.size<5 && !membuatSiklusBaru){
-            membuatSiklusBaru=true
-            val dataSiklus = DataSiklus(
-                "siklus $siklusKeBaru",
-                randomWaktu(listSiklus.size),
-                siklusKeBaru,
-                dateNow(),
-                false,
-                idTugasSiaga
-            )
-
-            siklusTodayRef.document()
-                .set(dataSiklus)
-                .addOnSuccessListener {
-                    Log.d(TAG, "buatSiklusBaru: berhasil")
-
-                    loadDataSiklus()
-                }
-                .addOnFailureListener { e->
-                    Log.e(TAG, "buatSiklusBaru: gagal $e")
-                }
-        }
-    }
 
     override fun onBackPressed() {
 
@@ -553,10 +560,17 @@ class SecurityDashboardActivity : AppCompatActivity() {
     }
     @SuppressLint("SimpleDateFormat")
     fun randomWaktu(siklus: Int): String{
+
+        val listShift = if(shift=="Malam"){
+            listShiftMalam
+        }else{
+            listShiftPagi
+        }
+
         return try {
             val df = SimpleDateFormat("HH.mm")
             val calendar = Calendar.getInstance()
-            calendar.time =df.parse(listShiftMalam[siklus])
+            calendar.time =df.parse(listShift[siklus])
             Log.d(
                 TAG, "dari: jam:${calendar.get(Calendar.HOUR_OF_DAY)}, menit:${
                     calendar.get(
@@ -567,9 +581,9 @@ class SecurityDashboardActivity : AppCompatActivity() {
 
             val calendar2 = Calendar.getInstance()
 
-            calendar2.time =df.parse(listShiftMalam[siklus + 1])
+            calendar2.time =df.parse(listShift[siklus + 1])
 
-            calendar2.time =df.parse(listShiftMalam[siklus + 1])
+            calendar2.time =df.parse(listShift[siklus + 1])
             Log.d(
                 TAG, "sampai: jam:${calendar2.get(Calendar.HOUR_OF_DAY)}, menit:${
                     calendar.get(

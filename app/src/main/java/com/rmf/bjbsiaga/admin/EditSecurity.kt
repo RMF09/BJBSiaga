@@ -20,7 +20,7 @@ import kotlinx.android.synthetic.main.activity_edit_user.edit_no_wa
 import kotlinx.android.synthetic.main.activity_edit_user.edit_password
 import kotlinx.android.synthetic.main.activity_edit_user.edit_unit_kerja
 
-class EditUser : AppCompatActivity() {
+class EditSecurity : AppCompatActivity() {
     lateinit var db : FirebaseFirestore
 
     private val TAG = "EditDataSecurityActiv"
