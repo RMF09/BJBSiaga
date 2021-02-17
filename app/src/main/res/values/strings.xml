@@ -74,6 +74,9 @@
     <string name="tambah">Tambah</string>
     <string name="hapus_ruangan">Hapus Ruangan</string>
     <string name="pilih_user">Pilih User</string>
+    <string name="detail_security">Detail Security</string>
+    <string name="detail_supervisor">Detail Supervisor</string>
+    <string name="edit">edit</string>
 
     <string-array name="list_shifts">
         <item>Malam</item>

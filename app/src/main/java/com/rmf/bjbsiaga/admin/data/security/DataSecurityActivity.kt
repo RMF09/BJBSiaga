@@ -1,4 +1,4 @@
-package com.rmf.bjbsiaga.admin
+package com.rmf.bjbsiaga.admin.data.security
 
 import android.content.Context
 import android.content.Intent
@@ -78,7 +78,7 @@ class DataSecurityActivity : AppCompatActivity(), RVAdapterSecurity.ClickListene
     }
 
     override fun onClickListener(dataSecurity: DataSecurity, context: Context) {
-        Intent(this,DetailSecurity::class.java).apply {
+        Intent(this, DetailSecurity::class.java).apply {
             putExtra("data",dataSecurity)
             putExtra("id",dataSecurity.documentId)
             context.startActivity(this)

@@ -1,12 +1,10 @@
-package com.rmf.bjbsiaga.admin
+package com.rmf.bjbsiaga.admin.data.security
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
-import android.view.View
 import androidx.appcompat.app.AlertDialog
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.rmf.bjbsiaga.R

@@ -1,5 +1,6 @@
 package com.rmf.bjbsiaga.admin
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -30,6 +31,11 @@ class DataSupervisorActivity : AppCompatActivity(), RVAdapterUser.ClickListener 
         setContentView(R.layout.activity_data_supervisor)
         initDB()
         setupRV()
+
+        btn_add.setOnClickListener {
+            startActivity(Intent(this,TambahDataSupervisorActivity::class.java))
+        }
+        back.setOnClickListener { finish() }
     }
 
     private fun setupRV(){
@@ -76,6 +82,10 @@ class DataSupervisorActivity : AppCompatActivity(), RVAdapterUser.ClickListener 
     }
 
     override fun onClickListener(dataUser: DataUser) {
-
+        Intent(this,DetailSupervisor::class.java).apply {
+            putExtra("data",dataUser)
+            putExtra("id",dataUser.documentId)
+            startActivity(this)
+        }
     }
 }

@@ -22,7 +22,7 @@ class TambahDataSupervisorActivity : AppCompatActivity() {
     private lateinit var alertDialog: AlertDialog
 
     companion object{
-        const val TAG ="TambahData  "
+        const val TAG ="TambahData "
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,10 +48,10 @@ class TambahDataSupervisorActivity : AppCompatActivity() {
         val dataUser = DataUser(nama,nik,password,CollectionsFS.SUPERVISOR)
         userRef.document().set(dataUser)
             .addOnSuccessListener {
-                this.showDialog("Data User berhasil ditambahkan","Berhasil")
+                this.showDialog("Data User Supervisor berhasil ditambahkan","Berhasil")
             }
             .addOnFailureListener {
-                this.showDialog("Data User gagal ditambahkan","Kesalahan")
+                this.showDialog("Data User Supervisor gagal ditambahkan","Kesalahan")
                 Log.e(TAG, "saveData: $it." )
             }
     }

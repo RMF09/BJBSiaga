@@ -1,4 +1,4 @@
-package com.rmf.bjbsiaga.admin
+package com.rmf.bjbsiaga.admin.data.security
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -9,26 +9,30 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.rmf.bjbsiaga.R
+import com.rmf.bjbsiaga.admin.EditSecurity
 import com.rmf.bjbsiaga.data.DataSecurity
 import com.rmf.bjbsiaga.util.CollectionsFS
-import kotlinx.android.synthetic.main.activity_detail_user.*
+import kotlinx.android.synthetic.main.activity_detail_security.*
 
 class DetailSecurity : AppCompatActivity() {
-    private  val TAG = "DetailUser"
+
+    companion object{
+        private const val TAG = "DetailSecurity"
+    }
     private lateinit var id : String
     private lateinit var dataSecurity: DataSecurity
 
-    lateinit var db : FirebaseFirestore
-    lateinit var securityRef: CollectionReference
-    lateinit var jadwalSecurityRef: CollectionReference
-    lateinit var userRef: CollectionReference
+    private lateinit var db : FirebaseFirestore
+    private lateinit var securityRef: CollectionReference
+    private lateinit var jadwalSecurityRef: CollectionReference
+    private lateinit var userRef: CollectionReference
     private lateinit var alertDialog: AlertDialog
 
     private var nikPetugas: Long? =0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_detail_user)
+        setContentView(R.layout.activity_detail_security)
 
         initDB()
 
@@ -49,7 +53,7 @@ class DetailSecurity : AppCompatActivity() {
         }
 
         edit.setOnClickListener {
-            Intent(this,EditSecurity::class.java).apply {
+            Intent(this, EditSecurity::class.java).apply {
                 putExtra("id",id)
                 putExtra("data",dataSecurity)
                 startActivity(this)

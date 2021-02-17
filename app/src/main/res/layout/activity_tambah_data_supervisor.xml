@@ -130,7 +130,7 @@
                     android:layout_marginBottom="4dp"
                     android:background="@drawable/rounded_corner_edit2"
                     android:digits="@string/filter_text_no_spacing"
-                    android:hint="@string/password_lama"
+                    android:hint="@string/password"
                     android:inputType="textPassword"
                     android:maxLines="1"
                     android:paddingHorizontal="16dp"
