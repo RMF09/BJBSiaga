@@ -1,11 +1,13 @@
 package com.rmf.bjbsiaga.ui.home
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -15,6 +17,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.rmf.bjbsiaga.R
+import com.rmf.bjbsiaga.util.SharedPref
 
 class HomeFragment : Fragment() {
 
@@ -49,10 +52,28 @@ class HomeFragment : Fragment() {
         }
 
         cardKeluar.setOnClickListener {
-            activity?.finish()
+            showLogout(root.context)
         }
 
         return root
+    }
+
+    private fun showLogout(context: Context){
+        val builder = AlertDialog.Builder(context)
+        builder.apply {
+            setTitle("Keluar")
+            setMessage("Anda yakin ingin keluar?")
+            setPositiveButton("Ya"){dialog,  _->
+                dialog.dismiss()
+                SharedPref.getInstance(context)!!.logout()
+                activity?.finish()
+            }
+            setNegativeButton("Batal"){ dialog, _ ->
+                dialog.dismiss()
+            }
+        }
+        val alertDialog = builder.create()
+        alertDialog.show()
     }
 
 }

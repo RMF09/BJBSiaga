@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.rmf.bjbsiaga.R
 import com.rmf.bjbsiaga.adapter.RVAdapterUserType
 import com.rmf.bjbsiaga.admin.data.security.DataSecurityActivity
-import com.rmf.bjbsiaga.admin.DataSupervisorActivity
+import com.rmf.bjbsiaga.admin.data.supervisor.DataSupervisorActivity
 import com.rmf.bjbsiaga.data.DataUserType
 
 class DataUserFragment : Fragment(),RVAdapterUserType.ClickListener  {
@@ -58,7 +58,7 @@ class DataUserFragment : Fragment(),RVAdapterUserType.ClickListener  {
     override fun onClickListener(dataUserType: DataUserType) {
         when(dataUserType.userType){
             "Security" -> { startActivity(Intent(activity, DataSecurityActivity::class.java)) }
-            else ->{startActivity(Intent(activity,DataSupervisorActivity::class.java)) }
+            else ->{startActivity(Intent(activity, DataSupervisorActivity::class.java)) }
         }
     }
 }

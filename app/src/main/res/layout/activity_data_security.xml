@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".admin.data.security.DataSecurityActivity">
+    tools:context=".admin.data.security.DataSecurityActivity"
+    android:animateLayoutChanges="true">
 
     <ImageView
         android:id="@+id/imageView"
@@ -45,6 +46,17 @@
             android:textColor="@color/colorWhiteText"
             android:textSize="20sp" />
     </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateTint="@color/colorWhitePure"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="gone"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_data_security"

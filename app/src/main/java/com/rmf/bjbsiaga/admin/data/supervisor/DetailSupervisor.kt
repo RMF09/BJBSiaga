@@ -1,12 +1,12 @@
-package com.rmf.bjbsiaga.admin
+package com.rmf.bjbsiaga.admin.data.supervisor
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import com.rmf.bjbsiaga.R
 import com.rmf.bjbsiaga.data.DataUser
 import com.rmf.bjbsiaga.util.CollectionsFS
@@ -16,6 +16,7 @@ class DetailSupervisor : AppCompatActivity() {
 
     companion object{
         const val TAG= "DetailSuperVis"
+        const val REQUEST_CODE =9911
     }
     private lateinit var id: String
     private lateinit var dataUser: DataUser
@@ -38,20 +39,39 @@ class DetailSupervisor : AppCompatActivity() {
         id =  intent.getStringExtra("id")!!
         Log.d(TAG, "onCreate: id: $id ")
 
+        edit.setOnClickListener {
+            Intent(this,EditSupervisorActivity::class.java).apply {
+                putExtra("id",id)
+                putExtra("data",dataUser)
+                startActivityForResult(this, REQUEST_CODE)
+            }
+        }
+
+        delete.setOnClickListener { showHapusDialog() }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        Log.d(TAG, "onActivityResult: $resultCode")
+        if(requestCode == REQUEST_CODE){
+            dataUser = data?.getParcelableExtra("data")!!
+            text_nama_lengkap.text = dataUser.nama
+            text_nik.text = dataUser.nik.toString()
+        }
     }
 
     private fun showHapusDialog(){
         val builder: AlertDialog.Builder = AlertDialog.Builder(this)
         builder.apply {
-            setMessage("Anda yakin ingin menghapus data security ini?")
             setTitle("Konfirmasi Hapus Data")
+            setMessage("Anda yakin ingin menghapus data supervisor ini?")
             setPositiveButton("Ya"
-            ) { dialog, _ ->
+            ) { dialog, _->
                 dialog.dismiss()
                 hapusData()
             }
             setNegativeButton("Batal"
-            ){ dialog, _ -> dialog.dismiss() }
+            ){ dialog, _-> dialog.dismiss() }
         }
         builder.setCancelable(false)
         alertDialog = builder.create()

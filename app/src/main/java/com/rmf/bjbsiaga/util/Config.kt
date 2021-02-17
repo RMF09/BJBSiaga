@@ -16,8 +16,9 @@ class Config {
         val JAM ="HH.mm"
         val TANGGAL_FIELD= "tanggal"
         val ACTION_DATA_DETAIL_SIKLUS="data-detail-siklus"
-        val USER_LOGIN_ADMIN = "admin"
-        val USER_LOGIN_USER ="user"
+        val USER_LOGIN_ADMIN = "Admin"
+        val USER_LOGIN_SECURITY ="Security"
+        val USER_LOGIN_SUPERVISOR ="Supervisor"
         val TGL_TIMESTAMP = "EEE MMM dd HH:mm:ss z yyyy"
 
 

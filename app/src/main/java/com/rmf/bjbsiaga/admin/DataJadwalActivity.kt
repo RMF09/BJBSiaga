@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.firebase.firestore.CollectionReference
@@ -16,6 +17,9 @@ import com.rmf.bjbsiaga.adapter.RVAdapterJadwal
 import com.rmf.bjbsiaga.data.DataJadwal
 import com.rmf.bjbsiaga.util.CollectionsFS
 import kotlinx.android.synthetic.main.activity_data_jadwal.*
+import kotlinx.android.synthetic.main.activity_data_jadwal.back
+import kotlinx.android.synthetic.main.activity_data_jadwal.btn_add
+import kotlinx.android.synthetic.main.activity_data_jadwal.progress_bar
 
 
 class DataJadwalActivity : AppCompatActivity(), RVAdapterJadwal.ClickListener {
@@ -70,7 +74,8 @@ class DataJadwalActivity : AppCompatActivity(), RVAdapterJadwal.ClickListener {
         db = FirebaseFirestore.getInstance()
         jadwalRef = db.collection(CollectionsFS.JADWAL)
     }
-    fun loadJadwal(){
+    private fun loadJadwal(){
+        progress_bar.visibility = View.VISIBLE
         list.clear()
         adapter.notifyDataSetChanged()
         isLoad=true
@@ -83,10 +88,12 @@ class DataJadwalActivity : AppCompatActivity(), RVAdapterJadwal.ClickListener {
                 }
                 adapter.notifyDataSetChanged()
                 isLoad=false
+//                progress_bar.visibility = View.GONE
             }
             .addOnFailureListener {
                 Log.e("loadJadwal", "loadJadwal: $it" )
                 isLoad=false
+//                progress_bar.visibility = View.GONE
             }
     }
 

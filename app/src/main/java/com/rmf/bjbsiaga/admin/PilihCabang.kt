@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
@@ -17,7 +18,11 @@ import com.rmf.bjbsiaga.R
 import com.rmf.bjbsiaga.adapter.RVAdapterCabang
 import com.rmf.bjbsiaga.data.DataCabang
 import com.rmf.bjbsiaga.util.CollectionsFS
+import kotlinx.android.synthetic.main.activity_data_security.*
 import kotlinx.android.synthetic.main.activity_pilih_cabang.*
+import kotlinx.android.synthetic.main.activity_pilih_cabang.back
+import kotlinx.android.synthetic.main.activity_pilih_cabang.btn_add
+import kotlinx.android.synthetic.main.activity_pilih_cabang.progress_bar
 
 class PilihCabang : AppCompatActivity(), RVAdapterCabang.ClickListener {
 
@@ -77,6 +82,7 @@ class PilihCabang : AppCompatActivity(), RVAdapterCabang.ClickListener {
     }
 
     private fun loadData() {
+        progress_bar.visibility = View.VISIBLE
         list.clear()
         cabangRef.get()
             .addOnSuccessListener {
@@ -88,10 +94,12 @@ class PilihCabang : AppCompatActivity(), RVAdapterCabang.ClickListener {
                         list.add(dataCabang)
                     }
                     adapter.notifyDataSetChanged()
+                    progress_bar.visibility = View.GONE
                 }
             }
             .addOnFailureListener {
                 Log.d(TAG, "loadData: $it")
+                progress_bar.visibility = View.GONE
             }
     }
 

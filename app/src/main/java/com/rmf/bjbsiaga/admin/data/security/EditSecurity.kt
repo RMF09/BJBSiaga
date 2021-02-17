@@ -1,4 +1,4 @@
-package com.rmf.bjbsiaga.admin
+package com.rmf.bjbsiaga.admin.data.security
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -63,14 +63,14 @@ class EditSecurity : AppCompatActivity() {
         val password = edit_password.text.toString()
 
         val dataSecurity =
-            DataSecurity(nama, email, nik, noWA, unitKerja,password, Config.USER_LOGIN_USER)
+            DataSecurity(nama, email, nik, noWA, unitKerja,password, Config.USER_LOGIN_SECURITY)
 
         db.collection(CollectionsFS.SECURITY).document(documentId).set(dataSecurity)
             .addOnSuccessListener {
-                this.showDialog("Edit Data User berhasil ditambahkan","Berhasil")
+                this.showDialog("Edit Data User berhasil","Berhasil")
             }
             .addOnFailureListener {
-                this.showDialog("Edit Data User gagal ditambahkan","Kesalahan")
+                this.showDialog("Edit Data User gagal","Kesalahan")
                 Log.e(TAG, "saveData: $it." )
             }
     }

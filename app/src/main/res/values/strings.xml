@@ -58,7 +58,7 @@
     <string name="_1">1</string>
 
     <string name="belum_dicek">Belum dicek</string>
-    <string name="title_activity_nav_security">NavSecurity</string>
+    <string name="title_activity_nav_admin">NavAdmin</string>
     <string name="shift">Shift</string>
     <string name="senin">Senin</string>
     <string name="malam">Malam</string>
@@ -77,6 +77,7 @@
     <string name="detail_security">Detail Security</string>
     <string name="detail_supervisor">Detail Supervisor</string>
     <string name="edit">edit</string>
+    <string name="profil">Profil</string>
 
     <string-array name="list_shifts">
         <item>Malam</item>

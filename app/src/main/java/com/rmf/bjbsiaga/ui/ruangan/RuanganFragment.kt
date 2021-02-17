@@ -23,6 +23,7 @@ import com.rmf.bjbsiaga.adapter.RVAdapterSiklus.Companion.TAG
 import com.rmf.bjbsiaga.admin.DataRuanganActivity
 import com.rmf.bjbsiaga.data.DataCabang
 import com.rmf.bjbsiaga.util.CollectionsFS
+import kotlinx.android.synthetic.main.fragment_ruangan.*
 
 class RuanganFragment: Fragment(), RVAdapterCabang.ClickListener {
 
@@ -89,6 +90,7 @@ class RuanganFragment: Fragment(), RVAdapterCabang.ClickListener {
     }
 
     private fun loadData() {
+        progress_bar.visibility = View.VISIBLE
         list.clear()
         cabangRef.get()
             .addOnSuccessListener {
@@ -100,10 +102,12 @@ class RuanganFragment: Fragment(), RVAdapterCabang.ClickListener {
                         list.add(dataCabang)
                     }
                     adapter.notifyDataSetChanged()
+                    progress_bar.visibility = View.GONE
                 }
             }
             .addOnFailureListener {
                 Log.d(TAG, "loadData: $it")
+                progress_bar.visibility = View.GONE
             }
     }
 

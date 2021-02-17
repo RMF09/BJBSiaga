@@ -52,7 +52,7 @@ class TambahDataSecurityActivity : AppCompatActivity() {
         val password = edit_password.editText?.text.toString()
 
         val dataSecurity =
-            DataSecurity(nama, email, nik, noWA, unitKerja,password,Config.USER_LOGIN_USER)
+            DataSecurity(nama, email, nik, noWA, unitKerja,password,Config.USER_LOGIN_SECURITY)
 
         db.collection(CollectionsFS.SECURITY).document().set(dataSecurity)
             .addOnSuccessListener {

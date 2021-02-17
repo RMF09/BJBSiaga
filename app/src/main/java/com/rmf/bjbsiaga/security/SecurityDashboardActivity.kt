@@ -22,12 +22,9 @@ import com.rmf.bjbsiaga.R
 import com.rmf.bjbsiaga.data.DataJadwalBertugas
 import com.rmf.bjbsiaga.data.DataSiklus
 import com.rmf.bjbsiaga.data.DataTugasSiaga
-import com.rmf.bjbsiaga.util.CollectionsFS
-import com.rmf.bjbsiaga.util.Config
+import com.rmf.bjbsiaga.util.*
 import com.rmf.bjbsiaga.util.Config.Companion.TANGGAL_FIELD
 import com.rmf.bjbsiaga.util.Config.Companion.dateNow
-import com.rmf.bjbsiaga.util.NotifAlarm
-import com.rmf.bjbsiaga.util.SharedPref
 import kotlinx.android.synthetic.main.activity_security_dashboard.*
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -464,6 +461,8 @@ class SecurityDashboardActivity : AppCompatActivity() {
             loadDataSiklus()
             Log.d(TAG, "onResume:  LoadDataSiklus")
         }
+
+        TimeAuto.isEnabled(this)
 
     }
     private fun checkSiklusSudahBeres(){

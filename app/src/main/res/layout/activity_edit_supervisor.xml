@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".admin.data.supervisor.TambahDataSupervisorActivity">
+    tools:context=".admin.data.supervisor.EditSupervisorActivity">
 
     <ImageView
         android:id="@+id/imageView"
@@ -40,7 +40,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tambah Data Supervisor"
+            android:text="Edit Data Supervisor"
             android:textColor="@color/colorWhiteText"
             android:textSize="20sp" />
     </LinearLayout>
@@ -140,17 +140,16 @@
 
             </com.google.android.material.textfield.TextInputLayout>
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_tambah_data"
+                android:id="@+id/btn_edit_data"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/ripple_effect"
-                android:text="Tambah data"
+                android:text="Edit Data"
                 android:textColor="@color/colorWhiteText"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
         </LinearLayout>
     </ScrollView>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -21,6 +21,7 @@ import com.rmf.bjbsiaga.admin.DetailJadwal
 import com.rmf.bjbsiaga.admin.InputJadwalActivity
 import com.rmf.bjbsiaga.data.DataJadwal
 import com.rmf.bjbsiaga.util.CollectionsFS
+import kotlinx.android.synthetic.main.fragment_ruangan.*
 
 class JadwalFragment : Fragment(), RVAdapterJadwal.ClickListener {
 
@@ -93,6 +94,7 @@ class JadwalFragment : Fragment(), RVAdapterJadwal.ClickListener {
     }
 
     private fun loadJadwal(){
+        progress_bar.visibility = View.VISIBLE
         list.clear()
         adapter.notifyDataSetChanged()
         isLoad=true
@@ -105,10 +107,12 @@ class JadwalFragment : Fragment(), RVAdapterJadwal.ClickListener {
                 }
                 adapter.notifyDataSetChanged()
                 isLoad=false
+                progress_bar.visibility = View.GONE
             }
             .addOnFailureListener {
                 Log.e("loadJadwal", "loadJadwal: $it" )
                 isLoad=false
+                progress_bar.visibility = View.GONE
             }
     }
 

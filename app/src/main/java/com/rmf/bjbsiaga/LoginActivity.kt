@@ -1,16 +1,16 @@
 package com.rmf.bjbsiaga
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
-import com.rmf.bjbsiaga.admin.AdminDashboardActivity
-import com.rmf.bjbsiaga.data.DataSecurity
+import com.rmf.bjbsiaga.admin.NavAdmin
+import com.rmf.bjbsiaga.data.DataUser
 import com.rmf.bjbsiaga.security.SecurityDashboardActivity
 import com.rmf.bjbsiaga.util.CollectionsFS
 import com.rmf.bjbsiaga.util.Config
@@ -20,11 +20,13 @@ import kotlinx.android.synthetic.main.activity_login.*
 
 
 class LoginActivity : AppCompatActivity() {
-    lateinit var mAuth : FirebaseAuth
-    private  val TAG = "LoginActivity"
+
+    companion object{
+        private const val TAG = "LoginActivity"
+    }
 
     lateinit var db : FirebaseFirestore
-    lateinit var securityRef: CollectionReference
+    private lateinit var userRef: CollectionReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,16 +36,17 @@ class LoginActivity : AppCompatActivity() {
         if(SharedPref.getInstance(this)!!.isLoggedIn()){
             when(SharedPref.getInstance(this)!!.loggedInRole()){
                 Config.USER_LOGIN_ADMIN ->{
+                    startActivity(Intent(this, NavAdmin::class.java))
+                    finish()
+                }
+                Config.USER_LOGIN_SECURITY ->{
                     startActivity(Intent(this,SecurityDashboardActivity::class.java))
                     finish()
                 }
-                Config.USER_LOGIN_USER ->{
-                    startActivity(Intent(this,SecurityDashboardActivity::class.java))
-                    finish()
+                else -> {
+
                 }
             }
-
-
         }
 
         initDB()
@@ -59,37 +62,37 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    fun initDB(){
+    private fun initDB(){
         db = FirebaseFirestore.getInstance()
-        securityRef = db.collection(CollectionsFS.SECURITY)
+        userRef = db.collection(CollectionsFS.USER)
     }
 
-    fun signIn(nik: Long,password: String){
+    private fun signIn(nik: Long, password: String){
 
         var passwordDB = ""
         var nikDB : Long = 0
         var nama=""
         var documentId=""
-        var role=""
+        var userType=""
 
         showInfoLogin(InfoLogin.LOADING)
 
-        securityRef.whereEqualTo("nik",nik).get()
+        userRef.whereEqualTo("nik",nik).get()
             .addOnSuccessListener {
 
                 btn_login.isEnabled=true
                 if (!it.isEmpty){
 
                     for (document in it){
-                        val dataSecurity : DataSecurity = document.toObject(DataSecurity::class.java)
-                        dataSecurity.documentId = document.id
-                        passwordDB = dataSecurity.password
-                        nikDB = dataSecurity.nik
-                        documentId =  dataSecurity.documentId
-                        nama = dataSecurity.nama
-                        role = dataSecurity.role
+                        val dataUser : DataUser = document.toObject(DataUser::class.java)
+                        dataUser.documentId = document.id
+                        passwordDB = dataUser.password
+                        nikDB = dataUser.nik
+                        documentId =  dataUser.documentId
+                        nama = dataUser.nama
+                        userType = dataUser.userType
                     }
-                    if(!passwordDB.equals(password)){
+                    if(passwordDB != password){
                         showInfoLogin(InfoLogin.PASSWORD_SALAH)
                     }
                     else{
@@ -104,9 +107,18 @@ class LoginActivity : AppCompatActivity() {
                         }else{
                             SharedPref.getInstance(this)!!.apply {
                                 storeID(documentId)
-                                storeRole(role)
+                                storeRole(userType)
                             }
-                            val intent = Intent(this,SecurityDashboardActivity::class.java)
+                            val intent: Intent = when(userType){
+                                Config.USER_LOGIN_SECURITY ->
+                                    pergiKe(SecurityDashboardActivity::class.java)
+
+                                Config.USER_LOGIN_ADMIN ->
+                                    pergiKe(NavAdmin::class.java)
+
+                                else -> { pergiKe(NavAdmin::class.java) }
+
+                            }
                             intent.putExtra("nama",nama)
                             startActivity(intent)
                             finish()
@@ -120,21 +132,27 @@ class LoginActivity : AppCompatActivity() {
             }.addOnFailureListener {
                 hideInfoLogin()
                 btn_login.isEnabled=true
-                Log.e(TAG, "signIn: ${it.toString()}")
+                Log.e(TAG, "signIn: $it")
 
             }
     }
-    fun checkKesamaanUsernamePassword(usename :String, password: String): Boolean{
-        if(usename.equals(password)){
+
+    private fun pergiKe(cls: Class<*>): Intent{
+        return Intent(this,cls)
+    }
+
+    private fun checkKesamaanUsernamePassword(usename :String, password: String): Boolean{
+        if(usename == password){
             return true
         }
         return false
     }
 
-    fun hideInfoLogin(){
+    private fun hideInfoLogin(){
         linear_info.visibility= View.GONE
     }
-    fun showInfoLogin(info: Int){
+    @SuppressLint("SetTextI18n")
+    private fun showInfoLogin(info: Int){
 
         text_input_username.error= ""
         text_input_password.error= ""
@@ -159,7 +177,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    fun validateLogin() : Boolean{
+    private fun validateLogin() : Boolean{
         val username = text_input_username.editText?.text.toString()
         val password = text_input_password.editText?.text.toString()
 
@@ -180,7 +198,7 @@ class LoginActivity : AppCompatActivity() {
         return true
     }
 
-    fun clearForm(){
+    private fun clearForm(){
         text_input_username.editText?.text= null
         text_input_password.editText?.text= null
 

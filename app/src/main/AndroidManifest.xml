@@ -29,25 +29,28 @@
         android:roundIcon="@mipmap/ic_launcher_bjb_siaga2_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".admin.DetailSupervisor"></activity>
-        <activity android:name=".admin.TambahDataSupervisorActivity" />
-        <activity android:name=".admin.DataSupervisorActivity" />
+        <activity android:name=".security.NavSecurityActivity"
+            android:label="@string/title_activity_nav_admin"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".admin.data.supervisor.EditSupervisorActivity" />
+        <activity android:name=".admin.data.supervisor.DetailSupervisor" />
+        <activity android:name=".admin.data.supervisor.TambahDataSupervisorActivity" />
+        <activity android:name=".admin.data.supervisor.DataSupervisorActivity" />
         <activity android:name=".admin.PilihCabang" />
         <activity android:name=".admin.DetailJadwal" />
-        <activity android:name=".admin.EditSecurity" />
+        <activity android:name=".admin.data.security.EditSecurity" />
         <activity android:name=".admin.data.security.DetailSecurity" />
         <activity android:name=".admin.DetailRuangan" />
         <activity android:name=".admin.DataJadwalActivity" />
         <activity
-            android:name=".NavAdmin"
-            android:label="@string/title_activity_nav_security"
-            android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:name=".admin.NavAdmin"
+            android:label="@string/title_activity_nav_admin"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity android:name=".DialogSelesaiActivity" />
         <activity
             android:name=".security.CapturePotrait"
@@ -82,7 +85,9 @@
         <activity android:name=".admin.data.security.TambahDataSecurityActivity" />
         <activity android:name=".admin.data.security.DataSecurityActivity" />
         <activity android:name=".admin.AdminDashboardActivity" />
-        <activity android:name=".LoginActivity" />
+        <activity android:name=".LoginActivity">
+
+        </activity>
         <activity android:name=".Splash" />
         <activity android:name=".security.Camera" />
 

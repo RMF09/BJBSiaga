@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_home_security">
+
+    <fragment
+        android:id="@+id/nav_profil"
+        android:name="com.rmf.bjbsiaga.ui.profile.ProfileFragment"
+        android:label="@string/kosong"
+        tools:layout="@layout/fragment_profile" >
+    </fragment>
+    <fragment
+        android:id="@+id/nav_home_security"
+        android:name="com.rmf.bjbsiaga.ui.homesecurity.HomeSecurityFragment"
+        android:label="@string/kosong"
+        tools:layout="@layout/fragment_home_security" >
+    </fragment>
+
+</navigation>

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.CollectionReference
@@ -63,6 +64,7 @@ class DataSecurityActivity : AppCompatActivity(), RVAdapterSecurity.ClickListene
         securityRef = db.collection(CollectionsFS.SECURITY)
     }
     fun loadSecurity(){
+        progress_bar.visibility = View.VISIBLE
         list.clear()
         adapter.notifyDataSetChanged()
         securityRef.get()
@@ -74,6 +76,11 @@ class DataSecurityActivity : AppCompatActivity(), RVAdapterSecurity.ClickListene
                     list.add(dataSecurity)
                 }
                 adapter.notifyDataSetChanged()
+                progress_bar.visibility = View.GONE
+            }
+            .addOnFailureListener {
+                Log.e(TAG, "loadSecurity: $it" )
+                progress_bar.visibility = View.GONE
             }
     }
 

@@ -6,6 +6,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -14,8 +15,10 @@ import com.rmf.bjbsiaga.adapter.RVAdapterRuangan
 import com.rmf.bjbsiaga.data.DataRuangan
 import com.rmf.bjbsiaga.util.CollectionsFS
 import kotlinx.android.synthetic.main.activity_data_ruangan.*
-
-
+import kotlinx.android.synthetic.main.activity_data_ruangan.back
+import kotlinx.android.synthetic.main.activity_data_ruangan.btn_add
+import kotlinx.android.synthetic.main.activity_data_ruangan.progress_bar
+import kotlinx.android.synthetic.main.activity_data_security.*
 
 
 class DataRuanganActivity : AppCompatActivity(), RVAdapterRuangan.ClickListener {
@@ -75,6 +78,7 @@ class DataRuanganActivity : AppCompatActivity(), RVAdapterRuangan.ClickListener 
         cabangRef = db.collection(CollectionsFS.CABANG)
     }
     fun loadDataRuangan(statusTambah: Boolean){
+        progress_bar.visibility = View.VISIBLE
         list.clear()
         ruanganRef.whereEqualTo("idCabang",idCabang)
             .get()
@@ -85,11 +89,16 @@ class DataRuanganActivity : AppCompatActivity(), RVAdapterRuangan.ClickListener 
                     list.add(dataRuangan)
                 }
                 adapter.notifyDataSetChanged()
-
+                progress_bar.visibility = View.GONE
                 if(statusTambah){
                     updateCountRuanganCabang(list.size)
                 }
             }
+            .addOnFailureListener {
+                Log.e(TAG, "loadDataRuangan: $it" )
+                progress_bar.visibility = View.GONE
+            }
+
     }
 
     override fun onClickListener(dataRuangan: DataRuangan, context: Context) {
