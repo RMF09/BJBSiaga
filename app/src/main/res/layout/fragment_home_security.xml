@@ -40,7 +40,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="@string/budi_setiawan"
         android:textAllCaps="true"
         android:textColor="@color/colorWhiteText"
         android:textSize="28sp"

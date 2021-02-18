@@ -11,12 +11,14 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.rmf.bjbsiaga.R
 import com.rmf.bjbsiaga.adapter.RVAdapterUser
 import com.rmf.bjbsiaga.data.DataUser
+import com.rmf.bjbsiaga.util.CheckConnection
 import com.rmf.bjbsiaga.util.CollectionsFS
-import kotlinx.android.synthetic.main.activity_data_security.*
 import kotlinx.android.synthetic.main.activity_data_supervisor.*
 import kotlinx.android.synthetic.main.activity_data_supervisor.back
 import kotlinx.android.synthetic.main.activity_data_supervisor.btn_add
+import kotlinx.android.synthetic.main.activity_data_supervisor.include_tidak_ada_koneksi
 import kotlinx.android.synthetic.main.activity_data_supervisor.progress_bar
+import kotlinx.android.synthetic.main.tidak_ada_koneksi.*
 
 class DataSupervisorActivity : AppCompatActivity(), RVAdapterUser.ClickListener {
 
@@ -41,6 +43,10 @@ class DataSupervisorActivity : AppCompatActivity(), RVAdapterUser.ClickListener 
             startActivity(Intent(this, TambahDataSupervisorActivity::class.java))
         }
         back.setOnClickListener { finish() }
+
+        btn_refresh.setOnClickListener {
+            startToLoad()
+        }
     }
 
     private fun setupRV(){
@@ -52,7 +58,12 @@ class DataSupervisorActivity : AppCompatActivity(), RVAdapterUser.ClickListener 
     }
 
     private fun loadData(){
+        include_tidak_ada_koneksi.visibility = View.GONE
         progress_bar.visibility = View.VISIBLE
+
+        rv_data_supervisor.visibility= View.VISIBLE
+        btn_add.visibility= View.VISIBLE
+
         list.clear()
         adapterUser.notifyDataSetChanged()
         isLoad=true
@@ -80,7 +91,17 @@ class DataSupervisorActivity : AppCompatActivity(), RVAdapterUser.ClickListener 
 
     override fun onResume() {
         super.onResume()
-        if(!isLoad) loadData()
+        startToLoad()
+    }
+
+    private fun startToLoad(){
+        if(CheckConnection.isConnected(this) && !isLoad){
+            loadData()
+        }else{
+            include_tidak_ada_koneksi.visibility = View.VISIBLE
+            rv_data_supervisor.visibility= View.GONE
+            btn_add.visibility= View.GONE
+        }
     }
 
     private fun initDB(){

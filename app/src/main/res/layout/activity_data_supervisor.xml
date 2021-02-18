@@ -68,6 +68,11 @@
         tools:listitem="@layout/item_data_user"
         tools:itemCount="2"/>
 
+    <include
+        android:id="@+id/include_tidak_ada_koneksi"
+        layout="@layout/tidak_ada_koneksi"
+        android:visibility="gone"/>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_add"
         android:layout_width="wrap_content"

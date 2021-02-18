@@ -11,7 +11,10 @@ data class DataUser (
     var nama: String="",
     val nik: Long =0,
     val password: String="",
-    val userType: String=""
+    val userType: String="",
+    val email: String="",
+    val noWA: Long =0,
+    val unitKerja: String=""
 ): Parcelable {
     @get:Exclude
     var documentId: String=""

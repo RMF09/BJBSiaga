@@ -22,8 +22,10 @@ import com.rmf.bjbsiaga.adapter.RVAdapterCabang
 import com.rmf.bjbsiaga.adapter.RVAdapterSiklus.Companion.TAG
 import com.rmf.bjbsiaga.admin.DataRuanganActivity
 import com.rmf.bjbsiaga.data.DataCabang
+import com.rmf.bjbsiaga.util.CheckConnection
 import com.rmf.bjbsiaga.util.CollectionsFS
 import kotlinx.android.synthetic.main.fragment_ruangan.*
+import kotlinx.android.synthetic.main.tidak_ada_koneksi.*
 
 class RuanganFragment: Fragment(), RVAdapterCabang.ClickListener {
 
@@ -37,6 +39,8 @@ class RuanganFragment: Fragment(), RVAdapterCabang.ClickListener {
     private lateinit var rv: RecyclerView
     private lateinit var btnAdd: FloatingActionButton
 
+    private lateinit var mContext: Context
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,6 +50,7 @@ class RuanganFragment: Fragment(), RVAdapterCabang.ClickListener {
         val root = inflater.inflate(R.layout.fragment_ruangan,container,false)
         rv = root.findViewById(R.id.rv_data_cabang)
         btnAdd = root.findViewById(R.id.btn_add)
+        mContext = root.context
 
         initDialog(root.context)
         initDB()
@@ -75,6 +80,9 @@ class RuanganFragment: Fragment(), RVAdapterCabang.ClickListener {
                 tambahCabang(editNama.text.toString())
             }
         }
+        btn_refresh.setOnClickListener {
+            startToLoad()
+        }
     }
     private fun tambahCabang(namaCabang: String) {
         val dataCabang = DataCabang(namaCabang,0)
@@ -90,7 +98,10 @@ class RuanganFragment: Fragment(), RVAdapterCabang.ClickListener {
     }
 
     private fun loadData() {
+        include_tidak_ada_koneksi.visibility = View.GONE
         progress_bar.visibility = View.VISIBLE
+        rv.visibility = View.VISIBLE
+        btnAdd.visibility = View.VISIBLE
         list.clear()
         cabangRef.get()
             .addOnSuccessListener {
@@ -132,6 +143,15 @@ class RuanganFragment: Fragment(), RVAdapterCabang.ClickListener {
 
     override fun onResume() {
         super.onResume()
-        loadData()
+        startToLoad()
+    }
+    private fun startToLoad(){
+        if(CheckConnection.isConnected(mContext)){
+            loadData()
+        }else{
+            include_tidak_ada_koneksi.visibility= View.VISIBLE
+            rv.visibility = View.GONE
+            btnAdd.visibility = View.GONE
+        }
     }
 }

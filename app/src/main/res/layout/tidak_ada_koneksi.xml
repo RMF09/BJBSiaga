@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/rel_tidak_ada_koneksi">
+
+    <ImageView
+        android:id="@+id/imageView6"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/ic_baseline_cloud_off_24"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@id/text_error"
+         />
+
+    <TextView
+        android:id="@+id/text_error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Tidak Ada Koneksi, Periksa Jaringan Anda dan Tekan Refresh untuk memuat ulang"
+        android:textColor="@color/colorWhiteText"
+        android:layout_centerInParent="true"
+        android:layout_marginHorizontal="20dp"
+        android:textSize="16sp"
+       />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_refresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ripple_effect"
+        android:letterSpacing="0.2"
+        android:text="Refresh"
+        android:textAllCaps="false"
+        android:textColor="@color/colorWhiteText"
+        android:textStyle="bold"
+        android:layout_below="@id/text_error"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"/>
+
+</RelativeLayout>

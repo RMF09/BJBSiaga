@@ -13,8 +13,7 @@ data class DataSecurity (
     val nik: Long =0,
     val noWA: Long =0,
     val unitKerja: String="",
-    val password: String="",
-    val role: String=""
+    val password: String=""
 ):Parcelable{
     @get:Exclude
     var documentId: String=""

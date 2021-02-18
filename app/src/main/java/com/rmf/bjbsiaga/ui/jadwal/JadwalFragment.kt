@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,8 +21,11 @@ import com.rmf.bjbsiaga.adapter.RVAdapterSiklus.Companion.TAG
 import com.rmf.bjbsiaga.admin.DetailJadwal
 import com.rmf.bjbsiaga.admin.InputJadwalActivity
 import com.rmf.bjbsiaga.data.DataJadwal
+import com.rmf.bjbsiaga.util.CheckConnection
 import com.rmf.bjbsiaga.util.CollectionsFS
+import kotlinx.android.synthetic.main.activity_data_jadwal.*
 import kotlinx.android.synthetic.main.fragment_ruangan.*
+import kotlinx.android.synthetic.main.fragment_ruangan.progress_bar
 
 class JadwalFragment : Fragment(), RVAdapterJadwal.ClickListener {
 
@@ -34,6 +38,10 @@ class JadwalFragment : Fragment(), RVAdapterJadwal.ClickListener {
 
     private lateinit var rv: RecyclerView
     private lateinit var btnAdd: FloatingActionButton
+    private lateinit var mContext: Context
+
+    private lateinit var includeTidakAdaKoneksi: View
+    private lateinit var btnRefresh:AppCompatButton
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,6 +56,9 @@ class JadwalFragment : Fragment(), RVAdapterJadwal.ClickListener {
         //SetupRV
         rv = root.findViewById(R.id.rv_data_jadwal)
         btnAdd = root.findViewById(R.id.btn_add)
+        btnRefresh = root.findViewById(R.id.btn_refresh)
+        includeTidakAdaKoneksi = root.findViewById(R.id.include_tidak_ada_koneksi)
+        mContext = root.context
 
         setupRV(root.context)
         Log.d(TAG, "onCreateView: gallery")
@@ -55,6 +66,9 @@ class JadwalFragment : Fragment(), RVAdapterJadwal.ClickListener {
         //Action Listener
         btnAdd.setOnClickListener {
             activity?.startActivity(Intent(activity, InputJadwalActivity::class.java))
+        }
+        btnRefresh.setOnClickListener {
+            startToLoad()
         }
 
         return root
@@ -90,11 +104,25 @@ class JadwalFragment : Fragment(), RVAdapterJadwal.ClickListener {
 
     override fun onResume() {
         super.onResume()
-        if(!isLoad) loadJadwal()
+        startToLoad()
+    }
+    private fun startToLoad(){
+        if(CheckConnection.isConnected(mContext) && !isLoad){
+            loadJadwal()
+        }else{
+            includeTidakAdaKoneksi.visibility = View.VISIBLE
+            rv.visibility= View.GONE
+            btnAdd.visibility= View.GONE
+        }
     }
 
     private fun loadJadwal(){
         progress_bar.visibility = View.VISIBLE
+        includeTidakAdaKoneksi.visibility = View.GONE
+
+        rv.visibility= View.VISIBLE
+        btnAdd.visibility= View.VISIBLE
+
         list.clear()
         adapter.notifyDataSetChanged()
         isLoad=true

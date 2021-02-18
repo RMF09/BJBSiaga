@@ -7,16 +7,22 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.room.Room
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.rmf.bjbsiaga.admin.NavAdmin
+import com.rmf.bjbsiaga.data.AppDatabase
 import com.rmf.bjbsiaga.data.DataUser
-import com.rmf.bjbsiaga.security.SecurityDashboardActivity
+import com.rmf.bjbsiaga.data.DataUserLogin
+import com.rmf.bjbsiaga.security.NavSecurityActivity
 import com.rmf.bjbsiaga.util.CollectionsFS
 import com.rmf.bjbsiaga.util.Config
 import com.rmf.bjbsiaga.util.InfoLogin
 import com.rmf.bjbsiaga.util.SharedPref
 import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
 class LoginActivity : AppCompatActivity() {
@@ -28,9 +34,18 @@ class LoginActivity : AppCompatActivity() {
     lateinit var db : FirebaseFirestore
     private lateinit var userRef: CollectionReference
 
+
+    private lateinit var dataUser: DataUser
+    private lateinit var dbRoom: AppDatabase
+    private lateinit var dataUserLogin: DataUserLogin
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        dbRoom = Room
+            .databaseBuilder(applicationContext,AppDatabase::class.java,"mydb")
+            .fallbackToDestructiveMigration().build()
 
         //Check Login
         if(SharedPref.getInstance(this)!!.isLoggedIn()){
@@ -40,7 +55,7 @@ class LoginActivity : AppCompatActivity() {
                     finish()
                 }
                 Config.USER_LOGIN_SECURITY ->{
-                    startActivity(Intent(this,SecurityDashboardActivity::class.java))
+                    startActivity(Intent(this,NavSecurityActivity::class.java))
                     finish()
                 }
                 else -> {
@@ -84,13 +99,15 @@ class LoginActivity : AppCompatActivity() {
                 if (!it.isEmpty){
 
                     for (document in it){
-                        val dataUser : DataUser = document.toObject(DataUser::class.java)
+                        dataUser = document.toObject(DataUser::class.java)
                         dataUser.documentId = document.id
                         passwordDB = dataUser.password
                         nikDB = dataUser.nik
                         documentId =  dataUser.documentId
                         nama = dataUser.nama
                         userType = dataUser.userType
+
+                        dataUserLogin = DataUserLogin(dataUser.nik,dataUser.nama,dataUser.unitKerja,dataUser.noWA)
                     }
                     if(passwordDB != password){
                         showInfoLogin(InfoLogin.PASSWORD_SALAH)
@@ -106,12 +123,12 @@ class LoginActivity : AppCompatActivity() {
 
                         }else{
                             SharedPref.getInstance(this)!!.apply {
-                                storeID(documentId)
+                                storeID(dataUser.nik)
                                 storeRole(userType)
                             }
                             val intent: Intent = when(userType){
                                 Config.USER_LOGIN_SECURITY ->
-                                    pergiKe(SecurityDashboardActivity::class.java)
+                                    pergiKe(NavSecurityActivity::class.java)
 
                                 Config.USER_LOGIN_ADMIN ->
                                     pergiKe(NavAdmin::class.java)
@@ -119,6 +136,8 @@ class LoginActivity : AppCompatActivity() {
                                 else -> { pergiKe(NavAdmin::class.java) }
 
                             }
+                            saveDataLogin()
+
                             intent.putExtra("nama",nama)
                             startActivity(intent)
                             finish()
@@ -135,6 +154,22 @@ class LoginActivity : AppCompatActivity() {
                 Log.e(TAG, "signIn: $it")
 
             }
+    }
+    private fun saveDataLogin(){
+        GlobalScope.launch(context = Dispatchers.IO){
+            val dataUserLoginDAO = dbRoom.dataUserLoginDao()
+            dataUserLoginDAO.deleteAll()
+            dataUserLoginDAO.insertAll(dataUserLogin)
+
+            val dataUserLogin: List<DataUserLogin> = dataUserLoginDAO.getDataByNIK(dataUser.nik)
+            if(dataUserLogin.size>0){
+                Log.d(TAG, "signIn: dataUserlogin ${dataUserLogin[0].nama} \n" +
+                        "${dataUserLogin[0].nik}" +
+                        "\n ${dataUserLogin[0].no_wa}" +
+                        "\n ${dataUserLogin[0].unit_kerja}")
+            }
+
+        }
     }
 
     private fun pergiKe(cls: Class<*>): Intent{

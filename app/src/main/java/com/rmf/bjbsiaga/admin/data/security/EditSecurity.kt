@@ -63,7 +63,7 @@ class EditSecurity : AppCompatActivity() {
         val password = edit_password.text.toString()
 
         val dataSecurity =
-            DataSecurity(nama, email, nik, noWA, unitKerja,password, Config.USER_LOGIN_SECURITY)
+            DataSecurity(nama, email, nik, noWA, unitKerja,password)
 
         db.collection(CollectionsFS.SECURITY).document(documentId).set(dataSecurity)
             .addOnSuccessListener {

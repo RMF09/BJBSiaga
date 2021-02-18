@@ -78,31 +78,31 @@ class SecurityDashboardActivity : AppCompatActivity() {
         checkPermission()
 
         //check is Login and get nama
-        if(SharedPref.getInstance(this)!!.isLoggedIn()){
-            SharedPref.getInstance(this)!!.loggedInUser()?.let {
-                db.collection(CollectionsFS.SECURITY).document(it)
-                    .get()
-                    .addOnSuccessListener { documentSnapshot ->
-                        if (documentSnapshot.exists()){
-
-                            NIK = documentSnapshot.getLong("nik")
-                            text_nama.text = documentSnapshot.getString("nama")
-                            AnimationUtils.loadAnimation(this, R.anim.fade_in).apply {
-                                text_nama.startAnimation(this)
-                            }
-                            Log.e(TAG, "onCreate: ${documentSnapshot.getString("nama")}")
-                            val hariSekarang = Config.Today()
-                            checkJadwalBertugas(hariSekarang)
-                        }
-                        else{
-                            Log.e(TAG, "onCreate: Tidak ada User")
-                        }
-                    }
-            }
-        }else{
-            startActivity(Intent(this, LoginActivity::class.java))
-            finish()
-        }
+//        if(SharedPref.getInstance(this)!!.isLoggedIn()){
+//            SharedPref.getInstance(this)!!.loggedInUser()?.let {
+//                db.collection(CollectionsFS.SECURITY).document(it)
+//                    .get()
+//                    .addOnSuccessListener { documentSnapshot ->
+//                        if (documentSnapshot.exists()){
+//
+//                            NIK = documentSnapshot.getLong("nik")
+//                            text_nama.text = documentSnapshot.getString("nama")
+//                            AnimationUtils.loadAnimation(this, R.anim.fade_in).apply {
+//                                text_nama.startAnimation(this)
+//                            }
+//                            Log.e(TAG, "onCreate: ${documentSnapshot.getString("nama")}")
+//                            val hariSekarang = Config.Today()
+//                            checkJadwalBertugas(hariSekarang)
+//                        }
+//                        else{
+//                            Log.e(TAG, "onCreate: Tidak ada User")
+//                        }
+//                    }
+//            }
+//        }else{
+//            startActivity(Intent(this, LoginActivity::class.java))
+//            finish()
+//        }
 
         btn_siklus1.setOnClickListener {
             this.keDetailSiklus(0)

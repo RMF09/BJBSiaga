@@ -78,6 +78,7 @@
     <string name="detail_supervisor">Detail Supervisor</string>
     <string name="edit">edit</string>
     <string name="profil">Profil</string>
+    <string name="logout">Logout</string>
 
     <string-array name="list_shifts">
         <item>Malam</item>

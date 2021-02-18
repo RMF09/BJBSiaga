@@ -12,21 +12,24 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.rmf.bjbsiaga.R
 import com.rmf.bjbsiaga.adapter.RVAdapterSecurity
 import com.rmf.bjbsiaga.data.DataSecurity
+import com.rmf.bjbsiaga.util.CheckConnection
 import com.rmf.bjbsiaga.util.CollectionsFS
 import kotlinx.android.synthetic.main.activity_data_security.*
+import kotlinx.android.synthetic.main.tidak_ada_koneksi.*
 import kotlin.collections.ArrayList
 
 
 class DataSecurityActivity : AppCompatActivity(), RVAdapterSecurity.ClickListener {
 
-    lateinit var list : ArrayList<DataSecurity>
-    lateinit var adapter : RVAdapterSecurity
+    private lateinit var list : ArrayList<DataSecurity>
+    private lateinit var adapter : RVAdapterSecurity
 
-    lateinit var db : FirebaseFirestore
-    lateinit var securityRef: CollectionReference
+    private lateinit var db : FirebaseFirestore
+    private lateinit var securityRef: CollectionReference
 
-
-    private  val TAG = "DataSecurity"
+    companion object{
+        private const val TAG = "DataSecurity"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +45,10 @@ class DataSecurityActivity : AppCompatActivity(), RVAdapterSecurity.ClickListene
         btn_add.setOnClickListener {
             startActivity(Intent(this, TambahDataSecurityActivity::class.java))
         }
+
+        btn_refresh.setOnClickListener {
+            startToLoad()
+        }
     }
     fun setupRV(){
         rv_data_security.layoutManager = LinearLayoutManager(
@@ -50,7 +57,7 @@ class DataSecurityActivity : AppCompatActivity(), RVAdapterSecurity.ClickListene
             false
         )
     }
-    fun setupAdapter(){
+    private fun setupAdapter(){
         list = ArrayList()
         adapter = RVAdapterSecurity(list,this)
         rv_data_security.adapter =adapter
@@ -63,8 +70,13 @@ class DataSecurityActivity : AppCompatActivity(), RVAdapterSecurity.ClickListene
 
         securityRef = db.collection(CollectionsFS.SECURITY)
     }
-    fun loadSecurity(){
+    private fun loadSecurity(){
+        include_tidak_ada_koneksi.visibility = View.GONE
         progress_bar.visibility = View.VISIBLE
+
+        rv_data_security.visibility= View.VISIBLE
+        btn_add.visibility= View.VISIBLE
+
         list.clear()
         adapter.notifyDataSetChanged()
         securityRef.get()
@@ -94,6 +106,17 @@ class DataSecurityActivity : AppCompatActivity(), RVAdapterSecurity.ClickListene
 
     override fun onResume() {
         super.onResume()
-        loadSecurity()
+        startToLoad()
     }
+    private fun startToLoad(){
+        if(CheckConnection.isConnected(this)){
+            loadSecurity()
+        }else{
+            include_tidak_ada_koneksi.visibility = View.VISIBLE
+            rv_data_security.visibility= View.GONE
+            btn_add.visibility= View.GONE
+        }
+    }
+
+
 }

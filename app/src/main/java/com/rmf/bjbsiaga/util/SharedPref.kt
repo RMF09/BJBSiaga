@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import com.rmf.bjbsiaga.LoginActivity
+import com.rmf.bjbsiaga.data.DataUser
 
 class SharedPref(context: Context) {
 
@@ -11,9 +12,8 @@ class SharedPref(context: Context) {
     companion object{
 
         const val SHARED_PREF_NAME = "com.rmf.bjbsiaga"
-        const val ID = "id"
+        const val NIK = "nik"
         const val ROLE = "role"
-
         var mInstance: SharedPref? = null
 
         @Synchronized
@@ -25,17 +25,18 @@ class SharedPref(context: Context) {
         }
     }
 
-    fun storeID(names: String?) {
+    fun storeID(nik: Long) {
         val sharedPreferences: SharedPreferences = mContext.getSharedPreferences(
             SHARED_PREF_NAME,
             Context.MODE_PRIVATE
         )
         sharedPreferences.edit().apply {
-            putString(ID, names)
+            putLong(NIK, nik)
             apply()
         }
 
     }
+
     fun storeRole(role: String?) {
         val sharedPreferences: SharedPreferences = mContext.getSharedPreferences(
             SHARED_PREF_NAME,
@@ -54,17 +55,17 @@ class SharedPref(context: Context) {
             SHARED_PREF_NAME,
             Context.MODE_PRIVATE
         )
-        return sharedPreferences.getString(ID, null) != null
+        return sharedPreferences.getString(ROLE, null) != null
     }
 
 
     //find logged in user
-    fun loggedInUser(): String? {
+    fun loggedInUser(): Long {
         val sharedPreferences: SharedPreferences = mContext.getSharedPreferences(
             SHARED_PREF_NAME,
             Context.MODE_PRIVATE
         )
-        return sharedPreferences.getString(ID, null)
+        return sharedPreferences.getLong(NIK, 0)
     }
 
     //find logged in role user

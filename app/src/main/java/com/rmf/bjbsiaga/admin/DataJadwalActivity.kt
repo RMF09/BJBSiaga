@@ -15,11 +15,13 @@ import com.google.firebase.firestore.Query
 import com.rmf.bjbsiaga.R
 import com.rmf.bjbsiaga.adapter.RVAdapterJadwal
 import com.rmf.bjbsiaga.data.DataJadwal
+import com.rmf.bjbsiaga.util.CheckConnection
 import com.rmf.bjbsiaga.util.CollectionsFS
 import kotlinx.android.synthetic.main.activity_data_jadwal.*
 import kotlinx.android.synthetic.main.activity_data_jadwal.back
 import kotlinx.android.synthetic.main.activity_data_jadwal.btn_add
 import kotlinx.android.synthetic.main.activity_data_jadwal.progress_bar
+import kotlinx.android.synthetic.main.tidak_ada_koneksi.*
 
 
 class DataJadwalActivity : AppCompatActivity(), RVAdapterJadwal.ClickListener {
@@ -46,6 +48,10 @@ class DataJadwalActivity : AppCompatActivity(), RVAdapterJadwal.ClickListener {
 
         back.setOnClickListener {
             finish()
+        }
+
+        btn_refresh.setOnClickListener {
+            startToLoad()
         }
 
         registerForContextMenu(rv_data_jadwal)
@@ -75,7 +81,12 @@ class DataJadwalActivity : AppCompatActivity(), RVAdapterJadwal.ClickListener {
         jadwalRef = db.collection(CollectionsFS.JADWAL)
     }
     private fun loadJadwal(){
+        include_tidak_ada_koneksi.visibility = View.GONE
         progress_bar.visibility = View.VISIBLE
+
+        rv_data_jadwal.visibility= View.VISIBLE
+        btn_add.visibility= View.VISIBLE
+
         list.clear()
         adapter.notifyDataSetChanged()
         isLoad=true
@@ -99,7 +110,17 @@ class DataJadwalActivity : AppCompatActivity(), RVAdapterJadwal.ClickListener {
 
     override fun onResume() {
         super.onResume()
-        if(!isLoad) loadJadwal()
+        startToLoad()
+    }
+
+    private fun startToLoad(){
+        if(CheckConnection.isConnected(this) && !isLoad){
+            loadJadwal()
+        }else{
+            include_tidak_ada_koneksi.visibility = View.VISIBLE
+            rv_data_jadwal.visibility= View.GONE
+            btn_add.visibility= View.GONE
+        }
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {

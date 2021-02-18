@@ -32,10 +32,7 @@
         <activity android:name=".security.NavSecurityActivity"
             android:label="@string/title_activity_nav_admin"
             android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
         </activity>
         <activity android:name=".admin.data.supervisor.EditSupervisorActivity" />
         <activity android:name=".admin.data.supervisor.DetailSupervisor" />
@@ -86,7 +83,10 @@
         <activity android:name=".admin.data.security.DataSecurityActivity" />
         <activity android:name=".admin.AdminDashboardActivity" />
         <activity android:name=".LoginActivity">
-
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity android:name=".Splash" />
         <activity android:name=".security.Camera" />

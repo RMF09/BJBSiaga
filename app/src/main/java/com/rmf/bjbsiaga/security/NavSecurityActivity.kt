@@ -1,7 +1,10 @@
 package com.rmf.bjbsiaga.security
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.view.animation.AnimationUtils
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
@@ -10,7 +13,12 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
+import com.rmf.bjbsiaga.LoginActivity
 import com.rmf.bjbsiaga.R
+import com.rmf.bjbsiaga.util.CollectionsFS
+import com.rmf.bjbsiaga.util.Config
+import com.rmf.bjbsiaga.util.SharedPref
+import kotlinx.android.synthetic.main.activity_security_dashboard.*
 
 class NavSecurityActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -36,6 +44,11 @@ class NavSecurityActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
         title = ""
+
+        if(!SharedPref.getInstance(this)!!.isLoggedIn()){
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+        }
 
     }
 
