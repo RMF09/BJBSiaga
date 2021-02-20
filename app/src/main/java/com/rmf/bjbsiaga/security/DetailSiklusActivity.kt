@@ -475,7 +475,7 @@ class DetailSiklusActivity : AppCompatActivity(),OnMapReadyCallback{
 
 
     private fun loadResourceRuangan() {
-        ruanganRef.whereEqualTo("nama_cabang",unitKerja).get()
+        ruanganRef.whereEqualTo("namaCabang",unitKerja).get()
             .addOnSuccessListener {
             if(!it.isEmpty){
                 for ((i, document) in it.withIndex()){
@@ -489,9 +489,25 @@ class DetailSiklusActivity : AppCompatActivity(),OnMapReadyCallback{
                 }
                 //end for
                 loadData()
+            }else{
+                showTidakAdaRuangan()
             }
         }
             .addOnFailureListener { Log.e(TAG, "loadResourceRuangan: $it") }
+    }
+
+    private fun showTidakAdaRuangan(){
+        val builder = AlertDialog.Builder(this)
+        builder.apply {
+            setTitle("Peringatan!")
+            setMessage("Tidak ada ruangan")
+            setPositiveButton("Ok"){dialog, _ ->
+                dialog.dismiss()
+                finish()
+            }
+        }
+        val alertDialog = builder.create()
+        alertDialog.show()
     }
 
 
