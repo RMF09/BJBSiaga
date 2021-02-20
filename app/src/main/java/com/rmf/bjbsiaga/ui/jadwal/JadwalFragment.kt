@@ -51,7 +51,6 @@ class JadwalFragment : Fragment(), RVAdapterJadwal.ClickListener {
 
         val root = inflater.inflate(R.layout.fragment_jadwal, container, false)
 
-
         initDB()
         //SetupRV
         rv = root.findViewById(R.id.rv_data_jadwal)
@@ -61,7 +60,6 @@ class JadwalFragment : Fragment(), RVAdapterJadwal.ClickListener {
         mContext = root.context
 
         setupRV(root.context)
-        Log.d(TAG, "onCreateView: gallery")
 
         //Action Listener
         btnAdd.setOnClickListener {

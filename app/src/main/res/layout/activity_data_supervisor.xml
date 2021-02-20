@@ -68,6 +68,19 @@
         tools:listitem="@layout/item_data_user"
         tools:itemCount="2"/>
 
+    <TextView
+        android:id="@+id/text_belum_ada_data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Belum ada data supervisor"
+        android:textColor="@color/colorWhiteText"
+        android:textSize="18sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/imageView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <include
         android:id="@+id/include_tidak_ada_koneksi"
         layout="@layout/tidak_ada_koneksi"

@@ -40,6 +40,7 @@ class RuanganFragment: Fragment(), RVAdapterCabang.ClickListener {
     private lateinit var btnAdd: FloatingActionButton
 
     private lateinit var mContext: Context
+    private lateinit var btnRefresh: AppCompatButton
 
 
     override fun onCreateView(
@@ -50,6 +51,7 @@ class RuanganFragment: Fragment(), RVAdapterCabang.ClickListener {
         val root = inflater.inflate(R.layout.fragment_ruangan,container,false)
         rv = root.findViewById(R.id.rv_data_cabang)
         btnAdd = root.findViewById(R.id.btn_add)
+        btnRefresh = root.findViewById(R.id.btn_refresh)
         mContext = root.context
 
         initDialog(root.context)
@@ -58,6 +60,10 @@ class RuanganFragment: Fragment(), RVAdapterCabang.ClickListener {
 
         //Action Listener
         btnAdd.setOnClickListener { alertDialog.show() }
+
+        btnRefresh.setOnClickListener {
+            startToLoad()
+        }
 
         return root
     }
@@ -80,9 +86,7 @@ class RuanganFragment: Fragment(), RVAdapterCabang.ClickListener {
                 tambahCabang(editNama.text.toString())
             }
         }
-        btn_refresh.setOnClickListener {
-            startToLoad()
-        }
+
     }
     private fun tambahCabang(namaCabang: String) {
         val dataCabang = DataCabang(namaCabang,0)
@@ -90,6 +94,8 @@ class RuanganFragment: Fragment(), RVAdapterCabang.ClickListener {
         cabangRef.document().set(dataCabang)
             .addOnSuccessListener {
                 Log.d(TAG, "tambahCabang: Berhasil ditambahkan")
+                alertDialog.dismiss()
+                startToLoad()
             }
             .addOnFailureListener {
                 Log.d(TAG, "tambahCabang: Gagal $it")
@@ -102,7 +108,9 @@ class RuanganFragment: Fragment(), RVAdapterCabang.ClickListener {
         progress_bar.visibility = View.VISIBLE
         rv.visibility = View.VISIBLE
         btnAdd.visibility = View.VISIBLE
+        text_belum_ada_data.visibility = View.GONE
         list.clear()
+        adapter.notifyDataSetChanged()
         cabangRef.get()
             .addOnSuccessListener {
                 Log.d(TAG, "loadData: ${it.size()}")
@@ -114,6 +122,10 @@ class RuanganFragment: Fragment(), RVAdapterCabang.ClickListener {
                     }
                     adapter.notifyDataSetChanged()
                     progress_bar.visibility = View.GONE
+                }
+                else{
+                    progress_bar.visibility = View.GONE
+                    text_belum_ada_data.visibility = View.VISIBLE
                 }
             }
             .addOnFailureListener {

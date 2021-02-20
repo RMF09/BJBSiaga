@@ -10,8 +10,8 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.FirebaseFirestore
 import com.rmf.bjbsiaga.R
 import com.rmf.bjbsiaga.data.DataSecurity
+import com.rmf.bjbsiaga.data.DataUser
 import com.rmf.bjbsiaga.util.CollectionsFS
-import com.rmf.bjbsiaga.util.Config
 import kotlinx.android.synthetic.main.activity_edit_user.*
 import kotlinx.android.synthetic.main.activity_edit_user.edit_email
 import kotlinx.android.synthetic.main.activity_edit_user.edit_nama
@@ -22,16 +22,21 @@ import kotlinx.android.synthetic.main.activity_edit_user.edit_unit_kerja
 
 class EditSecurity : AppCompatActivity() {
     lateinit var db : FirebaseFirestore
+    companion object{
 
-    private val TAG = "EditDataSecurityActiv"
+        private const val TAG = "EditDataSecurityActiv"
+    }
     private lateinit var alertDialog: AlertDialog
     private lateinit var documentId: String
+    private var nik:Long=0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_user)
 
         documentId = intent.getStringExtra("id").toString()
+
+
         intent.getParcelableExtra<DataSecurity>("data").apply {
             edit_nama.setText(this?.nama)
             edit_nik.setText(this?.nik.toString())
@@ -39,6 +44,7 @@ class EditSecurity : AppCompatActivity() {
             edit_no_wa.setText(this?.noWA.toString())
             edit_unit_kerja.setText(this?.unitKerja)
             edit_password.setText(this?.password)
+            nik = this?.nik!!
         }
         Log.d(TAG, "onCreate: documentID = $documentId")
         initDB()
@@ -49,11 +55,11 @@ class EditSecurity : AppCompatActivity() {
         back.setOnClickListener { finish() }
     }
 
-    fun initDB(){
+    private fun initDB(){
         db = FirebaseFirestore.getInstance()
     }
 
-    fun editData(){
+    private fun editData(){
 
         val nama = edit_nama.text.toString()
         val email = edit_email.text.toString()
@@ -65,17 +71,36 @@ class EditSecurity : AppCompatActivity() {
         val dataSecurity =
             DataSecurity(nama, email, nik, noWA, unitKerja,password)
 
-        db.collection(CollectionsFS.SECURITY).document(documentId).set(dataSecurity)
+        val dataUser =  DataUser(nama, nik, password,CollectionsFS.SECURITY,email, noWA, unitKerja)
+
+        db.collection(CollectionsFS.USER).whereEqualTo("nik",this.nik)
+            .get()
             .addOnSuccessListener {
-                this.showDialog("Edit Data User berhasil","Berhasil")
-            }
-            .addOnFailureListener {
-                this.showDialog("Edit Data User gagal","Kesalahan")
-                Log.e(TAG, "saveData: $it." )
+                if(!it.isEmpty){
+                    for (data in it){
+                        db.collection(CollectionsFS.USER)
+                            .document(data.id)
+                            .set(dataUser)
+                            .addOnSuccessListener { ex ->
+                                db.collection(CollectionsFS.SECURITY).document(documentId).set(dataSecurity)
+                                    .addOnSuccessListener {
+                                        this.showDialog("Data User berhasil diubah","Berhasil")
+                                    }
+                                    .addOnFailureListener {
+                                        this.showDialog("Data User gagal diubah","Kesalahan")
+                                        Log.e(TAG, "saveData: $ex." )
+                                    }
+                            }
+                            .addOnFailureListener { ex ->
+                                this.showDialog("Data User gagal diubah","Kesalahan")
+                                Log.e(TAG, "saveData: $ex." )
+                            }
+                    }
+                }
             }
     }
 
-    fun validate(view: View) : Boolean{
+    private fun validate(view: View) : Boolean{
         val nama = edit_nama.text.toString()
         val email = edit_email.text.toString()
         val unitKerja = edit_unit_kerja.text.toString()

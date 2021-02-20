@@ -66,6 +66,8 @@ class SecurityDashboardActivity : AppCompatActivity() {
     private var checkHariKamari  = false
     private var currentCalendar=  Calendar.getInstance()
 
+    private var unitKerja = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_security_dashboard)
@@ -151,6 +153,7 @@ class SecurityDashboardActivity : AppCompatActivity() {
             Intent(this, DetailSiklusActivity::class.java).apply {
                 putExtra("siklus", listSiklus[index].siklusKe)
                 putExtra("id", listSiklus[index].documentId)
+                putExtra("unit_kerja",unitKerja)
                 startActivity(this)
             }
         }
@@ -219,6 +222,7 @@ class SecurityDashboardActivity : AppCompatActivity() {
                         idJadwal = dataJadwalBertugas.idJadwal
                         hari = dataJadwalBertugas.hari
                         shift = dataJadwalBertugas.shift
+                        unitKerja = dataJadwalBertugas.unitKerja
                     }
 
                         checkTugasSiaga()

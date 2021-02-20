@@ -123,25 +123,26 @@ class DataJadwalActivity : AppCompatActivity(), RVAdapterJadwal.ClickListener {
         }
     }
 
-    override fun onContextItemSelected(item: MenuItem): Boolean {
-        val position: Int
-
-        try {
-            position = adapter.position
-        }
-        catch (e: Exception){
-            return super.onContextItemSelected(item)
-        }
-        return when(item.itemId){
-            R.id.hapus ->{
-                Log.d("ContextMenu", "onContextItemSelected: Hapus $position")
-                hapusItem(position)
-                return true
-                }
-            else ->
-                super.onContextItemSelected(item)
-        }
-    }
+//    override fun onContextItemSelected(item: MenuItem): Boolean {
+//        val position: Int
+//
+//        try {
+//            position = adapter.position
+//            Log.d("DataJadwal", "onContextItemSelected: $position")
+//        }
+//        catch (e: Exception){
+//            return super.onContextItemSelected(item)
+//        }
+//        return when(item.itemId){
+//            R.id.hapus ->{
+//                Log.d("ContextMenu", "onContextItemSelected: Hapus $position")
+//                hapusItem(position)
+//                return true
+//                }
+//            else ->
+//                super.onContextItemSelected(item)
+//        }
+//    }
     private fun hapusItem(position: Int){
         jadwalRef.document(list[position].documentId)
             .delete()

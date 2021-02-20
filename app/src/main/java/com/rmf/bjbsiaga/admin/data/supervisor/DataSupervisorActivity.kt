@@ -68,6 +68,8 @@ class DataSupervisorActivity : AppCompatActivity(), RVAdapterUser.ClickListener 
         adapterUser.notifyDataSetChanged()
         isLoad=true
 
+        text_belum_ada_data.visibility = View.GONE
+
         userRef.whereEqualTo("userType",CollectionsFS.SUPERVISOR)
             .get()
             .addOnSuccessListener {
@@ -79,6 +81,9 @@ class DataSupervisorActivity : AppCompatActivity(), RVAdapterUser.ClickListener 
                     }
                     adapterUser.notifyDataSetChanged()
                     isLoad=false
+                    progress_bar.visibility = View.GONE
+                }else{
+                    text_belum_ada_data.visibility = View.VISIBLE
                     progress_bar.visibility = View.GONE
                 }
             }

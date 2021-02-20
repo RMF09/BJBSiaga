@@ -2,7 +2,6 @@ package com.rmf.bjbsiaga.admin
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.DialogInterface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -18,12 +17,12 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.rmf.bjbsiaga.R
 import com.rmf.bjbsiaga.adapter.RVAdapterJadwalSecurity
 import com.rmf.bjbsiaga.adapter.RVAdapterSecurity
+import com.rmf.bjbsiaga.data.DataCabang
 import com.rmf.bjbsiaga.data.DataJadwal
 import com.rmf.bjbsiaga.data.DataJadwalBertugas
 import com.rmf.bjbsiaga.data.DataSecurity
 import com.rmf.bjbsiaga.util.CollectionsFS
 import kotlinx.android.synthetic.main.activity_detail_jadwal.*
-import kotlinx.android.synthetic.main.dialog_add_person.*
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -31,7 +30,10 @@ class DetailJadwal : AppCompatActivity(), RVAdapterSecurity.ClickListener, RVAda
     private var jadwalBertugasBeresDihapus=false
     private lateinit var id: String
     private lateinit var dataJadwal: DataJadwal
-    private val TAG = "DetailJadwal"
+
+    companion object{
+        const val TAG = "DetailJadwal"
+    }
 
     private lateinit var adapter: RVAdapterJadwalSecurity
     private lateinit var list: ArrayList<DataJadwalBertugas>
@@ -39,6 +41,7 @@ class DetailJadwal : AppCompatActivity(), RVAdapterSecurity.ClickListener, RVAda
     private lateinit var db : FirebaseFirestore
     private lateinit var jadwalBertugasRef: CollectionReference
     private lateinit var securityRef: CollectionReference
+    private lateinit var cabangRef: CollectionReference
 
     private lateinit var alertDialog: AlertDialog
 
@@ -61,6 +64,11 @@ class DetailJadwal : AppCompatActivity(), RVAdapterSecurity.ClickListener, RVAda
 
     private lateinit var alertDialogHapus: AlertDialog
 
+    private lateinit var alertDialogHapusJadwal: AlertDialog
+    private var jadwalDihapus=false
+
+    private var listCabang: ArrayList<String> = ArrayList()
+
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,11 +80,12 @@ class DetailJadwal : AppCompatActivity(), RVAdapterSecurity.ClickListener, RVAda
         initDB()
         setupRV()
         initialDialog()
+        initDialogHapusJadwal()
+
+        loadDataCabang()
 
         Log.d(TAG, "onCreate: documentID = $id, data :  ${dataJadwal.hari}")
         header_text.text = "Detail Jadwal Hari ${dataJadwal.hari}"
-
-        loadDataUnitKerja()
 
         spinner_unit_kerja.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onItemSelected(
@@ -103,25 +112,58 @@ class DetailJadwal : AppCompatActivity(), RVAdapterSecurity.ClickListener, RVAda
             loadDataSecurity()
         }
         back.setOnClickListener { finish() }
+        btn_delete.setOnClickListener { alertDialogHapusJadwal.show() }
     }
 
     private fun loadDataUnitKerja() {
         val dataUnitKerja = arrayOf("KCP Cipanas","KCP Cianjur")
-        val adapterSpinner = ArrayAdapter<String>(
-            this,
-            R.layout.spinner_selected_item,
-            dataUnitKerja)
-        adapterSpinner.setDropDownViewResource(R.layout.spinner_dropdown)
 
-        spinner_unit_kerja.adapter = adapterSpinner
-        adapterSpinner.notifyDataSetChanged()
     }
 
     private fun initDB() {
         db = FirebaseFirestore.getInstance()
         jadwalBertugasRef = db.collection(CollectionsFS.JADWAL_BERTUGAS)
         securityRef = db.collection(CollectionsFS.SECURITY)
+        cabangRef =  db.collection(CollectionsFS.CABANG)
     }
+    private fun loadDataCabang(){
+        cabangRef.get()
+            .addOnSuccessListener {
+                if (!it.isEmpty){
+                    for (data in it){
+                        val dataCabang = data.toObject(DataCabang::class.java)
+                        listCabang.add(dataCabang.namaCabang)
+                    }
+                    val adapterSpinner = ArrayAdapter<String>(
+                        this,
+                        R.layout.spinner_selected_item,
+                        listCabang)
+                    adapterSpinner.setDropDownViewResource(R.layout.spinner_dropdown)
+
+                    spinner_unit_kerja.adapter = adapterSpinner
+                    adapterSpinner.notifyDataSetChanged()
+                }
+                else{
+                    showTidakAdaCabang()
+                }
+            }
+    }
+
+    private fun showTidakAdaCabang(){
+        val builder= AlertDialog.Builder(this)
+        builder.apply {
+            setCancelable(false)
+            setTitle("Peringatan!")
+            setMessage("Tidak ada data cabang")
+            setPositiveButton("Ok"){dialog, _ ->
+                dialog.dismiss()
+                finish()
+            }
+        }
+        val alertDialog = builder.create()
+        alertDialog.show()
+    }
+
 
     private fun setupRV(){
         list = ArrayList()
@@ -155,7 +197,83 @@ class DetailJadwal : AppCompatActivity(), RVAdapterSecurity.ClickListener, RVAda
             }
     }
 
-    @SuppressLint("InflateParams")
+    @SuppressLint("SetTextI18n")
+    private fun hapusJadwal(){
+
+        setMessageForDialogHapusJadwal("","Harap tunggu...")
+        alertDialogHapusJadwal.apply {
+            getButton(AlertDialog.BUTTON_POSITIVE).visibility = View.GONE
+            alertDialogHapusJadwal.getButton(AlertDialog.BUTTON_NEGATIVE).visibility = View.GONE
+        }
+
+        val query= jadwalBertugasRef.whereEqualTo("idJadwal",id)
+        query.get()
+            .addOnCompleteListener {
+                if(it.isSuccessful){
+                    for (data in it.result){
+                        jadwalBertugasRef.document(data.id).delete()
+                    }
+
+                    val jadwalRef:CollectionReference = db.collection(CollectionsFS.JADWAL)
+                    jadwalRef.document(id)
+                        .delete()
+                        .addOnSuccessListener {
+                            setMessageForDialogHapusJadwal("Berhasil dihapus","Data Jadwal berhasil dihapus")
+                            alertDialogHapusJadwal.apply {
+                                getButton(AlertDialog.BUTTON_POSITIVE).apply {
+                                    visibility = View.VISIBLE
+                                    text = "Ok"
+                                }
+                                getButton(AlertDialog.BUTTON_NEGATIVE).visibility = View.GONE
+                            }
+                            jadwalDihapus = true
+                        }
+                        .addOnFailureListener { ex->
+                            Log.e("hapus", "hapusItem: $ex" )
+                            Toast.makeText(this, "gagal dihapus", Toast.LENGTH_SHORT).show()
+                        }
+                }
+            }
+
+
+    }
+    private fun setMessageForDialogHapusJadwal(title: String="",message: String ){
+        if(title!=""){
+            alertDialogHapusJadwal.setTitle(title)
+        }
+        alertDialogHapusJadwal.setMessage(message)
+    }
+
+    private fun initDialogHapusJadwal(){
+        val builder = AlertDialog.Builder(this)
+        builder.apply {
+            setCancelable(false)
+            setTitle("Hapus Jadwal Hari ${dataJadwal.hari}")
+            setMessage("Anda yakin ingin menghapus jadwal hari ${dataJadwal.hari}?")
+            setPositiveButton("Ya"){_,_->
+                //do Nothing
+            }
+            setNegativeButton("Batal"){dialog, _->
+                dialog.dismiss()
+            }
+        }
+        alertDialogHapusJadwal = builder.create()
+        alertDialogHapusJadwal.setOnShowListener {
+            val button: Button = alertDialogHapusJadwal.getButton(AlertDialog.BUTTON_POSITIVE)
+            button.setOnClickListener {
+                if(!jadwalDihapus){
+                    hapusJadwal()
+                }
+                else{
+                    alertDialogHapusJadwal.dismiss()
+                    finish()
+                }
+            }
+        }
+    }
+
+
+    @SuppressLint("InflateParams", "SetTextI18n")
     private fun initialDialog(){
         val builder = AlertDialog.Builder(this)
         val view = layoutInflater.inflate(R.layout.dialog_add_person,null)
@@ -200,9 +318,11 @@ class DetailJadwal : AppCompatActivity(), RVAdapterSecurity.ClickListener, RVAda
                 loadData()
             }
             else{
-                alertDialog.setCancelable(false)
-                textSecurityTerpilih.text = "Harap tunggu..."
-                addPersonSelectedToJadwal(0)
+                if(listPersonSelected.size>0){
+                    alertDialog.setCancelable(false)
+                    textSecurityTerpilih.text = "Harap tunggu..."
+                    addPersonSelectedToJadwal(0)
+                }
             }
         }
     }
@@ -255,6 +375,7 @@ class DetailJadwal : AppCompatActivity(), RVAdapterSecurity.ClickListener, RVAda
                 Toast.makeText(this, "Kesalahan mengambil data, Harap coba lagi", Toast.LENGTH_SHORT).show()
             }
     }
+    @SuppressLint("SetTextI18n")
     private fun filterDataSecurity(){
         Log.d(TAG, "filterDataSecurity: list size ${listPersonAdd.size} ${list.size}")
 
@@ -333,6 +454,7 @@ class DetailJadwal : AppCompatActivity(), RVAdapterSecurity.ClickListener, RVAda
 
     }
 
+    @SuppressLint("SetTextI18n")
     private fun addPersonSelectedToJadwal(position: Int){
        val dataSecurityTerpilih = listPersonSelected[position]
 
@@ -369,32 +491,51 @@ class DetailJadwal : AppCompatActivity(), RVAdapterSecurity.ClickListener, RVAda
         val alertBuilder = AlertDialog.Builder(this)
         alertBuilder.apply {
             setMessage("Anda yakin ingin menghapus security bernama '${dataJadwalBertugas.nama}' dari jadwal ini?")
-            setPositiveButton("Ya"){dialog, _->
-
-                if(jadwalBertugasBeresDihapus){
-//                    dialog.dismiss()
-                    jadwalBertugasBeresDihapus=false
-                }else{
-                    hapusJadwalBertugas(dataJadwalBertugas.documentId)
-                }
+            setPositiveButton("Ya"){_, _->
+                //do nothib
             }
-            setNegativeButton("Tidak"){dialog, _->
+            setNegativeButton("Batal"){dialog, _->
                 dialog.dismiss()
             }
         }
         alertDialogHapus = alertBuilder.create()
+        alertDialogHapus.setCancelable(false)
+
+
+        alertDialogHapus.setOnShowListener {
+            val button: Button =alertDialogHapus.getButton(AlertDialog.BUTTON_POSITIVE)
+            button.setOnClickListener {
+                Log.d(TAG, "onClickListener: s")
+                if(jadwalBertugasBeresDihapus){
+                    alertDialogHapus.dismiss()
+                    jadwalBertugasBeresDihapus=false
+                    loadData()
+                    Log.d(TAG, "onClickListener: kadie")
+                }else{
+                    hapusJadwalBertugas(dataJadwalBertugas.documentId)
+                }
+            }
+        }
+
         alertDialogHapus.show()
     }
 
     @SuppressLint("SetTextI18n")
     private fun hapusJadwalBertugas(documentId: String) {
         alertDialogHapus.setMessage("Harap tunggu...")
-        alertDialogHapus.setCancelable(false)
+        alertDialogHapus.apply {
+            getButton(AlertDialog.BUTTON_POSITIVE).visibility = View.GONE
+            getButton(AlertDialog.BUTTON_NEGATIVE).visibility = View.GONE
+        }
+
         jadwalBertugasRef.document(documentId).delete()
             .addOnSuccessListener {
-                alertDialogHapus.setMessage("Berhasil dihapus")
-                alertDialogHapus.getButton(AlertDialog.BUTTON_POSITIVE).text = "Ok"
-                alertDialogHapus.getButton(AlertDialog.BUTTON_NEGATIVE).visibility = View.GONE
+                alertDialogHapus.apply {
+                    setMessage("Berhasil dihapus")
+                    getButton(AlertDialog.BUTTON_POSITIVE).text = "Ok"
+                    getButton(AlertDialog.BUTTON_NEGATIVE).visibility = View.GONE
+                    getButton(AlertDialog.BUTTON_POSITIVE).visibility = View.VISIBLE
+                }
                 jadwalBertugasBeresDihapus=true
             }
             .addOnFailureListener {

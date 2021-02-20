@@ -108,7 +108,7 @@ class DetailSiklusActivity : AppCompatActivity(),OnMapReadyCallback{
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
-
+    private var unitKerja=""
 
     private var broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent) {
@@ -204,6 +204,8 @@ class DetailSiklusActivity : AppCompatActivity(),OnMapReadyCallback{
 
         idSiklus = intent.getStringExtra("id").toString()
         siklus = intent.getIntExtra("siklus", 0)
+        unitKerja = intent.getStringExtra("unit_kerja").toString()
+
         text_header_siklus.text = "Detail Siklus $siklus"
 
         storageReference = FirebaseStorage.getInstance().getReference("foto")
@@ -473,7 +475,7 @@ class DetailSiklusActivity : AppCompatActivity(),OnMapReadyCallback{
 
 
     private fun loadResourceRuangan() {
-        ruanganRef.get()
+        ruanganRef.whereEqualTo("nama_cabang",unitKerja).get()
             .addOnSuccessListener {
             if(!it.isEmpty){
                 for ((i, document) in it.withIndex()){

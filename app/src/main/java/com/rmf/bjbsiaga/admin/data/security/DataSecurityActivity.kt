@@ -15,6 +15,12 @@ import com.rmf.bjbsiaga.data.DataSecurity
 import com.rmf.bjbsiaga.util.CheckConnection
 import com.rmf.bjbsiaga.util.CollectionsFS
 import kotlinx.android.synthetic.main.activity_data_security.*
+import kotlinx.android.synthetic.main.activity_data_security.back
+import kotlinx.android.synthetic.main.activity_data_security.btn_add
+import kotlinx.android.synthetic.main.activity_data_security.include_tidak_ada_koneksi
+import kotlinx.android.synthetic.main.activity_data_security.progress_bar
+import kotlinx.android.synthetic.main.activity_data_security.text_belum_ada_data
+import kotlinx.android.synthetic.main.activity_data_supervisor.*
 import kotlinx.android.synthetic.main.tidak_ada_koneksi.*
 import kotlin.collections.ArrayList
 
@@ -77,18 +83,26 @@ class DataSecurityActivity : AppCompatActivity(), RVAdapterSecurity.ClickListene
         rv_data_security.visibility= View.VISIBLE
         btn_add.visibility= View.VISIBLE
 
+        text_belum_ada_data.visibility = View.GONE
+
         list.clear()
         adapter.notifyDataSetChanged()
         securityRef.get()
             .addOnSuccessListener {
-                for (document in it){
-                    val dataSecurity : DataSecurity = document.toObject(DataSecurity::class.java)
-                    dataSecurity.documentId = document.id
-                    Log.d(TAG, "loadSecurity: ${document.id}")
-                    list.add(dataSecurity)
+                if(!it.isEmpty){
+                    for (document in it){
+                        val dataSecurity : DataSecurity = document.toObject(DataSecurity::class.java)
+                        dataSecurity.documentId = document.id
+                        Log.d(TAG, "loadSecurity: ${document.id}")
+                        list.add(dataSecurity)
+                    }
+                    adapter.notifyDataSetChanged()
+                    progress_bar.visibility = View.GONE
                 }
-                adapter.notifyDataSetChanged()
-                progress_bar.visibility = View.GONE
+                else{
+                    text_belum_ada_data.visibility = View.VISIBLE
+                    progress_bar.visibility = View.GONE
+                }
             }
             .addOnFailureListener {
                 Log.e(TAG, "loadSecurity: $it" )

@@ -57,6 +57,7 @@ class TambahRuanganActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var alertDialog: AlertDialog
     
     private var idCabang: String =""
+    private var namaCabang: String=""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,6 +65,7 @@ class TambahRuanganActivity : AppCompatActivity(), OnMapReadyCallback {
 
         
         idCabang = intent.getStringExtra("id_cabang").toString()
+        namaCabang = intent.getStringExtra("nama_cabang").toString()
         Log.d(TAG, "onCreate: id_cabang $idCabang")
         
         initDB()
@@ -192,7 +194,7 @@ class TambahRuanganActivity : AppCompatActivity(), OnMapReadyCallback {
         val namaRuangan: String = text_input_nama_ruangan.editText?.text.toString()
 
         val id =  db.collection(CollectionsFS.RUANGAN).document().id
-        val dataRuangan = DataRuangan(namaRuangan, lat, lng,idCabang)
+        val dataRuangan = DataRuangan(namaRuangan, lat, lng,idCabang,namaCabang)
         dataRuangan.documentId = id
         Log.e(TAG, "saveData: id= $id")
         db.collection(CollectionsFS.RUANGAN).document(id).set(dataRuangan)

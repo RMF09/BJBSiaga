@@ -9,8 +9,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.rmf.bjbsiaga.R
 import com.rmf.bjbsiaga.data.DataSecurity
+import com.rmf.bjbsiaga.data.DataUser
 import com.rmf.bjbsiaga.util.CollectionsFS
-import com.rmf.bjbsiaga.util.Config
 
 import kotlinx.android.synthetic.main.activity_tambah_data_security.*
 import kotlinx.android.synthetic.main.activity_tambah_data_security.edit_password
@@ -18,7 +18,9 @@ import kotlinx.android.synthetic.main.activity_tambah_data_security.edit_passwor
 class TambahDataSecurityActivity : AppCompatActivity() {
     lateinit var db : FirebaseFirestore
 
-    private val TAG = "TambahDataSecurityActiv"
+    companion object{
+        private const val TAG = "TambahDataSecurityActiv"
+    }
     lateinit var mAuth : FirebaseAuth
     private lateinit var alertDialog: AlertDialog
 
@@ -53,15 +55,25 @@ class TambahDataSecurityActivity : AppCompatActivity() {
 
         val dataSecurity =
             DataSecurity(nama, email, nik, noWA, unitKerja,password)
+        val dataUser =  DataUser(nama, nik, password,CollectionsFS.SECURITY,email, noWA, unitKerja)
 
-        db.collection(CollectionsFS.SECURITY).document().set(dataSecurity)
+        db.collection(CollectionsFS.USER).document().set(dataUser)
             .addOnSuccessListener {
-                this.showDialog("Data User berhasil ditambahkan","Berhasil")
+                db.collection(CollectionsFS.SECURITY).document().set(dataSecurity)
+                    .addOnSuccessListener {
+                        this.showDialog("Data User berhasil ditambahkan","Berhasil")
+                    }
+                    .addOnFailureListener {
+                        this.showDialog("Data User gagal ditambahkan","Kesalahan")
+                        Log.e(TAG, "saveData: $it." )
+                    }
             }
             .addOnFailureListener {
                 this.showDialog("Data User gagal ditambahkan","Kesalahan")
                 Log.e(TAG, "saveData: $it." )
             }
+
+
     }
 
     private fun showDialog(message: String, title: String){
